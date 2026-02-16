@@ -1,8 +1,8 @@
 services:
   hospital-ui:
     build:
-      context: ./ui
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: hospital/ui/Dockerfile
     container_name: hospital-ui
     ports:
       - "3000:80"

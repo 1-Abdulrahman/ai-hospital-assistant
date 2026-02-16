@@ -1,8 +1,10 @@
 services:
   backend:
+  
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: company/backend/Dockerfile
+
     container_name: company-backend
     env_file:
       - ./.env
@@ -11,6 +13,13 @@ services:
     volumes:
       - ./data:/data
       - ./backend/app/assets/nlp_models/distilbert-specialty:/app/app/assets/nlp_models/distilbert-specialty:ro
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                capabilities: [gpu]
+
     depends_on:
       fhir:
         condition: service_healthy
@@ -52,8 +61,8 @@ services:
 
   portal-ui:
     build:
-      context: ./portal-ui
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: company/portal-ui/Dockerfile
     container_name: company-portal-ui
     ports:
       - "3001:80"
@@ -63,3 +72,4 @@ services:
 networks:
   company-net:
     driver: bridge
+
