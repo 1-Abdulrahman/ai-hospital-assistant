@@ -1,0 +1,65 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: company-backend
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+      - ./backend/app/assets/nlp_models/distilbert-specialty:/app/app/assets/nlp_models/distilbert-specialty:ro
+    depends_on:
+      fhir:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()\""]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks:
+      - company-net
+
+  fhir:
+    image: hapiproject/hapi:v8.6.0-1-tomcat
+    container_name: company-fhir
+    ports:
+      - "8080:8080"
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    volumes:
+      - ./fhir-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/fhir/metadata >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    networks:
+      - company-net
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: company-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - company-net
+
+  portal-ui:
+    build:
+      context: ./portal-ui
+      dockerfile: Dockerfile
+    container_name: company-portal-ui
+    ports:
+      - "3001:80"
+    networks:
+      - company-net
+
+networks:
+  company-net:
+    driver: bridge
