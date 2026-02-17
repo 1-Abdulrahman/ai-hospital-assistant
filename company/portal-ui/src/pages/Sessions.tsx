@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { ErrorBanner } from '@/components/shared/ErrorBanner';
 import { DateRangeSelector, type DatePreset } from '@/components/shared/DateRangeSelector';
+import { useAuth } from '@/contexts/AuthContext';
 import { useApiCall } from '@/hooks/useApiCall';
 import { safeFormatDate } from '@/lib/safeDate';
 import { Link } from 'react-router-dom';
@@ -14,6 +15,7 @@ import { format, subDays } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function SessionsPage() {
+  const { isTenantAdmin } = useAuth();
   const today = format(new Date(), 'yyyy-MM-dd');
   const [from, setFrom] = useState(format(subDays(new Date(), 30), 'yyyy-MM-dd'));
   const [to, setTo] = useState(today);
@@ -43,7 +45,12 @@ export default function SessionsPage() {
             <SelectItem value="FAILED">Failed</SelectItem>
           </SelectContent>
         </Select>
-        <Input placeholder="Tenant ID" value={tenantId} onChange={(e) => { setTenantId(e.target.value); setPage(1); }} className="w-[140px] h-9" />
+        {!isTenantAdmin && (
+          <Input
+            placeholder="Tenant ID"
+            value={tenantId}
+            onChange={(e) => { setTenantId(e.target.value); setPage(1); }}
+            className="w-[140px] h-9"/>)}
       </div>
 
       {loading && <Skeleton className="h-64" />}
@@ -54,7 +61,10 @@ export default function SessionsPage() {
           <Table>
             <TableHeader><TableRow>
               <TableHead>Patient Session ID</TableHead><TableHead>Started</TableHead><TableHead>Last Event</TableHead>
-              <TableHead>Status</TableHead><TableHead>Reason Code</TableHead><TableHead>Correlation ID</TableHead><TableHead></TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Reason Code</TableHead>
+              <TableHead>Correlation ID</TableHead>
+              {!isTenantAdmin && <TableHead></TableHead>}
             </TableRow></TableHeader>
             <TableBody>
               {data.items.map((s) => (
@@ -66,14 +76,28 @@ export default function SessionsPage() {
                   <TableCell className="text-xs">{s.finalReasonCode || 'N/A'}</TableCell>
                   <TableCell>
                     {s.correlationId ? (
-                      <Link to={`/traces?correlationId=${s.correlationId}`} className="text-xs font-mono text-primary hover:underline">{s.correlationId.slice(0, 8)}…</Link>
-                    ) : 'N/A'}
+                      isTenantAdmin ? (
+                        <span className="text-xs font-mono">{s.correlationId.slice(0, 8)}…</span>
+                      ) : (
+                        <Link
+                          to={`/traces?correlationId=${s.correlationId}`}
+                          className="text-xs font-mono text-primary hover:underline"
+                        >
+                          {s.correlationId.slice(0, 8)}…
+                        </Link>
+                      )
+                    ) : (
+                      'N/A'
+                    )}
                   </TableCell>
-                  <TableCell>
-                    <Link to={`/traces?correlationId=${s.correlationId || s.sessionId}`}>
-                      <Button variant="outline" size="sm">Open Trace</Button>
-                    </Link>
-                  </TableCell>
+                  {!isTenantAdmin && (
+                    <TableCell>
+                      <Link to={`/traces?correlationId=${s.correlationId || s.sessionId}`}>
+                        <Button variant="outline" size="sm">Open Trace</Button>
+                      </Link>
+                    </TableCell>
+                  )}
+
                 </TableRow>
               ))}
             </TableBody>

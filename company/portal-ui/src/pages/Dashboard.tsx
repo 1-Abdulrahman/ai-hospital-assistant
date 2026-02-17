@@ -117,11 +117,23 @@ export default function DashboardPage() {
                   <TableCell>{b.specialty || 'N/A'}</TableCell>
                   <TableCell><StatusBadge status={b.outcome} /></TableCell>
                   <TableCell>
-                    {b.correlationId ? (
-                      <Link to={`/traces?correlationId=${b.correlationId}`} className="text-xs font-mono text-primary hover:underline">
-                        {b.correlationId.slice(0, 8)}…
-                      </Link>
-                    ) : 'N/A'}
+               {b.correlationId ? (
+                  isTenantAdmin ? (
+                    <span className="text-xs font-mono">
+                      {b.correlationId.slice(0, 8)}…
+                    </span>
+                  ) : (
+                    <Link
+                      to={`/traces?correlationId=${b.correlationId}`}
+                      className="text-xs font-mono text-primary hover:underline"
+                    >
+                      {b.correlationId.slice(0, 8)}…
+                    </Link>
+                  )
+                ) : (
+                  'N/A'
+                )}
+
                   </TableCell>
                 </TableRow>
               ))}

@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { ErrorBanner } from '@/components/shared/ErrorBanner';
 import { DateRangeSelector, type DatePreset } from '@/components/shared/DateRangeSelector';
+import { useAuth } from '@/contexts/AuthContext';
 import { useApiCall } from '@/hooks/useApiCall';
 import { safeFormatDate } from '@/lib/safeDate';
 import { Link } from 'react-router-dom';
@@ -14,6 +15,7 @@ import { format, subDays } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function BookingsPage() {
+  const { isTenantAdmin } = useAuth();
   const today = format(new Date(), 'yyyy-MM-dd');
   const [from, setFrom] = useState(format(subDays(new Date(), 30), 'yyyy-MM-dd'));
   const [to, setTo] = useState(today);
@@ -76,9 +78,23 @@ export default function BookingsPage() {
                   <TableCell><StatusBadge status={b.outcome} /></TableCell>
                   <TableCell className="text-xs">{b.reasonCode || 'N/A'}</TableCell>
                   <TableCell>
-                    {b.correlationId ? (
-                      <Link to={`/traces?correlationId=${b.correlationId}`} className="text-xs font-mono text-primary hover:underline">{b.correlationId.slice(0, 8)}…</Link>
-                    ) : 'N/A'}
+                {b.correlationId ? (
+                  isTenantAdmin ? (
+                    <span className="text-xs font-mono">
+                      {b.correlationId.slice(0, 8)}…
+                    </span>
+                  ) : (
+                    <Link
+                      to={`/traces?correlationId=${b.correlationId}`}
+                      className="text-xs font-mono text-primary hover:underline"
+                    >
+                      {b.correlationId.slice(0, 8)}…
+                    </Link>
+                  )
+                ) : (
+                  'N/A'
+                )}
+
                   </TableCell>
                 </TableRow>
               ))}
