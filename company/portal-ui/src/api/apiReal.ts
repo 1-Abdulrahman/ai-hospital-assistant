@@ -1,6 +1,7 @@
 import type { ApiAdapter, ApiResponse, LoginRequest, LoginResponse, HealthStatus, AnalyticsSummary, Booking, BookingsPage, Tenant, TenantDetail, AuditPage, TraceEvent, Session, SessionsPage, NlpStats, NlpClassification } from './types';
 import { generateUUID } from '@/lib/uuid';
 import { sanitizeResponse } from '@/lib/sanitize';
+import { getEffectiveTenantId } from './authState';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -22,7 +23,7 @@ async function request<T>(method: string, path: string, body?: unknown, skipAuth
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'X-Correlation-Id': requestCorrelationId,
-    'X-Tenant-Id': 'demo',
+    'X-Tenant-Id': getEffectiveTenantId(),
     'X-Session-Id': getPortalSessionId(),
   };
   const jwt = getJwt();

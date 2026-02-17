@@ -4,8 +4,9 @@ import {
   GitBranch, MessageSquare, Brain,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
 
-const links = [
+const allLinks = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/bookings', label: 'Bookings', icon: CalendarCheck },
   { to: '/tenants', label: 'Tenants', icon: Building2 },
@@ -15,7 +16,12 @@ const links = [
   { to: '/nlp-monitoring', label: 'NLP Monitoring', icon: Brain },
 ];
 
+const adminOnlyPaths = new Set(['/tenants', '/audit', '/traces', '/nlp-monitoring']);
+
 export function Sidebar() {
+  const { role } = useAuth();
+  const links = role === 'ADMIN' ? allLinks : allLinks.filter(l => !adminOnlyPaths.has(l.to));
+
   return (
     <aside className="w-56 border-r bg-sidebar flex flex-col py-4">
       <nav className="flex flex-col gap-1 px-3">

@@ -7,6 +7,7 @@ import { StatusBadge } from '@/components/shared/StatusBadge';
 import { ErrorBanner } from '@/components/shared/ErrorBanner';
 import { DateRangeSelector, type DatePreset } from '@/components/shared/DateRangeSelector';
 import { useApiCall } from '@/hooks/useApiCall';
+import { useAuth } from '@/contexts/AuthContext';
 import { safeFormatDate } from '@/lib/safeDate';
 import { RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -41,6 +42,7 @@ function HealthCard({ title, fetchFn }: { title: string; fetchFn: string }) {
 }
 
 export default function DashboardPage() {
+  const { isTenantAdmin } = useAuth();
   const today = format(new Date(), 'yyyy-MM-dd');
   const [from, setFrom] = useState(format(subDays(new Date(), 7), 'yyyy-MM-dd'));
   const [to, setTo] = useState(today);
@@ -54,14 +56,17 @@ export default function DashboardPage() {
     (api) => api.getRecentBookings(10), []
   );
 
+  const skeletonCount = isTenantAdmin ? 2 : 5;
+  const gridCols = isTenantAdmin ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-5';
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Dashboard</h2>
 
       {/* Health widgets */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={`grid grid-cols-1 ${isTenantAdmin ? '' : 'md:grid-cols-2'} gap-4`}>
         <HealthCard title="Backend Health" fetchFn="health" />
-        <HealthCard title="FHIR Integration" fetchFn="fhir" />
+        {!isTenantAdmin && <HealthCard title="FHIR Integration" fetchFn="fhir" />}
       </div>
 
       {/* Analytics */}
@@ -70,15 +75,19 @@ export default function DashboardPage() {
           <h3 className="text-lg font-semibold">Summary Analytics</h3>
           <DateRangeSelector from={from} to={to} preset={preset} onChange={(f, t, p) => { setFrom(f); setTo(t); setPreset(p); }} />
         </div>
-        {analyticsLoading && <div className="grid grid-cols-2 md:grid-cols-5 gap-4">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-24" />)}</div>}
+        {analyticsLoading && <div className={`grid ${gridCols} gap-4`}>{Array.from({ length: skeletonCount }).map((_, i) => <Skeleton key={i} className="h-24" />)}</div>}
         {analyticsError && <ErrorBanner error={analyticsError} onRetry={refetchAnalytics} />}
         {analytics && (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className={`grid ${gridCols} gap-4`}>
             <Card><CardContent className="pt-4"><p className="text-2xl font-bold">{analytics.totalBookings}</p><p className="text-xs text-muted-foreground">Total Bookings</p></CardContent></Card>
             <Card><CardContent className="pt-4"><p className="text-2xl font-bold text-destructive">{analytics.bookingFailures}</p><p className="text-xs text-muted-foreground">Failures</p></CardContent></Card>
-            <Card><CardContent className="pt-4"><p className="text-2xl font-bold">{analytics.droppedSessions}</p><p className="text-xs text-muted-foreground">Dropped Sessions</p></CardContent></Card>
-            <Card><CardContent className="pt-4"><div className="space-y-1">{analytics.topReasonCodes.map((r) => <p key={r.code} className="text-xs">{r.code}: {r.count}</p>)}</div><p className="text-xs text-muted-foreground mt-1">Top Reason Codes</p></CardContent></Card>
-            <Card><CardContent className="pt-4"><div className="space-y-1">{(analytics.topSpecialties as any[]).map((s: any) => <p key={s.code || s.specialty} className="text-xs">{s.code || s.specialty}: {s.count}</p>)}</div><p className="text-xs text-muted-foreground mt-1">Top Specialties</p></CardContent></Card>
+            {!isTenantAdmin && (
+              <>
+                <Card><CardContent className="pt-4"><p className="text-2xl font-bold">{analytics.droppedSessions}</p><p className="text-xs text-muted-foreground">Dropped Sessions</p></CardContent></Card>
+                <Card><CardContent className="pt-4"><div className="space-y-1">{analytics.topReasonCodes.map((r) => <p key={r.code} className="text-xs">{r.code}: {r.count}</p>)}</div><p className="text-xs text-muted-foreground mt-1">Top Reason Codes</p></CardContent></Card>
+                <Card><CardContent className="pt-4"><div className="space-y-1">{(analytics.topSpecialties as any[]).map((s: any) => <p key={s.code || s.specialty} className="text-xs">{s.code || s.specialty}: {s.count}</p>)}</div><p className="text-xs text-muted-foreground mt-1">Top Specialties</p></CardContent></Card>
+              </>
+            )}
           </div>
         )}
       </div>

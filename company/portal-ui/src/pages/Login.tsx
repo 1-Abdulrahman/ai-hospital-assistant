@@ -74,9 +74,10 @@ export default function LoginPage() {
                 {loading ? 'Signing in…' : 'Sign In'}
               </Button>
             </form>
-            <p className="mt-4 text-xs text-muted-foreground text-center">
-              Demo credentials: <code className="bg-muted px-1 rounded">admin</code> / <code className="bg-muted px-1 rounded">admin</code>
-            </p>
+            <div className="mt-4 text-xs text-muted-foreground text-center space-y-1">
+              <p><code className="bg-muted px-1 rounded">admin</code> / <code className="bg-muted px-1 rounded">admin</code> <span className="text-muted-foreground">(Platform Admin)</span></p>
+              <p><code className="bg-muted px-1 rounded">tenant</code> / <code className="bg-muted px-1 rounded">tenant</code> <span className="text-muted-foreground">(Tenant Admin)</span></p>
+            </div>
           </CardContent>
         </Card>
       </div>

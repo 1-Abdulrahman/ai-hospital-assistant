@@ -58,7 +58,10 @@ export const apiMock: ApiAdapter = {
   async login(req) {
     await delay(500);
     if (req.username === 'admin' && req.password === 'admin') {
-      return wrap({ access_token: 'mock-jwt-token-' + generateUUID(), token_type: 'bearer', expires_in: 3600 });
+      return wrap({ access_token: 'mock-jwt-token-' + generateUUID(), token_type: 'bearer', expires_in: 3600, role: 'ADMIN' as const });
+    }
+    if (req.username === 'tenant' && req.password === 'tenant') {
+      return wrap({ access_token: 'mock-jwt-token-' + generateUUID(), token_type: 'bearer', expires_in: 3600, role: 'TENANT_ADMIN' as const, tenantId: 'demo' });
     }
     throw { userMessage: 'Invalid username or password.', requestCorrelationId: generateUUID() };
   },

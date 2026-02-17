@@ -15,10 +15,14 @@ export interface LoginRequest {
   password: string;
 }
 
+export type UserRole = "ADMIN" | "TENANT_ADMIN";
+
 export interface LoginResponse {
   access_token: string;
   token_type: string;
   expires_in: number;
+  role?: UserRole;
+  tenantId?: string;
 }
 
 export interface HealthStatus {
