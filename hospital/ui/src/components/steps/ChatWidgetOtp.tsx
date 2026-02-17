@@ -1,17 +1,16 @@
 import { useState } from "react";
-import { Loader2, Mail, ShieldCheck, ChevronLeft } from "lucide-react";
+import { Loader2, Mail, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useBookingFlow } from "@/hooks/use-booking-flow";
-import { requestOtp, verifyOtp } from "@/lib/api-client";
+import { requestOtp, verifyOtp, chatConfirm } from "@/lib/api-client";
 import { toast } from "sonner";
 
 export default function ChatWidgetOtp() {
   const [otp, setOtp] = useState("");
   const [otpRequested, setOtpRequested] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { setOtpVerified, setStep } = useBookingFlow();
+  const { currentMode, renewalItemId, setOtpVerified, setStep, addMessage } = useBookingFlow();
 
   const handleRequestOtp = async () => {
     setLoading(true);
@@ -33,7 +32,23 @@ export default function ChatWidgetOtp() {
       const res = await verifyOtp(otp);
       if (res.verified) {
         setOtpVerified(true);
-        setStep("confirm");
+        if (currentMode === "renewal") {
+          // For renewal: confirm immediately and return to chat
+          const confirmRes = await chatConfirm({
+            action: "CONFIRM_RENEWAL",
+            renewalItemId: renewalItemId || undefined,
+          });
+          addMessage({
+            role: "assistant",
+            text: confirmRes.userMessage,
+            confirmationType: confirmRes.confirmationType,
+            confirmationSummary: confirmRes.confirmationSummary,
+            bookingReferenceId: confirmRes.bookingReferenceId,
+          });
+          setStep("done");
+        } else {
+          setStep("confirm");
+        }
       } else {
         toast.error("Invalid OTP. Please try again.");
       }
@@ -109,7 +124,7 @@ export default function ChatWidgetOtp() {
         variant="ghost"
         size="sm"
         className="w-full text-xs justify-start mt-3"
-        onClick={() => setStep("book")}
+        onClick={() => setStep("chat")}
       >
         <ChevronLeft className="h-3 w-3 mr-1" />
         Back

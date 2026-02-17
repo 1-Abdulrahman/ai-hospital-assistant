@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { getSessionId, getTenantId, getCorrelationId, setCorrelationId } from "./session";
-import { chatResponseSchema, healthResponseSchema, bookingConfirmResponseSchema, otpRequestResponseSchema, otpVerifyResponseSchema } from "./zod-schemas";
-import type { ChatResponse, HealthResponse, BookingConfirmResponse, OtpRequestResponse, OtpVerifyResponse } from "./types";
+import { chatResponseSchema, healthResponseSchema, otpRequestResponseSchema, otpVerifyResponseSchema } from "./zod-schemas";
+import type { ChatResponse, HealthResponse, OtpRequestResponse, OtpVerifyResponse, SelectionRequest, ConfirmRequest } from "./types";
 
 const BASE_URL = "http://localhost:8000";
 const TIMEOUT_MS = 15000;
@@ -43,24 +43,64 @@ async function request<T>(path: string, init: RequestInit, schema: { parse: (d: 
   }
 }
 
+/** Build common body fields for chat endpoints */
+function chatBody(extra?: Record<string, unknown>) {
+  const body: Record<string, unknown> = {
+    tenantId: getTenantId(),
+    clientSessionId: getSessionId(),
+  };
+  const corrId = getCorrelationId();
+  if (corrId) body.correlationId = corrId;
+  if (extra) Object.assign(body, extra);
+  return body;
+}
+
 export async function checkHealth(): Promise<HealthResponse> {
   return request("/health", { method: "GET", headers: buildHeaders() }, healthResponseSchema);
 }
 
-export async function sendChatMessage(message: string): Promise<ChatResponse> {
+export async function sendChatMessage(messageText: string): Promise<ChatResponse> {
   return request("/chat/message", {
     method: "POST",
     headers: buildHeaders(),
-    body: JSON.stringify({ message }),
+    body: JSON.stringify(chatBody({ messageText })),
   }, chatResponseSchema);
 }
 
-export async function confirmBooking(data: { date: string; slotId: string; specialtyId?: string; doctorId?: string }): Promise<BookingConfirmResponse> {
-  return request("/booking/confirm", {
+export async function chatDirectStart(): Promise<ChatResponse> {
+  return request("/chat/direct/start", {
     method: "POST",
-    headers: buildHeaders({ "Idempotency-Key": uuidv4() }),
-    body: JSON.stringify(data),
-  }, bookingConfirmResponseSchema);
+    headers: buildHeaders(),
+    body: JSON.stringify(chatBody({ action: "START_DIRECT_SCHEDULING" })),
+  }, chatResponseSchema);
+}
+
+export async function chatRenewalRequest(): Promise<ChatResponse> {
+  return request("/chat/renewal/request", {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify(chatBody({ action: "REQUEST_MEDICATION_RENEWAL" })),
+  }, chatResponseSchema);
+}
+
+export async function chatSelection(data: Omit<SelectionRequest, "tenantId" | "clientSessionId" | "correlationId">): Promise<ChatResponse> {
+  return request("/chat/selection", {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify(chatBody(data)),
+  }, chatResponseSchema);
+}
+
+export async function chatConfirm(data: Omit<ConfirmRequest, "tenantId" | "clientSessionId" | "correlationId">): Promise<ChatResponse> {
+  const extra: Record<string, string> = {};
+  if (data.action === "CONFIRM_APPOINTMENT") {
+    extra["Idempotency-Key"] = uuidv4();
+  }
+  return request("/chat/confirm", {
+    method: "POST",
+    headers: buildHeaders(extra),
+    body: JSON.stringify(chatBody(data)),
+  }, chatResponseSchema);
 }
 
 export async function requestOtp(): Promise<OtpRequestResponse> {
