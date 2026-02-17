@@ -14,4 +14,13 @@ company/fhir-data/
 
 # Environment
 .env
+.env.*
+
+# Logs  
+*.log
+# Test coverage reports
+coverage/
+
+# Build artifacts
+build/
 
