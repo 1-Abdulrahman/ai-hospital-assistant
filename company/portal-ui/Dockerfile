@@ -5,24 +5,20 @@ WORKDIR /ui
 COPY docs/offline/npm-cache /npm-cache
 
 # Copy only dependency manifests first for better layer caching
-COPY hospital/ui/package.json hospital/ui/package-lock.json ./
-# For portal-ui Dockerfile, replace the two lines above with:
-# COPY company/portal-ui/package.json company/portal-ui/package-lock.json ./
+COPY company/portal-ui/package.json company/portal-ui/package-lock.json ./
 
 # Deterministic install, should not hit the internet if cache is complete
 RUN npm ci --cache /npm-cache --prefer-offline --no-audit --no-fund
 
 # Copy app source
-COPY hospital/ui/ ./
-# For portal-ui Dockerfile, replace with:
-# COPY company/portal-ui/ ./
+COPY company/portal-ui/ ./
 
 RUN npm run build
 
 FROM nginx:1.27.4-alpine
-COPY hospital/ui/nginx.conf /etc/nginx/conf.d/default.conf
-# For portal-ui Dockerfile, replace with:
-# COPY company/portal-ui/nginx.conf /etc/nginx/conf.d/default.conf
+
+
+COPY company/portal-ui/nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build /ui/dist /usr/share/nginx/html
 EXPOSE 80
