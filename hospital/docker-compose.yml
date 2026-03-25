@@ -1,0 +1,14 @@
+services:
+  hospital-ui:
+    build:
+      context: ..
+      dockerfile: hospital/ui/Dockerfile
+    container_name: hospital-ui
+    ports:
+      - "3000:80"
+    networks:
+      - hospital-net
+
+networks:
+  hospital-net:
+    driver: bridge

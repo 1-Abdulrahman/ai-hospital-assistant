@@ -3,10 +3,19 @@
 __pycache__/
 .pytest_cache/
 .ruff_cache/
+*.db
 
 # Node
 node_modules/
 dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model artifacts
+company/backend/app/assets/nlp_models/*
+!company/backend/app/assets/nlp_models/.gitkeep
 
 # Runtime data
 company/data/
@@ -14,4 +23,13 @@ company/fhir-data/
 
 # Environment
 .env
+.env.*
+
+# Logs  
+*.log
+# Test coverage reports
+coverage/
+
+# Build artifacts
+build/
 
