@@ -6,37 +6,76 @@ from app.db.models import PortalUser, Tenant
 from app.db.session import SessionLocal
 
 
-DEMO_TENANT_ID = "demo-tenant"
+PLATFORM_TENANT_ID = "platform"
+PLATFORM_TENANT_NAME = "Platform"
+
+DEMO_TENANT_ID = "demo"
 DEMO_TENANT_NAME = "Demo Hospital Tenant"
-DEMO_ADMIN_EMAIL = "admin@demo.local"
-DEMO_ADMIN_ROLE = "admin"
+
+COMPANY_ADMIN_EMAIL = "admin@company.local"
+COMPANY_ADMIN_ROLE = "company_admin"
+
+TENANT_ADMIN_EMAIL = "admin@mvp.local"
+TENANT_ADMIN_ROLE = "tenant_admin"
+
+
+def ensure_tenant(db, tenant_id: str, name: str) -> None:
+    tenant = db.get(Tenant, tenant_id)
+    if tenant is None:
+        db.add(Tenant(id=tenant_id, name=name))
+
+
+def ensure_portal_user(
+    db,
+    *,
+    tenant_id: str,
+    email: str,
+    password: str,
+    role: str,
+) -> None:
+    existing = (
+        db.query(PortalUser)
+        .filter_by(tenant_id=tenant_id, email=email)
+        .first()
+    )
+
+    if existing is None:
+        db.add(
+            PortalUser(
+                id=uuid.uuid4().hex,
+                tenant_id=tenant_id,
+                email=email,
+                password_hash=hash_password(password),
+                role=role,
+                is_active=True,
+            )
+        )
 
 
 def run() -> None:
     db = SessionLocal()
     try:
-        tenant = db.get(Tenant, DEMO_TENANT_ID)
-        if not tenant:
-            db.add(Tenant(id=DEMO_TENANT_ID, name=DEMO_TENANT_NAME))
+        company_admin_password = os.getenv("DEMO_COMPANY_ADMIN_PASSWORD", "CompanyAdmin123!")
+        tenant_admin_password = os.getenv("DEMO_TENANT_ADMIN_PASSWORD", "Admin123!")
 
-        email = DEMO_ADMIN_EMAIL
-        existing = (
-            db.query(PortalUser)
-            .filter_by(tenant_id=DEMO_TENANT_ID, email=email)
-            .first()
+        ensure_tenant(db, PLATFORM_TENANT_ID, PLATFORM_TENANT_NAME)
+        ensure_tenant(db, DEMO_TENANT_ID, DEMO_TENANT_NAME)
+
+        ensure_portal_user(
+            db,
+            tenant_id=PLATFORM_TENANT_ID,
+            email=COMPANY_ADMIN_EMAIL,
+            password=company_admin_password,
+            role=COMPANY_ADMIN_ROLE,
         )
 
-        if not existing:
-            demo_password = os.getenv("DEMO_ADMIN_PASSWORD", "Admin123!")
-            db.add(
-                PortalUser(
-                    id=uuid.uuid4().hex,
-                    tenant_id=DEMO_TENANT_ID,
-                    email=email,
-                    password_hash=hash_password(demo_password),
-                    role=DEMO_ADMIN_ROLE,
-                )
-            )
+        ensure_portal_user(
+            db,
+            tenant_id=DEMO_TENANT_ID,
+            email=TENANT_ADMIN_EMAIL,
+            password=tenant_admin_password,
+            role=TENANT_ADMIN_ROLE,
+        )
 
         db.commit()
         print("Seed complete.")
