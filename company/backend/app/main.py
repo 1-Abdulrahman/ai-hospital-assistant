@@ -1,3 +1,6 @@
+from contextlib import asynccontextmanager
+from datetime import datetime, timezone
+
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,12 +19,43 @@ from app.api.routes.otp import router as otp_router
 from app.api.routes.portal import router as portal_router
 from app.core.config import settings
 from app.core.logging import configure_logging
+from app.modules.nlp.inference import try_load_nlp_service
 
 configure_logging()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Startup and shutdown lifecycle for shared app resources.
+
+    We load the NLP service once at startup and keep it on app.state.
+    If loading fails, the API still starts and later flows can fall back
+    to manual specialty selection.
+    """
+    nlp_service, nlp_status = try_load_nlp_service()
+
+    app.state.nlp_service = nlp_service
+    app.state.nlp_status = nlp_status
+    app.state.nlp_available = nlp_service is not None
+    app.state.started_at_utc = datetime.now(timezone.utc)
+
+    try:
+        yield
+    finally:
+        # Release references on shutdown.
+        # This is simple and sufficient for the current MVP.
+        app.state.nlp_service = None
+        app.state.nlp_available = False
+
+        if hasattr(app.state, "nlp_status") and isinstance(app.state.nlp_status, dict):
+            app.state.nlp_status["shutdownAt"] = datetime.now(timezone.utc).isoformat()
+
 
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
+    lifespan=lifespan,
 )
 
 app.add_middleware(CorrelationIdMiddleware)
