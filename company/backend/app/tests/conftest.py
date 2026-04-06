@@ -18,6 +18,7 @@ from app.api.deps import get_db
 from app.core.security import create_access_token, hash_password
 from app.db.models import Base, PortalUser, Tenant
 from app.main import app
+from app.core.correlation import correlation_id_ctx
 
 
 @pytest.fixture()
@@ -135,3 +136,11 @@ def tenant_admin_token(db_session) -> str:
         role=user.role,
         expires_in_seconds=3600,
     )
+    
+@pytest.fixture(autouse=True)
+def correlation_id_for_tests():
+    token = correlation_id_ctx.set(str(uuid.uuid4()))
+    try:
+        yield
+    finally:
+        correlation_id_ctx.reset(token)
