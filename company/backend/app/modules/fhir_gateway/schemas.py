@@ -60,7 +60,18 @@ class ContinuitySignalsDTO(BaseModel):
     lastPractitionerRef: str | None = None
 
 
+class MedicationRenewalItemDTO(BaseModel):
+    medicationRequestRef: str
+    medicationDisplay: str
+    medicationCode: str | None = None
+    status: str
+    intent: str | None = None
+    authoredOn: str | None = None
+    dosageText: str | None = None
+
+
 class MedicationRenewalSignalsDTO(BaseModel):
+    patientRef: str | None = None
+    patientFound: bool = False
     eligible: bool = False
-    lastMedicationRequestDateUtc: str | None = None
-    note: str | None = None
+    items: list[MedicationRenewalItemDTO] = Field(default_factory=list)

@@ -7,12 +7,24 @@ import { toast } from "sonner";
 
 export default function ChatWidgetConfirm() {
   const {
-    selectedSpecialtyId, selectedDoctorId, selectedSlotId, selectedDate,
-    addMessage, setStep, resetFlow,
+    selectedSpecialtyId,
+    selectedDoctorId,
+    selectedSlotId,
+    selectedDate,
+    patientNationalId,
+    patientEmail,
+    addMessage,
+    setStep,
+    resetFlow,
   } = useBookingFlow();
   const [loading, setLoading] = useState(false);
 
   const handleConfirm = async () => {
+    if (!patientNationalId || !patientEmail) {
+      toast.error("National ID and email are required before confirmation.");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await chatConfirm({
@@ -21,6 +33,8 @@ export default function ChatWidgetConfirm() {
         doctorId: selectedDoctorId || undefined,
         slotId: selectedSlotId || undefined,
         date: selectedDate || undefined,
+        nationalId: patientNationalId,
+        email: patientEmail,
       });
       addMessage({
         role: "assistant",
@@ -29,8 +43,13 @@ export default function ChatWidgetConfirm() {
         confirmationSummary: res.confirmationSummary,
         bookingReferenceId: res.bookingReferenceId,
       });
-      setStep("done");
-      toast.success("Booking confirmed!");
+      if (res.errors?.length) {
+        toast.error(res.errors[0].userMessage);
+        setStep("chat");
+      } else {
+        setStep("done");
+        toast.success("Booking confirmed!");
+      }
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -43,27 +62,33 @@ export default function ChatWidgetConfirm() {
       <h3 className="font-semibold text-sm mb-3">Confirm Booking</h3>
       <div className="space-y-1.5 rounded-lg bg-muted px-3 py-2.5 text-xs mb-3">
         {selectedSpecialtyId && (
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-2">
             <span className="text-muted-foreground">Specialty</span>
-            <span className="font-medium capitalize">{selectedSpecialtyId}</span>
+            <span className="font-medium capitalize text-right">{selectedSpecialtyId}</span>
           </div>
         )}
         {selectedDoctorId && (
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-2">
             <span className="text-muted-foreground">Doctor</span>
-            <span className="font-medium">{selectedDoctorId}</span>
+            <span className="font-medium text-right">{selectedDoctorId}</span>
           </div>
         )}
         {selectedDate && (
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-2">
             <span className="text-muted-foreground">Date</span>
-            <span className="font-medium">{selectedDate}</span>
+            <span className="font-medium text-right">{selectedDate}</span>
           </div>
         )}
         {selectedSlotId && (
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-2">
             <span className="text-muted-foreground">Slot</span>
-            <span className="font-medium">{selectedSlotId}</span>
+            <span className="font-medium text-right break-all">{selectedSlotId}</span>
+          </div>
+        )}
+        {patientEmail && (
+          <div className="flex justify-between gap-2">
+            <span className="text-muted-foreground">Email</span>
+            <span className="font-medium text-right">{patientEmail}</span>
           </div>
         )}
       </div>

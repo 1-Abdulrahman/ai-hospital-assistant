@@ -35,24 +35,6 @@ function buildHeaders(extra?: Record<string, string>): Record<string, string> {
   return headers;
 }
 
-/**
- * Makes an HTTP request with timeout handling and response validation.
- * 
- * @template T - The expected type of the parsed response body
- * @param path - The API endpoint path to request (appended to BASE_URL)
- * @param init - Fetch API RequestInit options (method, headers, body, etc.)
- * @param schema - A schema object with a parse method to validate and transform the response body
- * @returns A promise that resolves to the parsed and validated response of type T
- * @throws {Error} If the request times out, cannot connect to the server, or the response is not ok
- * @throws {Error} If response validation against the schema fails
- * 
- * @remarks
- * - Requests automatically timeout after TIMEOUT_MS milliseconds
- * - If response has a correlationId, it is stored via setCorrelationId()
- * - Error messages are extracted from response body (userMessage or message field)
- * - Network errors and timeout errors are caught and wrapped with user-friendly messages
- * - The abort timer is always cleaned up in the finally block
- */
 async function request<T>(
   path: string,
   init: RequestInit,
@@ -60,46 +42,44 @@ async function request<T>(
 ): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
   try {
     const res = await fetch(`${BASE_URL}${path}`, {
       ...init,
       signal: controller.signal,
     });
+
+    const headerCorrelationId = res.headers.get("X-Correlation-Id");
+    if (headerCorrelationId) setCorrelationId(headerCorrelationId);
+
     const body = await res.json();
+
     if (!res.ok) {
-      const msg =
-        body?.userMessage ||
-        body?.message ||
-        "Something went wrong. Please try again.";
-      if (body?.reasonCode) console.debug("[API reasonCode]", body.reasonCode);
+      const msg = body?.message || body?.userMessage || "Something went wrong. Please try again.";
+      if (body?.correlationId && !headerCorrelationId) setCorrelationId(body.correlationId);
       throw new Error(msg);
     }
-    if (body.correlationId) setCorrelationId(body.correlationId);
+
+    if (!headerCorrelationId && body?.correlationId) setCorrelationId(body.correlationId);
     return schema.parse(body) as T;
   } catch (err: any) {
-    if (err.name === "AbortError")
+    if (err.name === "AbortError") {
       throw new Error("Request timed out. Please try again.");
-    if (err instanceof TypeError && err.message === "Failed to fetch")
+    }
+    if (err instanceof TypeError && err.message === "Failed to fetch") {
       throw new Error("Cannot connect to server. Is the backend running?");
+    }
     throw err;
   } finally {
     clearTimeout(timer);
   }
 }
 
-
-/**
- * Constructs a request body object for chat API calls with tenant and session information.
- * @param extra - Optional additional properties to merge into the request body
- * @returns An object containing tenantId, clientSessionId, and optionally correlationId and any extra properties
- */
 function chatBody(extra?: Record<string, unknown>) {
   const body: Record<string, unknown> = {
     tenantId: getTenantId(),
     clientSessionId: getSessionId(),
   };
-  const corrId = getCorrelationId();
-  if (corrId) body.correlationId = corrId;
   if (extra) Object.assign(body, extra);
   return body;
 }
@@ -112,15 +92,7 @@ export async function checkHealth(): Promise<HealthResponse> {
   );
 }
 
-/**
- * Sends a chat message to the hospital assistant API.
- * @param messageText - The text content of the message to send
- * @returns A promise that resolves to the chat response from the server
- * @throws Will throw an error if the API request fails or the response doesn't match the expected schema
- */
-export async function sendChatMessage(
-  messageText: string,
-): Promise<ChatResponse> {
+export async function sendChatMessage(messageText: string): Promise<ChatResponse> {
   return request(
     "/chat/message",
     {
@@ -156,33 +128,15 @@ export async function chatRenewalRequest(): Promise<ChatResponse> {
   );
 }
 
-/**
- * Sends a chat request with a selection to the server and returns the chat response.
- * 
- * @param data - The selection request data, excluding tenantId, clientSessionId, and correlationId
- * @param data.tenantId - Automatically included by the request context (omitted from input)
- * @param data.clientSessionId - Automatically included by the request context (omitted from input)
- * @param data.correlationId - Automatically included by the request context (omitted from input)
- * @returns A promise that resolves to the chat response from the server
- * @throws Will throw an error if the request fails or the response validation fails
- * 
- * @example
- * const response = await chatSelection({
- *   message: "User's selected text or query"
- * });
- */
 export async function chatSelection(
-  data: Omit<
-    SelectionRequest,
-    "tenantId" | "clientSessionId" | "correlationId"
-  >,
+  data: Omit<SelectionRequest, "tenantId" | "clientSessionId" | "correlationId">,
 ): Promise<ChatResponse> {
   return request(
     "/chat/selection",
     {
       method: "POST",
       headers: buildHeaders(),
-      body: JSON.stringify(chatBody(data)),
+      body: JSON.stringify(chatBody(data as Record<string, unknown>)),
     },
     chatResponseSchema,
   );
@@ -200,32 +154,55 @@ export async function chatConfirm(
     {
       method: "POST",
       headers: buildHeaders(extra),
-      body: JSON.stringify(chatBody(data)),
+      body: JSON.stringify(chatBody(data as Record<string, unknown>)),
     },
     chatResponseSchema,
   );
 }
 
-export async function requestOtp(): Promise<OtpRequestResponse> {
+export async function requestOtp(nationalId: string, email: string): Promise<OtpRequestResponse> {
   return request(
-    "/auth/request-otp",
+    "/otp/request",
     {
       method: "POST",
       headers: buildHeaders(),
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        tenantId: getTenantId(),
+        nationalId,
+        email,
+      }),
     },
     otpRequestResponseSchema,
   );
 }
 
-export async function verifyOtp(otp: string): Promise<OtpVerifyResponse> {
+export async function verifyOtp(args: { nationalId: string; email: string; otp: string }): Promise<OtpVerifyResponse> {
   return request(
-    "/auth/verify-otp",
+    "/otp/verify",
     {
       method: "POST",
       headers: buildHeaders(),
-      body: JSON.stringify({ otp }),
+      body: JSON.stringify({
+        tenantId: getTenantId(),
+        nationalId: args.nationalId,
+        email: args.email,
+        otp: args.otp,
+      }),
     },
     otpVerifyResponseSchema,
+  );
+}
+
+export async function chatRenewalIdentify(
+  nationalId: string,
+): Promise<ChatResponse> {
+  return request(
+    "/chat/renewal/identify",
+    {
+      method: "POST",
+      headers: buildHeaders(),
+      body: JSON.stringify(chatBody({ nationalId })),
+    },
+    chatResponseSchema,
   );
 }

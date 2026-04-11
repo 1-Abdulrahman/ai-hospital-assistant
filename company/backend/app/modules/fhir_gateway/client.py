@@ -2,14 +2,17 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 
 from app.core.config import settings
 from app.modules.fhir_gateway.mappers import (
+    PATIENT_IDENTIFIER_SYSTEM,
     TENANT_IDENTIFIER_SYSTEM,
     map_appointment_bundle_to_dtos,
     map_appointment_resource_to_dto,
+    map_medication_request_bundle_to_signals,
     map_patient_resource_to_dto,
     map_schedule_bundle_to_dtos,
     map_schedule_resource_to_dto,
@@ -28,6 +31,7 @@ from app.modules.fhir_gateway.reason_codes import (
 )
 from app.modules.fhir_gateway.schemas import (
     AppointmentDTO,
+    MedicationRenewalSignalsDTO,
     PatientSummaryDTO,
     ScheduleDTO,
     SlotDTO,
@@ -113,10 +117,9 @@ class FhirClient:
 
     async def find_patient_by_identifier(
         self,
-        *,
-        tenant_id: str,
         patient_key_hash: str,
-    ) -> PatientSummaryDTO | None:
+        tenant_id: str | None = None,
+    ) -> PatientSummaryDTO | str | None:
         if not patient_key_hash.strip():
             raise FhirGatewayError(
                 reason_code=INVALID_REQUEST,
@@ -124,19 +127,54 @@ class FhirClient:
                 status_code=400,
             )
 
-        params = {
-            "identifier": f"{build_patient_identifier_system(tenant_id)}|{patient_key_hash}",
-        }
+        cleaned_tenant_id = (tenant_id or "").strip()
+        if cleaned_tenant_id:
+            params = {
+                "identifier": f"{build_patient_identifier_system(cleaned_tenant_id)}|{patient_key_hash}",
+            }
 
+            response = await self._request(
+                "GET",
+                "/Patient",
+                params=params,
+                retry_on_read=True,
+            )
+            self._ensure_read_success(
+                response,
+                operation="search patient by tenant-scoped identifier",
+            )
+
+            bundle = self._json_or_empty(response)
+            entries = bundle.get("entry") or []
+            if not isinstance(entries, list) or not entries:
+                return None
+
+            first_entry = entries[0]
+            if not isinstance(first_entry, dict):
+                return None
+
+            resource = first_entry.get("resource")
+            if not isinstance(resource, dict):
+                return None
+
+            return map_patient_resource_to_dto(
+                resource,
+                tenant_id=cleaned_tenant_id,
+                patient_key_hash=patient_key_hash,
+            )
+
+        identifier_value = quote(
+            f"{PATIENT_IDENTIFIER_SYSTEM}|{patient_key_hash}",
+            safe="",
+        )
         response = await self._request(
             "GET",
-            "/Patient",
-            params=params,
+            f"/Patient?identifier={identifier_value}&_count=1",
             retry_on_read=True,
         )
         self._ensure_read_success(
             response,
-            operation="search patient by tenant-scoped identifier",
+            operation="search patient by identifier",
         )
 
         bundle = self._json_or_empty(response)
@@ -152,11 +190,11 @@ class FhirClient:
         if not isinstance(resource, dict):
             return None
 
-        return map_patient_resource_to_dto(
-            resource,
-            tenant_id=tenant_id,
-            patient_key_hash=patient_key_hash,
-        )
+        patient_id = resource.get("id")
+        if not isinstance(patient_id, str) or not patient_id.strip():
+            return None
+
+        return f"Patient/{patient_id.strip()}"
 
     async def ensure_patient(
         self,
@@ -166,10 +204,10 @@ class FhirClient:
         display_name: str | None = None,
     ) -> PatientSummaryDTO:
         existing = await self.find_patient_by_identifier(
-            tenant_id=tenant_id,
             patient_key_hash=patient_key_hash,
+            tenant_id=tenant_id,
         )
-        if existing is not None:
+        if isinstance(existing, PatientSummaryDTO):
             return existing
 
         resource: dict[str, Any] = {
@@ -202,10 +240,10 @@ class FhirClient:
 
         if response.status_code == 409:
             retried = await self.find_patient_by_identifier(
-                tenant_id=tenant_id,
                 patient_key_hash=patient_key_hash,
+                tenant_id=tenant_id,
             )
-            if retried is not None:
+            if isinstance(retried, PatientSummaryDTO):
                 return retried
 
         if response.status_code == 503:
@@ -238,16 +276,49 @@ class FhirClient:
         patient_key_hash: str,
     ) -> PatientSummaryDTO:
         patient = await self.find_patient_by_identifier(
-            tenant_id=tenant_id,
             patient_key_hash=patient_key_hash,
+            tenant_id=tenant_id,
         )
-        if patient is None:
+        if not isinstance(patient, PatientSummaryDTO):
             raise FhirGatewayError(
                 reason_code=PATIENT_NOT_FOUND,
                 user_message="Patient was not found in FHIR.",
                 status_code=404,
             )
         return patient
+
+    async def get_medication_requests_for_patient(self, patient_ref: str) -> dict[str, Any]:
+        patient_ref_q = quote(patient_ref, safe="")
+        response = await self._request(
+            "GET",
+            f"/MedicationRequest?subject={patient_ref_q}&status=active&_count=50",
+            retry_on_read=True,
+        )
+        self._ensure_read_success(
+            response,
+            operation="search medication requests for patient",
+        )
+        return self._json_or_empty(response)
+
+    async def get_medication_renewal_signals(
+        self,
+        *,
+        patient_key_hash: str,
+    ) -> MedicationRenewalSignalsDTO:
+        patient_ref = await self.find_patient_by_identifier(patient_key_hash=patient_key_hash)
+        if not isinstance(patient_ref, str):
+            return MedicationRenewalSignalsDTO(
+                patientRef=None,
+                patientFound=False,
+                eligible=False,
+                items=[],
+            )
+
+        med_bundle = await self.get_medication_requests_for_patient(patient_ref)
+        return map_medication_request_bundle_to_signals(
+            patient_ref=patient_ref,
+            bundle=med_bundle,
+        )
 
     async def search_schedules(
         self,
@@ -609,7 +680,7 @@ class FhirClient:
         method: str,
         path: str,
         *,
-        params: dict[str, Any] | list[tuple[str, str]] | None = None,
+        params: Any = None,
         json: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
         retry_on_read: bool = False,

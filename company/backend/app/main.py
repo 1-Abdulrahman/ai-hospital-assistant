@@ -13,6 +13,7 @@ from app.api.errors import (
 )
 from app.api.middleware import CorrelationIdMiddleware
 from app.api.routes.auth import router as auth_router
+from app.api.routes.chat import router as chat_router
 from app.api.routes.health import router as health_router
 from app.api.routes.integrations import router as integrations_router
 from app.api.routes.otp import router as otp_router
@@ -27,13 +28,6 @@ configure_logging()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Startup and shutdown lifecycle for shared app resources.
-
-    We load the NLP service once at startup and keep it on app.state.
-    If loading fails, the API still starts and later flows can fall back
-    to manual specialty selection.
-    """
     nlp_service, nlp_status = try_load_nlp_service()
 
     app.state.nlp_service = nlp_service
@@ -44,8 +38,6 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
-        # Release references on shutdown.
-        # This is simple and sufficient for the current MVP.
         app.state.nlp_service = None
         app.state.nlp_available = False
 
@@ -87,3 +79,4 @@ app.include_router(auth_router)
 app.include_router(portal_router)
 app.include_router(otp_router)
 app.include_router(scheduling_router)
+app.include_router(chat_router)

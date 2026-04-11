@@ -6,12 +6,14 @@ from app.modules.fhir_gateway.schemas import (
     AppointmentDTO,
     ContinuitySignalsDTO,
     MedicationRenewalSignalsDTO,
+    MedicationRenewalItemDTO,
     PatientSummaryDTO,
     ScheduleDTO,
     SlotDTO,
 )
 
 TENANT_IDENTIFIER_SYSTEM = "urn:ai-hospital-assistant:tenant-id"
+PATIENT_IDENTIFIER_SYSTEM = "urn:tenant-patient-key"
 
 
 def _entries(bundle: dict[str, Any]) -> list[dict[str, Any]]:
@@ -176,6 +178,64 @@ def _extract_slot_refs(resource: dict[str, Any]) -> list[str]:
             results.append(reference.strip())
 
     return results
+
+
+def _safe_medication_display(resource: dict[str, Any]) -> str:
+    medication = resource.get("medicationCodeableConcept")
+    if not isinstance(medication, dict):
+        medication = {}
+
+    text = medication.get("text")
+    if isinstance(text, str) and text.strip():
+        return text.strip()
+
+    codings = medication.get("coding")
+    if not isinstance(codings, list):
+        codings = []
+
+    for coding in codings:
+        if not isinstance(coding, dict):
+            continue
+        display = coding.get("display")
+        if isinstance(display, str) and display.strip():
+            return display.strip()
+
+    return "Unknown medication"
+
+
+def _safe_medication_code(resource: dict[str, Any]) -> str | None:
+    medication = resource.get("medicationCodeableConcept")
+    if not isinstance(medication, dict):
+        return None
+
+    codings = medication.get("coding")
+    if not isinstance(codings, list):
+        return None
+
+    for coding in codings:
+        if not isinstance(coding, dict):
+            continue
+        code = coding.get("code")
+        if isinstance(code, str) and code.strip():
+            return code.strip()
+
+    return None
+
+
+def _safe_dosage_text(resource: dict[str, Any]) -> str | None:
+    dosage = resource.get("dosageInstruction")
+    if not isinstance(dosage, list) or not dosage:
+        return None
+
+    first = dosage[0]
+    if not isinstance(first, dict):
+        return None
+
+    text = first.get("text")
+    if isinstance(text, str) and text.strip():
+        return text.strip()
+
+    return None
 
 
 def map_patient_resource_to_dto(
@@ -348,24 +408,75 @@ def map_medication_requests_to_renewal_signals(
 ) -> MedicationRenewalSignalsDTO:
     if not medication_requests:
         return MedicationRenewalSignalsDTO(
+            patientRef=None,
+            patientFound=False,
             eligible=False,
-            lastMedicationRequestDateUtc=None,
-            note="Medication renewal analysis is not enabled in the MVP.",
+            items=[],
         )
 
-    authored_on_values: list[str] = []
+    synthetic_bundle = {
+        "entry": [
+            {"resource": item}
+            for item in medication_requests
+            if isinstance(item, dict)
+        ]
+    }
 
-    for item in medication_requests:
-        if not isinstance(item, dict):
+    return map_medication_request_bundle_to_signals(
+        patient_ref=None,
+        bundle=synthetic_bundle,
+    )
+
+
+def map_medication_request_bundle_to_signals(
+    *,
+    patient_ref: str | None,
+    bundle: dict[str, Any] | None,
+) -> MedicationRenewalSignalsDTO:
+    if not bundle:
+        return MedicationRenewalSignalsDTO(
+            patientRef=patient_ref,
+            patientFound=patient_ref is not None,
+            eligible=False,
+            items=[],
+        )
+
+    entries = bundle.get("entry")
+    if not isinstance(entries, list):
+        entries = []
+
+    items: list[MedicationRenewalItemDTO] = []
+
+    for entry in entries:
+        if not isinstance(entry, dict):
             continue
-        authored_on = item.get("authoredOn")
-        if isinstance(authored_on, str) and authored_on.strip():
-            authored_on_values.append(authored_on.strip())
+        resource = entry.get("resource")
+        if not isinstance(resource, dict):
+            continue
+        if resource.get("resourceType") != "MedicationRequest":
+            continue
 
-    latest = max(authored_on_values) if authored_on_values else None
+        resource_id = resource.get("id")
+        if not isinstance(resource_id, str) or not resource_id.strip():
+            continue
+
+        items.append(
+            MedicationRenewalItemDTO(
+                medicationRequestRef=f"MedicationRequest/{resource_id.strip()}",
+                medicationDisplay=_safe_medication_display(resource),
+                medicationCode=_safe_medication_code(resource),
+                status=str(resource.get("status") or "unknown"),
+                intent=resource.get("intent") if isinstance(resource.get("intent"), str) else None,
+                authoredOn=resource.get("authoredOn")
+                if isinstance(resource.get("authoredOn"), str)
+                else None,
+                dosageText=_safe_dosage_text(resource),
+            )
+        )
 
     return MedicationRenewalSignalsDTO(
-        eligible=latest is not None,
-        lastMedicationRequestDateUtc=latest,
-        note="Medication renewal signal is derived from local FHIR resources.",
+        patientRef=patient_ref,
+        patientFound=patient_ref is not None,
+        eligible=len(items) > 0,
+        items=items,
     )

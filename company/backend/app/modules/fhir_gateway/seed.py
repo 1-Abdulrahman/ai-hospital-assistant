@@ -13,6 +13,7 @@ import httpx
 from app.core.config import settings
 from app.modules.fhir_gateway.client import SPECIALTY_SYSTEM
 from app.modules.fhir_gateway.mappers import TENANT_IDENTIFIER_SYSTEM
+from app.modules.otp.service import build_patient_key_hash
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -21,11 +22,44 @@ PROVIDERS_PATH = BASE_DIR / "modules" / "scheduling" / "providers_static.json"
 SEED_TENANT_ID = "demo"
 SEED_DAYS_AHEAD = 14
 SLOT_DURATION_MINUTES = 30
+PATIENT_KEY_IDENTIFIER_SYSTEM = "urn:tenant-patient-key"
 
 CLINIC_WINDOWS: tuple[tuple[time, time], ...] = (
     (time(hour=9, minute=0), time(hour=12, minute=0)),
     (time(hour=13, minute=0), time(hour=16, minute=0)),
 )
+
+DEMO_RENEWAL_PATIENTS = [
+    {
+        "national_id": "5000000001",
+        "identity_type": "border_id",
+        "display": "Demo Renewal Patient 1",
+        "medications": [
+            {
+                "code": "860975",
+                "display": "Metformin",
+                "dosageText": "500 mg twice daily",
+            },
+            {
+                "code": "83367",
+                "display": "Atorvastatin",
+                "dosageText": "20 mg nightly",
+            },
+        ],
+    },
+    {
+        "national_id": "5000000002",
+        "identity_type": "border_id",
+        "display": "Demo Renewal Patient 2",
+        "medications": [
+            {
+                "code": "29046",
+                "display": "Losartan",
+                "dosageText": "50 mg daily",
+            },
+        ],
+    },
+]
 
 
 @dataclass(frozen=True)
@@ -34,8 +68,6 @@ class ProviderSeedItem:
     practitioner_id: str
     practitioner_ref: str
     practitioner_display: str
-    
-    
 
 
 def _normalize_display(value: str) -> str:
@@ -47,6 +79,7 @@ def _sanitize_fhir_id(value: str) -> str:
     cleaned = re.sub(r"[^A-Za-z0-9\-.]", "-", cleaned)
     cleaned = re.sub(r"-{2,}", "-", cleaned)
     return cleaned[:64]
+
 
 def _extract_practitioner_id(practitioner_ref: str) -> str:
     cleaned = practitioner_ref.strip()
@@ -75,6 +108,15 @@ def _slot_id_for(schedule_id: str, start_dt: datetime) -> str:
     return _sanitize_fhir_id(
         f"slot-{schedule_id}-{start_dt.strftime('%Y%m%dT%H%M')}"
     )
+
+
+def _patient_id_for(patient_key_hash: str) -> str:
+    return _sanitize_fhir_id(f"patient-{patient_key_hash[:20]}")
+
+
+def _medication_request_id_for(patient_ref: str, medication_code: str) -> str:
+    patient_id = patient_ref.split("/", 1)[1]
+    return _sanitize_fhir_id(f"medreq-{patient_id}-{medication_code}")
 
 
 def _build_headers() -> dict[str, str]:
@@ -266,6 +308,68 @@ def _build_slot_resource(
     return resource
 
 
+def _build_demo_patient_resource(
+    *,
+    patient_id: str,
+    patient_key_hash: str,
+    display: str,
+) -> dict[str, Any]:
+    return {
+        "resourceType": "Patient",
+        "id": patient_id,
+        "identifier": [
+            {
+                "system": TENANT_IDENTIFIER_SYSTEM,
+                "value": SEED_TENANT_ID,
+            },
+            {
+                "system": PATIENT_KEY_IDENTIFIER_SYSTEM,
+                "value": patient_key_hash,
+            },
+        ],
+        "name": [
+            {
+                "text": display,
+            }
+        ],
+        "active": True,
+    }
+
+def _build_demo_medication_request_resource(
+    *,
+    med_request_id: str,
+    patient_ref: str,
+    code: str,
+    display: str,
+    dosage_text: str,
+) -> dict[str, Any]:
+    return {
+        "resourceType": "MedicationRequest",
+        "id": med_request_id,
+        "status": "active",
+        "intent": "order",
+        "subject": {
+            "reference": patient_ref,
+        },
+        "medicationCodeableConcept": {
+            "coding": [
+                {
+                    "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+                    "code": code,
+                    "display": display,
+                }
+            ],
+            "text": display,
+        },
+        "authoredOn": datetime.now(UTC).date().isoformat(),
+        "dosageInstruction": [
+            {
+                "text": dosage_text,
+            }
+        ],
+    }
+
+
 async def _check_fhir_ready(client: httpx.AsyncClient) -> None:
     response = await client.get("/metadata", headers={"Accept": "application/fhir+json"})
     if response.status_code != 200:
@@ -333,6 +437,62 @@ async def run_async() -> None:
     ) as client:
         await _check_fhir_ready(client)
 
+        # Seed demo renewal patients and their active medication requests
+        for patient_def in DEMO_RENEWAL_PATIENTS:
+            patient_key_hash = build_patient_key_hash(
+                tenant_id=SEED_TENANT_ID,
+                identity_type=patient_def["identity_type"],
+                normalized_identity_number=patient_def["national_id"],
+            )
+
+            patient_id = _patient_id_for(patient_key_hash)
+            patient_ref = f"Patient/{patient_id}"
+
+            patient_resource = _build_demo_patient_resource(
+                patient_id=patient_id,
+                patient_key_hash=patient_key_hash,
+                display=patient_def["display"],
+            )
+            patient_outcome = await _put_resource(
+                client,
+                "Patient",
+                patient_id,
+                patient_resource,
+            )
+            print(
+                f"[{patient_outcome.upper()}] {patient_ref} | "
+                f"{patient_def['display']} | renewal demo patient"
+            )
+            created += 1 if patient_outcome == "created" else 0
+            updated += 1 if patient_outcome == "updated" else 0
+
+            for med in patient_def["medications"]:
+                med_request_id = _medication_request_id_for(
+                    patient_ref,
+                    med["code"],
+                )
+                med_request_resource = _build_demo_medication_request_resource(
+                    med_request_id=med_request_id,
+                    patient_ref=patient_ref,
+                    code=med["code"],
+                    display=med["display"],
+                    dosage_text=med["dosageText"],
+                )
+
+                med_request_outcome = await _put_resource(
+                    client,
+                    "MedicationRequest",
+                    med_request_id,
+                    med_request_resource,
+                )
+                print(
+                    f"[{med_request_outcome.upper()}] MedicationRequest/{med_request_id} | "
+                    f"{med['display']} | {patient_ref}"
+                )
+                created += 1 if med_request_outcome == "created" else 0
+                updated += 1 if med_request_outcome == "updated" else 0
+
+        # Seed practitioners, schedules, and slots
         for item in provider_items:
             practitioner_resource = _build_practitioner_resource(item)
             practitioner_outcome = await _put_resource(

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Loader2, Mail, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useBookingFlow } from "@/hooks/use-booking-flow";
 import { requestOtp, verifyOtp, chatConfirm } from "@/lib/api-client";
@@ -10,14 +11,33 @@ export default function ChatWidgetOtp() {
   const [otp, setOtp] = useState("");
   const [otpRequested, setOtpRequested] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { currentMode, renewalItemId, setOtpVerified, setStep, addMessage } = useBookingFlow();
+  const {
+    currentMode,
+    renewalItemId,
+    patientNationalId,
+    patientEmail,
+    setPatientNationalId,
+    setPatientEmail,
+    setOtpVerified,
+    setStep,
+    addMessage,
+  } = useBookingFlow();
+
+  const nationalId = patientNationalId || "";
+  const email = patientEmail || "";
+  const canRequestOtp = nationalId.trim().length > 0 && email.trim().length > 0;
 
   const handleRequestOtp = async () => {
+    if (!canRequestOtp) {
+      toast.error("Enter national ID and email before requesting OTP.");
+      return;
+    }
+
     setLoading(true);
     try {
-      await requestOtp();
+      const response = await requestOtp(nationalId.trim(), email.trim());
       setOtpRequested(true);
-      toast.success("OTP sent to MailHog!");
+      toast.success(response.message || "OTP sent successfully.");
     } catch (err: any) {
       toast.error(err.message);
     } finally {
@@ -29,14 +49,19 @@ export default function ChatWidgetOtp() {
     if (otp.length < 6) return;
     setLoading(true);
     try {
-      const res = await verifyOtp(otp);
+      const res = await verifyOtp({
+        nationalId: nationalId.trim(),
+        email: email.trim(),
+        otp,
+      });
       if (res.verified) {
         setOtpVerified(true);
         if (currentMode === "renewal") {
-          // For renewal: confirm immediately and return to chat
           const confirmRes = await chatConfirm({
             action: "CONFIRM_RENEWAL",
             renewalItemId: renewalItemId || undefined,
+            nationalId: nationalId.trim(),
+            email: email.trim(),
           });
           addMessage({
             role: "assistant",
@@ -50,7 +75,7 @@ export default function ChatWidgetOtp() {
           setStep("confirm");
         }
       } else {
-        toast.error("Invalid OTP. Please try again.");
+        toast.error(res.message || "Invalid OTP. Please try again.");
       }
     } catch (err: any) {
       toast.error(err.message);
@@ -62,6 +87,24 @@ export default function ChatWidgetOtp() {
   return (
     <div className="flex flex-col h-full overflow-y-auto px-4 py-3">
       <h3 className="font-semibold text-sm mb-3">Verify Your Identity</h3>
+
+      <div className="space-y-3 mb-4">
+        <Input
+          value={nationalId}
+          onChange={(e) => setPatientNationalId(e.target.value)}
+          placeholder="National ID / Iqama / Border ID"
+          className="h-8 text-xs"
+          disabled={loading || otpRequested}
+        />
+        <Input
+          value={email}
+          onChange={(e) => setPatientEmail(e.target.value)}
+          placeholder="Email address"
+          type="email"
+          className="h-8 text-xs"
+          disabled={loading || otpRequested}
+        />
+      </div>
 
       <div className="rounded-lg border border-border bg-accent/50 px-3 py-2 text-xs mb-4">
         <div className="flex items-start gap-2">
@@ -81,7 +124,7 @@ export default function ChatWidgetOtp() {
       </div>
 
       {!otpRequested ? (
-        <Button size="sm" onClick={handleRequestOtp} disabled={loading} className="w-full h-8 text-xs">
+        <Button size="sm" onClick={handleRequestOtp} disabled={loading || !canRequestOtp} className="w-full h-8 text-xs">
           {loading && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
           Request OTP
         </Button>

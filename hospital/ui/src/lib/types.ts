@@ -1,5 +1,3 @@
-/** Unified backend response types */
-
 export interface QuickReply {
   label: string;
   value: string;
@@ -15,9 +13,9 @@ export interface SelectionListItemMeta {
 export interface SelectionListItem {
   id: string;
   label: string;
-  description?: string;
-  confidence?: number;
-  meta?: SelectionListItemMeta;
+  description?: string | null;
+  confidence?: number | null;
+  meta?: SelectionListItemMeta | null;
 }
 
 export interface SelectionList {
@@ -31,28 +29,28 @@ export interface BackendError {
 }
 
 export interface ConfirmationSummary {
-  bookingReferenceId?: string;
-  correlationId?: string;
-  doctorLabel?: string;
-  specialtyLabel?: string;
-  date?: string;
-  slotLabel?: string;
-  renewalItemLabel?: string;
+  bookingReferenceId?: string | null;
+  correlationId?: string | null;
+  doctorLabel?: string | null;
+  specialtyLabel?: string | null;
+  date?: string | null;
+  slotLabel?: string | null;
+  renewalItemLabel?: string | null;
 }
 
 export interface ChatResponse {
   userMessage: string;
-  quickReplies?: QuickReply[];
-  selectionLists?: SelectionList[];
-  needsClarification?: boolean;
-  isChronicContinuity?: boolean;
-  showConsentNotice?: boolean;
-  requiresDate?: boolean;
-  correlationId?: string;
-  errors?: BackendError[];
-  bookingReferenceId?: string;
-  confirmationType?: "appointment" | "renewal";
-  confirmationSummary?: ConfirmationSummary;
+  quickReplies?: QuickReply[] | null;
+  selectionLists?: SelectionList[] | null;
+  needsClarification?: boolean | null;
+  isChronicContinuity?: boolean | null;
+  showConsentNotice?: boolean | null;
+  requiresDate?: boolean | null;
+  correlationId?: string | null;
+  errors?: BackendError[] | null;
+  bookingReferenceId?: string | null;
+  confirmationType?: "appointment" | "renewal" | null;
+  confirmationSummary?: ConfirmationSummary | null;
 }
 
 export interface HealthResponse {
@@ -60,13 +58,16 @@ export interface HealthResponse {
 }
 
 export interface OtpRequestResponse {
+  ok?: boolean | null;
   message: string;
-  correlationId?: string;
+  expiresIn?: number | null;
+  correlationId?: string | null;
 }
 
 export interface OtpVerifyResponse {
   verified: boolean;
-  correlationId?: string;
+  message?: string | null;
+  correlationId?: string | null;
 }
 
 export interface ChatMessage {
@@ -83,10 +84,9 @@ export interface ChatMessage {
   confirmationSummary?: ConfirmationSummary;
 }
 
-export type FlowStep = "chat" | "otp" | "confirm" | "done";
+export type FlowStep = "chat" | "otp" | "confirm" | "done" | "renewal_identity";
 export type FlowMode = "complaint" | "direct" | "renewal";
 
-/** Request types for structured interactions */
 export interface SelectionRequest {
   tenantId: string;
   clientSessionId: string;
@@ -106,5 +106,7 @@ export interface ConfirmRequest {
   doctorId?: string;
   slotId?: string;
   date?: string;
+  nationalId?: string;
+  email?: string;
   renewalItemId?: string;
 }

@@ -11,6 +11,8 @@ interface BookingFlowState {
   selectedDate: string | null;
   selectedSlotId: string | null;
   renewalItemId: string | null;
+  patientNationalId: string | null;
+  patientEmail: string | null;
   otpVerified: boolean;
   isLoading: boolean;
   error: string | null;
@@ -23,12 +25,12 @@ interface BookingFlowState {
   setSelectedDate: (d: string) => void;
   setSelectedSlotId: (id: string) => void;
   setRenewalItemId: (id: string) => void;
+  setPatientNationalId: (id: string) => void;
+  setPatientEmail: (email: string) => void;
   setOtpVerified: (v: boolean) => void;
   setLoading: (l: boolean) => void;
   setError: (e: string | null) => void;
-  /** Clears selections and OTP flag, preserves messages and session */
   resetFlow: () => void;
-  /** Full reset including messages */
   reset: () => void;
 }
 
@@ -41,6 +43,8 @@ const initialState = {
   selectedDate: null as string | null,
   selectedSlotId: null as string | null,
   renewalItemId: null as string | null,
+  patientNationalId: null as string | null,
+  patientEmail: null as string | null,
   otpVerified: false,
   isLoading: false,
   error: null as string | null,
@@ -56,6 +60,8 @@ export const useBookingFlow = create<BookingFlowState>((set) => ({
   setSelectedDate: (d) => set({ selectedDate: d }),
   setSelectedSlotId: (id) => set({ selectedSlotId: id }),
   setRenewalItemId: (id) => set({ renewalItemId: id }),
+  setPatientNationalId: (patientNationalId) => set({ patientNationalId }),
+  setPatientEmail: (patientEmail) => set({ patientEmail }),
   setOtpVerified: (v) => set({ otpVerified: v }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
@@ -67,6 +73,8 @@ export const useBookingFlow = create<BookingFlowState>((set) => ({
     selectedDate: null,
     selectedSlotId: null,
     renewalItemId: null,
+    patientNationalId: null,
+    patientEmail: null,
     otpVerified: false,
     error: null,
   }),
