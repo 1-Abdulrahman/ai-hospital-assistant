@@ -11,6 +11,10 @@ from app.modules.fhir_gateway.mappers import (
     map_appointment_bundle_to_dtos,
     map_appointment_resource_to_dto,
     map_patient_resource_to_dto,
+    map_schedule_bundle_to_dtos,
+    map_schedule_resource_to_dto,
+    map_slot_bundle_to_dtos,
+    map_slot_resource_to_dto,
 )
 from app.modules.fhir_gateway.reason_codes import (
     APPOINTMENT_CONFLICT,
@@ -19,10 +23,15 @@ from app.modules.fhir_gateway.reason_codes import (
     FHIR_UNAVAILABLE,
     INVALID_REQUEST,
     PATIENT_NOT_FOUND,
+    SLOT_NO_LONGER_AVAILABLE,
     FhirGatewayError,
 )
-from app.modules.fhir_gateway.schemas import AppointmentDTO, PatientSummaryDTO
-
+from app.modules.fhir_gateway.schemas import (
+    AppointmentDTO,
+    PatientSummaryDTO,
+    ScheduleDTO,
+    SlotDTO,
+)
 
 SPECIALTY_SYSTEM = "urn:ai-hospital-assistant:specialty"
 
@@ -99,10 +108,7 @@ class FhirClient:
             "/metadata",
             retry_on_read=True,
         )
-        self._ensure_read_success(
-            response,
-            operation="read FHIR metadata",
-        )
+        self._ensure_read_success(response, operation="read FHIR metadata")
         return self._json_or_empty(response)
 
     async def find_patient_by_identifier(
@@ -243,6 +249,170 @@ class FhirClient:
             )
         return patient
 
+    async def search_schedules(
+        self,
+        *,
+        tenant_id: str,
+        specialty: str,
+        active: bool = True,
+    ) -> list[ScheduleDTO]:
+        if not specialty.strip():
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Specialty is required for schedule search.",
+                status_code=400,
+            )
+
+        params: list[tuple[str, str]] = [
+            ("identifier", f"{TENANT_IDENTIFIER_SYSTEM}|{tenant_id}"),
+            ("specialty", specialty.strip()),
+        ]
+        if active:
+            params.append(("active", "true"))
+
+        response = await self._request(
+            "GET",
+            "/Schedule",
+            params=params,
+            retry_on_read=True,
+        )
+        self._ensure_read_success(response, operation="search schedules")
+
+        return map_schedule_bundle_to_dtos(self._json_or_empty(response))
+
+    async def get_schedule_or_raise(self, schedule_ref: str) -> ScheduleDTO:
+        resource = await self._read_resource_or_raise(
+            resource_type="Schedule",
+            resource_id_or_ref=schedule_ref,
+            not_found_reason_code=INVALID_REQUEST,
+            not_found_message="Schedule was not found in FHIR.",
+        )
+        return map_schedule_resource_to_dto(resource)
+
+    async def search_slots(
+        self,
+        *,
+        schedule_ref: str,
+        status: str = "free",
+        start_from_utc: str | None = None,
+    ) -> list[SlotDTO]:
+        schedule = await self.get_schedule_or_raise(schedule_ref)
+
+        params: list[tuple[str, str]] = [
+            ("schedule", _reference_search_value(schedule_ref)),
+        ]
+        if status.strip():
+            params.append(("status", status.strip()))
+
+        response = await self._request(
+            "GET",
+            "/Slot",
+            params=params,
+            retry_on_read=True,
+        )
+        self._ensure_read_success(response, operation="search slots")
+
+        items = map_slot_bundle_to_dtos(
+            self._json_or_empty(response), schedule=schedule)
+
+        if start_from_utc:
+            filtered: list[SlotDTO] = []
+            for item in items:
+                if item.startUtc and item.startUtc >= start_from_utc:
+                    filtered.append(item)
+            return filtered
+
+        return items
+
+    async def get_slot_or_raise(self, slot_id: str) -> SlotDTO:
+        resource = await self._read_resource_or_raise(
+            resource_type="Slot",
+            resource_id_or_ref=slot_id,
+            not_found_reason_code=SLOT_NO_LONGER_AVAILABLE,
+            not_found_message="Selected slot is no longer available.",
+        )
+
+        schedule_ref = None
+        schedule_obj = resource.get("schedule")
+        if isinstance(schedule_obj, dict):
+            schedule_ref_value = schedule_obj.get("reference")
+            if isinstance(schedule_ref_value, str) and schedule_ref_value.strip():
+                schedule_ref = schedule_ref_value.strip()
+
+        schedule = await self.get_schedule_or_raise(schedule_ref or "")
+        return map_slot_resource_to_dto(resource, schedule=schedule)
+
+    async def update_slot_status(
+        self,
+        *,
+        slot_id: str,
+        new_status: str,
+        comment: str | None = None,
+    ) -> SlotDTO:
+        resource = await self._read_resource_or_raise(
+            resource_type="Slot",
+            resource_id_or_ref=slot_id,
+            not_found_reason_code=SLOT_NO_LONGER_AVAILABLE,
+            not_found_message="Selected slot is no longer available.",
+        )
+
+        resource["status"] = new_status.strip()
+
+        if comment is not None:
+            resource["comment"] = comment
+
+        response = await self._request(
+            "PUT",
+            f"/Slot/{_reference_search_value(slot_id)}",
+            json=resource,
+            headers={"Content-Type": "application/fhir+json"},
+            retry_on_read=False,
+        )
+
+        if response.status_code in {200, 201}:
+            updated = self._json_or_empty(response)
+
+            schedule_ref = None
+            schedule_obj = updated.get("schedule")
+            if isinstance(schedule_obj, dict):
+                schedule_ref_value = schedule_obj.get("reference")
+                if isinstance(schedule_ref_value, str) and schedule_ref_value.strip():
+                    schedule_ref = schedule_ref_value.strip()
+
+            schedule = await self.get_schedule_or_raise(schedule_ref or "")
+            return map_slot_resource_to_dto(updated, schedule=schedule)
+
+        if response.status_code in {404, 409, 412}:
+            raise FhirGatewayError(
+                reason_code=SLOT_NO_LONGER_AVAILABLE,
+                user_message="Selected slot is no longer available.",
+                status_code=409,
+                details=self._operation_outcome_text(response),
+            )
+
+        if response.status_code == 503:
+            raise FhirGatewayError(
+                reason_code=FHIR_UNAVAILABLE,
+                user_message="FHIR service is unavailable while updating slot status.",
+                status_code=503,
+                details=self._operation_outcome_text(response),
+            )
+
+        if 400 <= response.status_code < 500:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Slot update request was rejected by FHIR.",
+                status_code=response.status_code,
+                details=self._operation_outcome_text(response),
+            )
+
+        raise FhirGatewayError(
+            reason_code=FHIR_UNAVAILABLE,
+            user_message="Slot status update failed.",
+            status_code=503,
+            details=self._operation_outcome_text(response),
+        )
+
     async def search_appointments(
         self,
         *,
@@ -258,7 +428,8 @@ class FhirClient:
             params.append(("patient", _reference_search_value(patient_ref)))
 
         if practitioner_ref:
-            params.append(("practitioner", _reference_search_value(practitioner_ref)))
+            params.append(
+                ("practitioner", _reference_search_value(practitioner_ref)))
 
         if start_utc:
             params.append(("date", f"ge{start_utc}"))
@@ -275,10 +446,7 @@ class FhirClient:
             params=params,
             retry_on_read=True,
         )
-        self._ensure_read_success(
-            response,
-            operation="search appointments",
-        )
+        self._ensure_read_success(response, operation="search appointments")
 
         bundle = self._json_or_empty(response)
         return map_appointment_bundle_to_dtos(bundle)
@@ -293,10 +461,13 @@ class FhirClient:
         specialty_display: str,
         start_utc: str,
         end_utc: str,
+        slot_ref: str,
         description: str | None = None,
     ) -> AppointmentDTO:
         patient_ref_normalized = _ensure_reference("Patient", patient_ref)
-        practitioner_ref_normalized = _ensure_reference("Practitioner", practitioner_ref)
+        practitioner_ref_normalized = _ensure_reference(
+            "Practitioner", practitioner_ref)
+        slot_ref_normalized = _ensure_reference("Slot", slot_ref)
 
         if not specialty_code.strip():
             raise FhirGatewayError(
@@ -327,6 +498,23 @@ class FhirClient:
                         }
                     ],
                     "text": specialty_display.strip() or specialty_code.strip(),
+                }
+            ],
+            "specialty": [
+                {
+                    "coding": [
+                        {
+                            "system": SPECIALTY_SYSTEM,
+                            "code": specialty_code.strip(),
+                            "display": specialty_display.strip() or specialty_code.strip(),
+                        }
+                    ],
+                    "text": specialty_display.strip() or specialty_code.strip(),
+                }
+            ],
+            "slot": [
+                {
+                    "reference": slot_ref_normalized,
                 }
             ],
             "participant": [
@@ -382,6 +570,39 @@ class FhirClient:
             status_code=503,
             details=self._operation_outcome_text(response),
         )
+
+    async def _read_resource_or_raise(
+        self,
+        *,
+        resource_type: str,
+        resource_id_or_ref: str,
+        not_found_reason_code: str,
+        not_found_message: str,
+    ) -> dict[str, Any]:
+        resource_id = _reference_search_value(resource_id_or_ref)
+        if not resource_id.strip():
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message=f"{resource_type} id is required.",
+                status_code=400,
+            )
+
+        response = await self._request(
+            "GET",
+            f"/{resource_type}/{resource_id}",
+            retry_on_read=True,
+        )
+
+        if response.status_code == 404:
+            raise FhirGatewayError(
+                reason_code=not_found_reason_code,
+                user_message=not_found_message,
+                status_code=404,
+                details=self._operation_outcome_text(response),
+            )
+
+        self._ensure_read_success(response, operation=f"read {resource_type}")
+        return self._json_or_empty(response)
 
     async def _request(
         self,
@@ -485,11 +706,13 @@ class FhirClient:
             return None
 
         details = first_issue.get("details")
-        if not isinstance(details, dict):
-            return None
+        if isinstance(details, dict):
+            text = details.get("text")
+            if isinstance(text, str) and text.strip():
+                return text.strip()[:200]
 
-        text = details.get("text")
-        if isinstance(text, str) and text.strip():
-            return text.strip()[:200]
+        diagnostics = first_issue.get("diagnostics")
+        if isinstance(diagnostics, str) and diagnostics.strip():
+            return diagnostics.strip()[:200]
 
         return None

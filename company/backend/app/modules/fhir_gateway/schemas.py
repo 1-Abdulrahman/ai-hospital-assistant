@@ -14,21 +14,22 @@ class PatientSummaryDTO(BaseModel):
     )
 
 
-class ContinuitySignalsDTO(BaseModel):
-    hasPriorAppointments: bool = False
-    totalAppointments: int = 0
-    lastAppointmentStartUtc: str | None = None
-    lastPractitionerRef: str | None = None
-
-
-class MedicationRenewalSignalsDTO(BaseModel):
-    eligible: bool = False
-    lastMedicationRequestDateUtc: str | None = None
-    note: str | None = None
+class ScheduleDTO(BaseModel):
+    scheduleId: str
+    scheduleRef: str
+    practitionerRef: str | None = None
+    practitionerDisplay: str | None = None
+    specialty: str | None = None
+    tenantId: str | None = None
+    planningHorizonStartUtc: str | None = None
+    planningHorizonEndUtc: str | None = None
+    active: bool = True
 
 
 class SlotDTO(BaseModel):
     slotId: str
+    slotRef: str
+    scheduleRef: str | None = None
     practitionerRef: str | None = None
     practitionerDisplay: str | None = None
     specialty: str | None = None
@@ -49,3 +50,17 @@ class AppointmentDTO(BaseModel):
     patientRef: str | None = None
     patientDisplay: str | None = None
     tenantId: str | None = None
+    slotRefs: list[str] = Field(default_factory=list)
+
+
+class ContinuitySignalsDTO(BaseModel):
+    hasPriorAppointments: bool = False
+    totalAppointments: int = 0
+    lastAppointmentStartUtc: str | None = None
+    lastPractitionerRef: str | None = None
+
+
+class MedicationRenewalSignalsDTO(BaseModel):
+    eligible: bool = False
+    lastMedicationRequestDateUtc: str | None = None
+    note: str | None = None

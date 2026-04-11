@@ -17,6 +17,7 @@ from app.api.routes.health import router as health_router
 from app.api.routes.integrations import router as integrations_router
 from app.api.routes.otp import router as otp_router
 from app.api.routes.portal import router as portal_router
+from app.api.routes.scheduling import router as scheduling_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.modules.nlp.inference import try_load_nlp_service
@@ -85,3 +86,4 @@ app.include_router(integrations_router)
 app.include_router(auth_router)
 app.include_router(portal_router)
 app.include_router(otp_router)
+app.include_router(scheduling_router)

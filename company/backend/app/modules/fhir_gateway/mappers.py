@@ -7,6 +7,7 @@ from app.modules.fhir_gateway.schemas import (
     ContinuitySignalsDTO,
     MedicationRenewalSignalsDTO,
     PatientSummaryDTO,
+    ScheduleDTO,
     SlotDTO,
 )
 
@@ -54,7 +55,10 @@ def _first_human_name(resource: dict[str, Any]) -> str | None:
     return full_name or None
 
 
-def _extract_reference(participants: list[dict[str, Any]], prefix: str) -> tuple[str | None, str | None]:
+def _extract_reference(
+    participants: list[dict[str, Any]],
+    prefix: str,
+) -> tuple[str | None, str | None]:
     for participant in participants:
         actor = participant.get("actor")
         if not isinstance(actor, dict):
@@ -71,34 +75,60 @@ def _extract_reference(participants: list[dict[str, Any]], prefix: str) -> tuple
     return None, None
 
 
+def _extract_actor_reference(
+    actors: list[dict[str, Any]],
+    prefix: str,
+) -> tuple[str | None, str | None]:
+    for actor in actors:
+        reference = actor.get("reference")
+        if not isinstance(reference, str):
+            continue
+
+        if reference.startswith(prefix):
+            display = actor.get("display")
+            return reference, display if isinstance(display, str) else None
+
+    return None, None
+
+
+def _extract_codeable_concept_text_or_code(value: Any) -> str | None:
+    items = value if isinstance(value, list) else [value]
+
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+
+        text = item.get("text")
+        if isinstance(text, str) and text.strip():
+            return text.strip()
+
+        coding = item.get("coding")
+        if not isinstance(coding, list):
+            continue
+
+        for coded in coding:
+            if not isinstance(coded, dict):
+                continue
+
+            display = coded.get("display")
+            if isinstance(display, str) and display.strip():
+                return display.strip()
+
+            code = coded.get("code")
+            if isinstance(code, str) and code.strip():
+                return code.strip()
+
+    return None
+
+
 def _extract_specialty(resource: dict[str, Any]) -> str | None:
-    service_type = resource.get("serviceType")
-    if not isinstance(service_type, list) or not service_type:
-        return None
+    specialty = _extract_codeable_concept_text_or_code(resource.get("specialty"))
+    if specialty:
+        return specialty
 
-    first = service_type[0]
-    if not isinstance(first, dict):
-        return None
-
-    text = first.get("text")
-    if isinstance(text, str) and text.strip():
-        return text.strip()
-
-    coding = first.get("coding")
-    if not isinstance(coding, list) or not coding:
-        return None
-
-    first_coding = coding[0]
-    if not isinstance(first_coding, dict):
-        return None
-
-    display = first_coding.get("display")
-    if isinstance(display, str) and display.strip():
-        return display.strip()
-
-    code = first_coding.get("code")
-    if isinstance(code, str) and code.strip():
-        return code.strip()
+    service_type = _extract_codeable_concept_text_or_code(resource.get("serviceType"))
+    if service_type:
+        return service_type
 
     return None
 
@@ -119,6 +149,35 @@ def _extract_tenant_id(resource: dict[str, Any]) -> str | None:
     return None
 
 
+def _extract_schedule_reference(resource: dict[str, Any]) -> str | None:
+    schedule = resource.get("schedule")
+    if not isinstance(schedule, dict):
+        return None
+
+    reference = schedule.get("reference")
+    if isinstance(reference, str) and reference.strip():
+        return reference.strip()
+
+    return None
+
+
+def _extract_slot_refs(resource: dict[str, Any]) -> list[str]:
+    results: list[str] = []
+
+    slots = resource.get("slot")
+    if not isinstance(slots, list):
+        return results
+
+    for item in slots:
+        if not isinstance(item, dict):
+            continue
+        reference = item.get("reference")
+        if isinstance(reference, str) and reference.strip():
+            results.append(reference.strip())
+
+    return results
+
+
 def map_patient_resource_to_dto(
     resource: dict[str, Any],
     *,
@@ -135,6 +194,89 @@ def map_patient_resource_to_dto(
         patientKeyHash=patient_key_hash,
         displayName=_first_human_name(resource),
     )
+
+
+def map_schedule_resource_to_dto(resource: dict[str, Any]) -> ScheduleDTO:
+    schedule_id = str(resource.get("id") or "").strip() or "unknown"
+    schedule_ref = f"Schedule/{schedule_id}"
+
+    actors = resource.get("actor")
+    actor_list = actors if isinstance(actors, list) else []
+    practitioner_ref, practitioner_display = _extract_actor_reference(
+        actor_list,
+        "Practitioner/",
+    )
+
+    planning_horizon = resource.get("planningHorizon")
+    planning_horizon_start = None
+    planning_horizon_end = None
+    if isinstance(planning_horizon, dict):
+        start = planning_horizon.get("start")
+        end = planning_horizon.get("end")
+        planning_horizon_start = start if isinstance(start, str) else None
+        planning_horizon_end = end if isinstance(end, str) else None
+
+    return ScheduleDTO(
+        scheduleId=schedule_id,
+        scheduleRef=schedule_ref,
+        practitionerRef=practitioner_ref,
+        practitionerDisplay=practitioner_display,
+        specialty=_extract_specialty(resource),
+        tenantId=_extract_tenant_id(resource),
+        planningHorizonStartUtc=planning_horizon_start,
+        planningHorizonEndUtc=planning_horizon_end,
+        active=bool(resource.get("active", True)),
+    )
+
+
+def map_schedule_bundle_to_dtos(bundle: dict[str, Any]) -> list[ScheduleDTO]:
+    results: list[ScheduleDTO] = []
+
+    for entry in _entries(bundle):
+        resource = _resource_from_entry(entry)
+        if resource.get("resourceType") != "Schedule":
+            continue
+        results.append(map_schedule_resource_to_dto(resource))
+
+    return results
+
+
+def map_slot_resource_to_dto(
+    resource: dict[str, Any],
+    *,
+    schedule: ScheduleDTO | None = None,
+) -> SlotDTO:
+    slot_id = str(resource.get("id") or "").strip() or "unknown"
+    slot_ref = f"Slot/{slot_id}"
+    schedule_ref = _extract_schedule_reference(resource)
+
+    return SlotDTO(
+        slotId=slot_id,
+        slotRef=slot_ref,
+        scheduleRef=schedule_ref,
+        practitionerRef=schedule.practitionerRef if schedule else None,
+        practitionerDisplay=schedule.practitionerDisplay if schedule else None,
+        specialty=_extract_specialty(resource) or (schedule.specialty if schedule else None),
+        startUtc=str(resource.get("start") or ""),
+        endUtc=str(resource.get("end") or ""),
+        status=str(resource.get("status") or "free"),
+    )
+
+
+def map_slot_bundle_to_dtos(
+    bundle: dict[str, Any],
+    *,
+    schedule: ScheduleDTO | None = None,
+) -> list[SlotDTO]:
+    results: list[SlotDTO] = []
+
+    for entry in _entries(bundle):
+        resource = _resource_from_entry(entry)
+        if resource.get("resourceType") != "Slot":
+            continue
+        results.append(map_slot_resource_to_dto(resource, schedule=schedule))
+
+    return results
 
 
 def map_appointment_resource_to_dto(resource: dict[str, Any]) -> AppointmentDTO:
@@ -159,6 +301,7 @@ def map_appointment_resource_to_dto(resource: dict[str, Any]) -> AppointmentDTO:
         patientRef=patient_ref,
         patientDisplay=patient_display,
         tenantId=_extract_tenant_id(resource),
+        slotRefs=_extract_slot_refs(resource),
     )
 
 
@@ -225,24 +368,4 @@ def map_medication_requests_to_renewal_signals(
         eligible=latest is not None,
         lastMedicationRequestDateUtc=latest,
         note="Medication renewal signal is derived from local FHIR resources.",
-    )
-
-
-def map_slot_resource_to_dto(
-    resource: dict[str, Any],
-    *,
-    practitioner_ref: str | None = None,
-    practitioner_display: str | None = None,
-    specialty: str | None = None,
-) -> SlotDTO:
-    slot_id = str(resource.get("id") or "").strip() or "unknown"
-
-    return SlotDTO(
-        slotId=slot_id,
-        practitionerRef=practitioner_ref,
-        practitionerDisplay=practitioner_display,
-        specialty=specialty,
-        startUtc=str(resource.get("start") or ""),
-        endUtc=str(resource.get("end") or ""),
-        status=str(resource.get("status") or "free"),
     )

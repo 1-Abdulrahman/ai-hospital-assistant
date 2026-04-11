@@ -1,0 +1,92 @@
+{
+  "cardiology": [
+    {
+      "practitionerRef": "Practitioner/prac-card-1",
+      "practitionerDisplay": "Dr. Lina Alharbi"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-card-2",
+      "practitionerDisplay": "Dr. Omar Alshehri"
+    }
+  ],
+  "dermatology": [
+    {
+      "practitionerRef": "Practitioner/prac-derm-1",
+      "practitionerDisplay": "Dr. Sara Alqahtani"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-derm-2",
+      "practitionerDisplay": "Dr. Faisal Aldosari"
+    }
+  ],
+  "orthopedics": [
+    {
+      "practitionerRef": "Practitioner/prac-ortho-1",
+      "practitionerDisplay": "Dr. Yasser Almutairi"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-ortho-2",
+      "practitionerDisplay": "Dr. Reem Alotaibi"
+    }
+  ],
+  "ent": [
+    {
+      "practitionerRef": "Practitioner/prac-ent-1",
+      "practitionerDisplay": "Dr. Huda Alghamdi"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-ent-2",
+      "practitionerDisplay": "Dr. Bandar Alzahrani"
+    }
+  ],
+  "ophthalmology": [
+    {
+      "practitionerRef": "Practitioner/prac-eye-1",
+      "practitionerDisplay": "Dr. Amal Alsubaie"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-eye-2",
+      "practitionerDisplay": "Dr. Tariq Alshammari"
+    }
+  ],
+  "neurology": [
+    {
+      "practitionerRef": "Practitioner/prac-neuro-1",
+      "practitionerDisplay": "Dr. Maha Alenezi"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-neuro-2",
+      "practitionerDisplay": "Dr. Khaled Alotaibi"
+    }
+  ],
+  "gastroenterology": [
+    {
+      "practitionerRef": "Practitioner/prac-gi-1",
+      "practitionerDisplay": "Dr. Noura Alotaibi"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-gi-2",
+      "practitionerDisplay": "Dr. Salem Alharbi"
+    }
+  ],
+  "pediatrics": [
+    {
+      "practitionerRef": "Practitioner/prac-peds-1",
+      "practitionerDisplay": "Dr. Rania Alqahtani"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-peds-2",
+      "practitionerDisplay": "Dr. Ahmed Aljohani"
+    }
+  ],
+  "general_practice": [
+    {
+      "practitionerRef": "Practitioner/prac-gp-1",
+      "practitionerDisplay": "Dr. Mona Alqahtani"
+    },
+    {
+      "practitionerRef": "Practitioner/prac-gp-2",
+      "practitionerDisplay": "Dr. Ibrahim Alanazi"
+    }
+  ]
+}
