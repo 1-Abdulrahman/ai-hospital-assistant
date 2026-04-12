@@ -63,6 +63,11 @@ export default function ChatWidgetContent() {
     setSelectedDate,
     setRenewalItemId,
     resetFlow,
+    setSelectedSpecialtyLabel,
+    setSelectedDoctorLabel,
+    setSelectedSlotLabel,
+    setSelectedSlotStartUtc,
+    setRenewalItemLabel,
   } = useBookingFlow();
 
   useEffect(() => {
@@ -145,14 +150,20 @@ export default function ChatWidgetContent() {
 
     if (listType === "specialty") {
       setSelectedSpecialtyId(item.id);
+      setSelectedSpecialtyLabel(item.label);
     }
 
     if (listType === "doctor") {
       setSelectedDoctorId(item.id);
+      setSelectedDoctorLabel(item.label);
     }
 
     if (listType === "slot") {
       setSelectedSlotId(item.id);
+      setSelectedSlotLabel(item.label);
+      setSelectedDoctorLabel(item.label.split("•")[0]?.trim() || null);
+      setSelectedSlotStartUtc(item.meta?.isoDate ?? null);
+
       if (item.meta?.isoDate) {
         setSelectedDate(item.meta.isoDate);
       }
@@ -160,8 +171,8 @@ export default function ChatWidgetContent() {
 
     if (listType === "medication") {
       setRenewalItemId(item.id);
+      setRenewalItemLabel(item.label);
     }
-
     setLoading(true);
 
     try {
