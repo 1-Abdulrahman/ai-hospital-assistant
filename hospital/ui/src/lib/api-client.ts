@@ -216,3 +216,17 @@ export async function chatRenewalIdentify(
     chatResponseSchema,
   );
 }
+
+export async function chatContinuityIdentify(
+  nationalId: string,
+): Promise<ChatResponse> {
+  return request(
+    "/chat/continuity/identify",
+    {
+      method: "POST",
+      headers: buildHeaders(),
+      body: JSON.stringify(chatBody({ nationalId })),
+    },
+    chatResponseSchema,
+  );
+}

@@ -54,6 +54,7 @@ export const chatResponseSchema = z.object({
 
   needsClarification: z.boolean().optional().nullable(),
   isChronicContinuity: z.boolean().optional().nullable(),
+  requiresContinuityIdentity: z.boolean().optional().nullable(),
   showConsentNotice: z.boolean().optional().nullable(),
   requiresDate: z.boolean().optional().nullable(),
 

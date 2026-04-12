@@ -20,6 +20,7 @@ import ConfirmationCard from "./chat/ConfirmationCard";
 import ChatWidgetOtp from "./steps/ChatWidgetOtp";
 import ChatWidgetConfirm from "./steps/ChatWidgetConfirm";
 import ChatWidgetRenewalIdentity from "./steps/ChatWidgetRenewalIdentity";
+import ChatWidgetContinuityIdentity from "./steps/ChatWidgetContinuityIdentity";
 
 function responseToMessage(res: ChatResponse) {
   return {
@@ -29,6 +30,7 @@ function responseToMessage(res: ChatResponse) {
     selectionLists: res.selectionLists ?? undefined,
     needsClarification: res.needsClarification ?? undefined,
     isChronicContinuity: res.isChronicContinuity ?? undefined,
+    requiresContinuityIdentity: res.requiresContinuityIdentity ?? undefined,
     showConsentNotice: res.showConsentNotice ?? undefined,
     bookingReferenceId: res.bookingReferenceId ?? undefined,
     confirmationType: res.confirmationType ?? undefined,
@@ -172,6 +174,11 @@ export default function ChatWidgetContent() {
 
       addMessage(responseToMessage(res));
       handleResponseErrors(res);
+      
+      if (res.requiresContinuityIdentity) {
+        setStep("continuity_identity");
+        return;
+      }
 
       const hasBackendErrors = Boolean(res.errors?.length);
 
@@ -211,6 +218,7 @@ export default function ChatWidgetContent() {
   };
 
   if (step === "renewal_identity") return <ChatWidgetRenewalIdentity />;
+  if (step === "continuity_identity") return <ChatWidgetContinuityIdentity />;
   if (step === "otp") return <ChatWidgetOtp />;
   if (step === "confirm") return <ChatWidgetConfirm />;
 
