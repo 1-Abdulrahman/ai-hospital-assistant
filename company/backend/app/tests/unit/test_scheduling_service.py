@@ -215,6 +215,32 @@ def add_verified_otp(
     )
     db_session.commit()
 
+@pytest.mark.asyncio
+async def test_list_available_slots_filters_out_past_slots(db_session) -> None:
+    schedule = make_schedule()
+    past_slot = make_slot(
+        start_utc="2026-04-08T09:00:00Z",
+        end_utc="2026-04-08T09:30:00Z",
+    )
+
+    client = FakeFhirClient(
+        schedules=[schedule],
+        slots_by_schedule={schedule.scheduleRef: [past_slot]},
+        practitioner_appointments=[],
+    )
+
+    result = await list_available_slots(
+        db=db_session,
+        header_tenant_id="demo",
+        session_id="patient-session-1",
+        body_tenant_id="demo",
+        specialty="cardiology",
+        now_utc=datetime.fromisoformat("2026-04-12T08:00:00+00:00"),
+        fhir_client=client,
+    )
+
+    assert result["reasonCode"] == NO_SLOTS_AVAILABLE
+    assert result["items"] == []
 
 @pytest.mark.asyncio
 async def test_list_available_slots_reads_fhir_schedules_and_slots(db_session) -> None:
@@ -233,6 +259,7 @@ async def test_list_available_slots_reads_fhir_schedules_and_slots(db_session) -
         session_id="patient-session-1",
         body_tenant_id="demo",
         specialty="cardiology",
+        now_utc=datetime.fromisoformat("2026-04-08T08:00:00+00:00"),
         fhir_client=client,
     )
 
