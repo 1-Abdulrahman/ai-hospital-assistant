@@ -111,8 +111,8 @@ def test_chat_selection_for_specialty_requests_continuity_identity(client) -> No
     assert response.status_code == 200
     body = response.json()
     assert body["requiresContinuityIdentity"] is True
-    assert body["showConsentNotice"] is True
-    assert "previous physician" in body["userMessage"].lower()
+    assert body.get("showConsentNotice") in (None, False)
+    assert "continuity of care" in body["userMessage"].lower()
 
 
 def test_chat_continuity_identify_accepts_slot_dto_items(client, monkeypatch) -> None:
