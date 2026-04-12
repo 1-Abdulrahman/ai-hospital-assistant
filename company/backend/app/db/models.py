@@ -4,6 +4,10 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text, UniqueC
 from sqlalchemy.orm import declarative_base
 
 
+def utcnow() -> datetime:
+    return datetime.now(timezone.utc)
+
+
 Base = declarative_base()
 
 
@@ -47,11 +51,7 @@ class Event(Base):
     __tablename__ = "events"
 
     id = Column(String, primary_key=True)  # uuid
-    ts_utc = Column(
-        DateTime,
-        nullable=False,
-        default=lambda: datetime.now(timezone.utc),
-    )
+    ts_utc = Column(DateTime, nullable=False, default=utcnow)
     tenant_id = Column(String, nullable=False)
     session_id = Column(String, nullable=False)
     correlation_id = Column(String, nullable=False)
@@ -84,25 +84,28 @@ class AssistantSession(Base):
     selected_specialty_id = Column(String, nullable=True)
     selected_doctor_id = Column(String, nullable=True)
     selected_slot_id = Column(String, nullable=True)
+    selected_slot_label = Column(String, nullable=True)
+    selected_slot_start_utc = Column(String, nullable=True)
     selected_date = Column(String, nullable=True)
+    last_input_summary = Column(String, nullable=True)
 
     renewal_item_id = Column(String, nullable=True)
     renewal_item_label = Column(String, nullable=True)
     renewal_patient_key_hash = Column(String, nullable=True)
     renewal_patient_ref = Column(String, nullable=True)
 
-    created_at_utc = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC))
+    created_at_utc = Column(DateTime(timezone=True), nullable=False, default=utcnow)
     updated_at_utc = Column(
         DateTime(timezone=True),
         nullable=False,
-        default=lambda: datetime.now(UTC),
-        onupdate=lambda: datetime.now(UTC),
+        default=utcnow,
+        onupdate=utcnow,
     )
 
     __table_args__ = (
         UniqueConstraint(
             "tenant_id",
             "client_session_id",
-            name="uq_assistant_sessions_tenant_client_session",
+            name="uq_assistant_session_tenant_client",
         ),
     )
