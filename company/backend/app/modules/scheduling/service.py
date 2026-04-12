@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.db.models import OtpRecord
 from app.modules.fhir_gateway.client import FhirClient
 from app.modules.fhir_gateway.reason_codes import FhirGatewayError
-from app.modules.fhir_gateway.schemas import AppointmentDTO, ScheduleDTO, SlotDTO
+from app.modules.fhir_gateway.schemas import AppointmentDTO, SlotDTO
 from app.modules.observability.emitter import emit_event
 from app.modules.otp.service import (
     build_patient_key_hash,
@@ -58,6 +58,12 @@ def parse_utc(value: str) -> datetime:
             user_message="Datetime must be timezone-aware UTC.",
         )
     return parsed.astimezone(UTC)
+
+
+def normalize_specialty_token(value: str | None) -> str:
+    if not value:
+        return ""
+    return value.strip().replace("-", "_").replace(" ", "_").lower()
 
 
 def is_overlap(
@@ -180,7 +186,7 @@ async def list_available_slots(
     )
     ensure_tenant_exists(db=db, tenant_id=body_tenant_id)
 
-    specialty_normalized = specialty.strip().lower()
+    specialty_normalized = normalize_specialty_token(specialty)
     now_value = now_utc or utc_now()
     now_iso = to_utc_z(now_value)
     client = fhir_client or FhirClient()
@@ -289,7 +295,7 @@ async def book_appointment(
         raise SchedulingError(reason_code=IDEMPOTENCY_KEY_REQUIRED)
 
     normalized_email = normalize_email(email)
-    specialty_normalized = specialty.strip().lower()
+    specialty_normalized = normalize_specialty_token(specialty)
     client = fhir_client or FhirClient()
 
     try:
@@ -337,7 +343,7 @@ async def book_appointment(
         )
         return result
 
-    if slot.specialty and slot.specialty.strip().lower() != specialty_normalized:
+    if slot.specialty and normalize_specialty_token(slot.specialty) != specialty_normalized:
         raise SchedulingError(
             reason_code=INVALID_REQUEST,
             user_message="Selected slot does not belong to the requested specialty.",
@@ -363,7 +369,7 @@ async def book_appointment(
             status_code=400,
         )
 
-    if schedule.specialty and schedule.specialty.strip().lower() != specialty_normalized:
+    if schedule.specialty and normalize_specialty_token(schedule.specialty) != specialty_normalized:
         raise SchedulingError(
             reason_code=INVALID_REQUEST,
             user_message="Selected slot does not belong to the requested specialty.",
@@ -521,65 +527,38 @@ async def book_appointment(
                 db.commit()
                 return result
 
-            if not appointment.startUtc or not appointment.endUtc:
-                continue
-
-            if is_overlap(
-                new_start=slot_start,
-                new_end=slot_end,
-                existing_start=parse_utc(appointment.startUtc),
-                existing_end=parse_utc(appointment.endUtc),
-            ):
-                result = to_jsonable_dict(
-                    {
-                        "ok": True,
-                        "reasonCode": SLOT_TAKEN,
-                        "appointmentId": appointment.appointmentId,
-                        "appointmentRef": appointment.appointmentRef,
-                        "specialty": specialty_normalized,
-                        "slot": {**slot.model_dump(), "status": "busy"},
-                        "message": "Selected slot is no longer available.",
-                    }
-                )
-
-                save_terminal_result(
-                    db=db,
-                    idempotency_key=idempotency_key.strip(),
-                    tenant_id=body_tenant_id,
-                    session_id=session_id,
-                    request_hash=request_hash,
-                    result=result,
-                )
-                emit_event(
-                    db=db,
-                    tenant_id=body_tenant_id,
-                    session_id=session_id,
-                    actor_type="system",
-                    event_type="BOOKING_FAILED",
-                    outcome="FAILURE",
-                    reason_code=SLOT_TAKEN,
-                    payload={
-                        "component": "scheduling",
-                        "safeSummary": "Blocked booking because slot was already reserved.",
-                    },
-                )
-                db.commit()
-                return result
-
-        created = await client.create_appointment(
+        appointment = await client.create_appointment_for_slot(
             tenant_id=body_tenant_id,
             patient_ref=patient.patientRef,
-            practitioner_ref=schedule.practitionerRef,
-            specialty_code=specialty_normalized,
-            specialty_display=schedule.specialty or specialty_normalized.replace("_", " ").title(),
-            start_utc=slot.startUtc,
-            end_utc=slot.endUtc,
-            slot_ref=slot.slotRef,
-            description=f"Scheduled via offline MVP for {specialty_normalized}",
+            schedule=schedule,
+            slot=slot,
+            specialty=specialty_normalized,
         )
 
     except FhirGatewayError as exc:
         mapped = map_fhir_error(exc)
+
+        result = to_jsonable_dict(
+            {
+                "ok": True,
+                "reasonCode": mapped.reason_code,
+                "appointmentId": "",
+                "appointmentRef": "",
+                "specialty": specialty_normalized,
+                "slot": {**slot.model_dump(), "status": "busy"},
+                "message": mapped.user_message,
+            }
+        )
+
+        if mapped.reason_code in {SLOT_TAKEN, APPOINTMENT_CREATE_FAILED}:
+            save_terminal_result(
+                db=db,
+                idempotency_key=idempotency_key.strip(),
+                tenant_id=body_tenant_id,
+                session_id=session_id,
+                request_hash=request_hash,
+                result=result,
+            )
 
         emit_event(
             db=db,
@@ -595,38 +574,16 @@ async def book_appointment(
             },
         )
         db.commit()
-        raise mapped from exc
-
-    try:
-        await client.update_slot_status(
-            slot_id=slot.slotId,
-            new_status="busy",
-            comment=f"Booked via {created.appointmentRef}",
-        )
-    except FhirGatewayError:
-        emit_event(
-            db=db,
-            tenant_id=body_tenant_id,
-            session_id=session_id,
-            actor_type="system",
-            event_type="SLOT_STATUS_SYNC_FAILED",
-            outcome="FAILURE",
-            reason_code="FHIR_SLOT_SYNC_FAILED",
-            payload={
-                "component": "scheduling",
-                "safeSummary": "Appointment was created but slot busy sync failed.",
-            },
-        )
-        db.commit()
+        return result
 
     result = to_jsonable_dict(
         {
             "ok": True,
             "reasonCode": OK,
-            "appointmentId": created.appointmentId,
-            "appointmentRef": created.appointmentRef,
+            "appointmentId": appointment.appointmentId,
+            "appointmentRef": appointment.appointmentRef,
             "specialty": specialty_normalized,
-            "slot": {**slot.model_dump(), "status": "busy"},
+            "slot": slot.model_dump(),
             "message": "Appointment booked successfully.",
         }
     )
@@ -650,7 +607,7 @@ async def book_appointment(
         reason_code=OK,
         payload={
             "component": "scheduling",
-            "safeSummary": f"Appointment booked successfully for slot {slot.slotRef}.",
+            "safeSummary": f"Appointment confirmed as {appointment.appointmentRef}.",
         },
     )
     db.commit()

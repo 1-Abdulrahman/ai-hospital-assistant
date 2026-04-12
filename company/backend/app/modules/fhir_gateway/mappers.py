@@ -100,25 +100,27 @@ def _extract_codeable_concept_text_or_code(value: Any) -> str | None:
         if not isinstance(item, dict):
             continue
 
+        coding = item.get("coding")
+        if isinstance(coding, list):
+            for coded in coding:
+                if not isinstance(coded, dict):
+                    continue
+
+                code = coded.get("code")
+                if isinstance(code, str) and code.strip():
+                    return code.strip()
+
+            for coded in coding:
+                if not isinstance(coded, dict):
+                    continue
+
+                display = coded.get("display")
+                if isinstance(display, str) and display.strip():
+                    return display.strip()
+
         text = item.get("text")
         if isinstance(text, str) and text.strip():
             return text.strip()
-
-        coding = item.get("coding")
-        if not isinstance(coding, list):
-            continue
-
-        for coded in coding:
-            if not isinstance(coded, dict):
-                continue
-
-            display = coded.get("display")
-            if isinstance(display, str) and display.strip():
-                return display.strip()
-
-            code = coded.get("code")
-            if isinstance(code, str) and code.strip():
-                return code.strip()
 
     return None
 

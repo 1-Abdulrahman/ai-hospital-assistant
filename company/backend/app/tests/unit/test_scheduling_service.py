@@ -121,9 +121,14 @@ class FakeFhirClient:
         self.created_appointment = created_appointment or make_appointment()
         self.update_slot_should_fail = update_slot_should_fail
         self.updated_slot_calls: list[tuple[str, str, str | None]] = []
+        self.create_appointment_for_slot_calls: list[dict] = []
 
     async def search_schedules(self, *, tenant_id: str, specialty: str, active: bool = True):
-        return [item for item in self.schedules if item.specialty == specialty and item.tenantId == tenant_id]
+        return [
+            item
+            for item in self.schedules
+            if item.specialty == specialty and item.tenantId == tenant_id
+        ]
 
     async def search_slots(
         self,
@@ -175,7 +180,33 @@ class FakeFhirClient:
     async def create_appointment(self, **kwargs):
         return self.created_appointment
 
-    async def update_slot_status(self, *, slot_id: str, new_status: str, comment: str | None = None):
+    async def create_appointment_for_slot(
+        self,
+        *,
+        tenant_id: str,
+        patient_ref: str,
+        schedule: ScheduleDTO,
+        slot: SlotDTO,
+        specialty: str,
+    ):
+        self.create_appointment_for_slot_calls.append(
+            {
+                "tenant_id": tenant_id,
+                "patient_ref": patient_ref,
+                "schedule_ref": schedule.scheduleRef,
+                "slot_ref": slot.slotRef,
+                "specialty": specialty,
+            }
+        )
+        return self.created_appointment
+
+    async def update_slot_status(
+        self,
+        *,
+        slot_id: str,
+        new_status: str,
+        comment: str | None = None,
+    ):
         self.updated_slot_calls.append((slot_id, new_status, comment))
         if self.update_slot_should_fail:
             raise FhirGatewayError(
@@ -185,7 +216,6 @@ class FakeFhirClient:
             )
         slot = self.slots_by_id[slot_id]
         return SlotDTO(**{**slot.model_dump(), "status": new_status})
-
 
 def add_verified_otp(
     db_session,
@@ -514,7 +544,7 @@ async def test_book_blocks_taken_slot_when_existing_appointment_uses_same_slot(d
 
 
 @pytest.mark.asyncio
-async def test_book_success_creates_appointment_and_updates_slot_status(db_session) -> None:
+async def test_book_success_creates_appointment(db_session) -> None:
     add_verified_otp(
         db_session,
         session_id="patient-session-1",
@@ -555,18 +585,21 @@ async def test_book_success_creates_appointment_and_updates_slot_status(db_sessi
 
     assert result["reasonCode"] == OK
     assert result["appointmentId"] == "appt-new"
-    assert result["slot"]["status"] == "busy"
-    assert client.updated_slot_calls == [
-        (
-            slot.slotId,
-            "busy",
-            f"Booked via {created.appointmentRef}",
-        )
+    assert result["appointmentRef"] == "Appointment/appt-new"
+    assert result["slot"]["slotId"] == slot.slotId
+    assert client.create_appointment_for_slot_calls == [
+        {
+            "tenant_id": "demo",
+            "patient_ref": "Patient/patient-1",
+            "schedule_ref": schedule.scheduleRef,
+            "slot_ref": slot.slotRef,
+            "specialty": "cardiology",
+        }
     ]
 
 
 @pytest.mark.asyncio
-async def test_book_success_still_returns_ok_if_slot_status_sync_fails_after_appointment_create(db_session) -> None:
+async def test_book_success_creates_appointment_without_slot_status_sync_step(db_session) -> None:
     add_verified_otp(
         db_session,
         session_id="patient-session-1",
@@ -608,10 +641,11 @@ async def test_book_success_still_returns_ok_if_slot_status_sync_fails_after_app
 
     assert result["reasonCode"] == OK
     assert result["appointmentId"] == "appt-new"
+    assert client.updated_slot_calls == []
 
     event = (
         db_session.query(Event)
-        .filter(Event.event_type == "SLOT_STATUS_SYNC_FAILED")
+        .filter(Event.event_type == "BOOKING_CONFIRMED")
         .first()
     )
     assert event is not None

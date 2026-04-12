@@ -149,7 +149,7 @@ async def test_search_schedules_returns_safe_schedule_dtos(monkeypatch) -> None:
     assert items[0].scheduleRef == "Schedule/sched-cardiology-prac-card-1"
     assert items[0].practitionerRef == "Practitioner/prac-card-1"
     assert items[0].practitionerDisplay == "Dr. Lina Alharbi"
-    assert items[0].specialty == "Cardiology"
+    assert items[0].specialty == "cardiology"
     assert items[0].tenantId == "demo"
 
 

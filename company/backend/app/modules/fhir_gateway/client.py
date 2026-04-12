@@ -673,6 +673,49 @@ class FhirClient:
             details=self._operation_outcome_text(response),
         )
 
+    async def create_appointment_for_slot(
+        self,
+        *,
+        tenant_id: str,
+        patient_ref: str,
+        schedule: ScheduleDTO,
+        slot: SlotDTO,
+        specialty: str,
+    ) -> AppointmentDTO:
+        practitioner_ref = schedule.practitionerRef or slot.practitionerRef
+        if not practitioner_ref:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Practitioner reference is required for appointment creation.",
+                status_code=400,
+            )
+
+        specialty_code = specialty.strip()
+        if not specialty_code:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Specialty is required for appointment creation.",
+                status_code=400,
+            )
+
+        specialty_display = (
+            schedule.specialty
+            or slot.specialty
+            or specialty_code
+        ).strip()
+
+        return await self.create_appointment(
+            tenant_id=tenant_id,
+            patient_ref=patient_ref,
+            practitioner_ref=practitioner_ref,
+            specialty_code=specialty_code,
+            specialty_display=specialty_display,
+            start_utc=slot.startUtc,
+            end_utc=slot.endUtc,
+            slot_ref=slot.slotRef,
+            description=f"{specialty_display} appointment",
+        )
+
     async def _read_resource_or_raise(
         self,
         *,
