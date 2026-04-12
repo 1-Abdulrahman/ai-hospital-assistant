@@ -12,6 +12,7 @@ from app.modules.fhir_gateway.mappers import (
     TENANT_IDENTIFIER_SYSTEM,
     map_appointment_bundle_to_dtos,
     map_appointment_resource_to_dto,
+    map_appointments_to_continuity_signals,
     map_medication_request_bundle_to_signals,
     map_patient_resource_to_dto,
     map_schedule_bundle_to_dtos,
@@ -31,6 +32,7 @@ from app.modules.fhir_gateway.reason_codes import (
 )
 from app.modules.fhir_gateway.schemas import (
     AppointmentDTO,
+    ContinuitySignalsDTO,
     MedicationRenewalSignalsDTO,
     PatientSummaryDTO,
     ScheduleDTO,
@@ -74,6 +76,15 @@ def _reference_search_value(reference: str) -> str:
         return cleaned.split("/", 1)[1]
     return cleaned
 
+def _normalize_specialty_token(value: str | None) -> str:
+    if not value:
+        return ""
+    return value.strip().replace("_", " ").lower()
+
+
+def _specialty_matches(appointment_specialty: str | None, selected_specialty: str | None) -> bool:
+    return _normalize_specialty_token(appointment_specialty) == _normalize_specialty_token(selected_specialty)
+
 
 class FhirClient:
     def __init__(
@@ -105,6 +116,26 @@ class FhirClient:
                 "time": _utc_now_iso(),
                 "reasonCode": exc.reason_code,
             }
+
+    async def get_continuity_signals(
+        self,
+        *,
+        patient_ref: str,
+        specialty: str | None = None,
+    ) -> ContinuitySignalsDTO:
+        appointments = await self.search_appointments(
+            patient_ref=patient_ref,
+            status="booked",
+        )
+
+        if specialty and specialty.strip():
+            appointments = [
+                appointment
+                for appointment in appointments
+                if _specialty_matches(appointment.specialty, specialty)
+            ]
+
+        return map_appointments_to_continuity_signals(appointments)
 
     async def get_capability_statement(self) -> dict[str, Any]:
         response = await self._request(

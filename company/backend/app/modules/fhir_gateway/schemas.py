@@ -58,6 +58,7 @@ class ContinuitySignalsDTO(BaseModel):
     totalAppointments: int = 0
     lastAppointmentStartUtc: str | None = None
     lastPractitionerRef: str | None = None
+    lastPractitionerDisplay: str | None = None
 
 
 class MedicationRenewalItemDTO(BaseModel):

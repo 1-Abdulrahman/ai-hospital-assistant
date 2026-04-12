@@ -45,67 +45,7 @@ class FakeSlotDTO:
     start_utc: str
     end_utc: str
     status: str
-    
 
-def test_chat_selection_accepts_slot_dto_items(client, monkeypatch) -> None:
-    async def fake_list_available_slots(*, db, header_tenant_id, session_id, body_tenant_id, specialty):
-        return {
-            "ok": True,
-            "specialty": specialty,
-            "reasonCode": "OK",
-            "items": [
-                FakeSlotDTO(
-                    slot_id="slot-1",
-                    slot_ref="Slot/slot-1",
-                    practitioner_ref="Practitioner/prac-1",
-                    practitioner_display="Dr. Lina Alharbi",
-                    specialty=specialty,
-                    start_utc="2026-04-12T09:00:00Z",
-                    end_utc="2026-04-12T09:30:00Z",
-                    status="free",
-                )
-            ],
-        }
-
-    monkeypatch.setattr(
-        "app.modules.orchestration.service.list_available_slots",
-        fake_list_available_slots,
-    )
-
-    client.post(
-        "/chat/direct/start",
-        headers={
-            "X-Tenant-Id": "demo",
-            "X-Session-Id": "patient-session-001",
-            "X-Correlation-Id": "corr-chat-001",
-        },
-        json={
-            "tenantId": "demo",
-            "clientSessionId": "patient-session-001",
-            "action": "START_DIRECT_SCHEDULING",
-        },
-    )
-
-    response = client.post(
-        "/chat/selection",
-        headers={
-            "X-Tenant-Id": "demo",
-            "X-Session-Id": "patient-session-001",
-            "X-Correlation-Id": "corr-chat-001",
-        },
-        json={
-            "tenantId": "demo",
-            "clientSessionId": "patient-session-001",
-            "selectionType": "specialty",
-            "selectionId": "cardiology",
-            "action": "SELECT_SPECIALTY",
-        },
-    )
-
-    assert response.status_code == 200
-    body = response.json()
-    assert body["selectionLists"][0]["type"] == "slot"
-    assert body["selectionLists"][0]["items"][0]["id"] == "slot-1"
 
 def test_chat_message_returns_specialty_choices(client) -> None:
     client.app.state.nlp_service = FakeNlpService()
@@ -145,32 +85,7 @@ def test_chat_direct_start_returns_supported_specialties(client) -> None:
     assert len(body["selectionLists"][0]["items"]) >= 3
 
 
-def test_chat_selection_for_specialty_returns_slot_list(client, monkeypatch) -> None:
-    async def fake_list_available_slots(*, db, header_tenant_id, session_id, body_tenant_id, specialty):
-        return {
-            "ok": True,
-            "specialty": specialty,
-            "reasonCode": "OK",
-            "items": [
-                {
-                    "slotId": "slot-1",
-                    "slotRef": "Slot/slot-1",
-                    "scheduleRef": "Schedule/schedule-1",
-                    "practitionerRef": "Practitioner/prac-1",
-                    "practitionerDisplay": "Dr. Lina Alharbi",
-                    "specialty": specialty,
-                    "startUtc": "2026-04-12T09:00:00Z",
-                    "endUtc": "2026-04-12T09:30:00Z",
-                    "status": "free",
-                }
-            ],
-        }
-
-    monkeypatch.setattr(
-        "app.modules.orchestration.service.list_available_slots",
-        fake_list_available_slots,
-    )
-
+def test_chat_selection_for_specialty_requests_continuity_identity(client) -> None:
     client.post(
         "/chat/direct/start",
         headers=hospital_headers(),
@@ -195,8 +110,205 @@ def test_chat_selection_for_specialty_returns_slot_list(client, monkeypatch) -> 
 
     assert response.status_code == 200
     body = response.json()
+    assert body["requiresContinuityIdentity"] is True
+    assert body["showConsentNotice"] is True
+    assert "previous physician" in body["userMessage"].lower()
+
+
+def test_chat_continuity_identify_accepts_slot_dto_items(client, monkeypatch) -> None:
+    class FakePatient:
+        patientRef = "Patient/patient-1"
+
+    class FakeContinuity:
+        hasPriorAppointments = True
+        totalAppointments = 2
+        lastAppointmentStartUtc = "2026-04-10T09:00:00Z"
+        lastPractitionerRef = "Practitioner/prac-1"
+        lastPractitionerDisplay = "Dr. Lina Alharbi"
+
+    class FakeFhirClient:
+        async def get_patient_or_raise(self, *, tenant_id, patient_key_hash):
+            return FakePatient()
+
+        async def get_continuity_signals(self, *, patient_ref, specialty):
+            return FakeContinuity()
+
+    async def fake_list_available_slots(
+        *,
+        db,
+        header_tenant_id,
+        session_id,
+        body_tenant_id,
+        specialty,
+    ):
+        return {
+            "ok": True,
+            "specialty": specialty,
+            "reasonCode": "OK",
+            "items": [
+                FakeSlotDTO(
+                    slot_id="slot-1",
+                    slot_ref="Slot/slot-1",
+                    practitioner_ref="Practitioner/prac-1",
+                    practitioner_display="Dr. Lina Alharbi",
+                    specialty=specialty,
+                    start_utc="2026-04-12T09:00:00Z",
+                    end_utc="2026-04-12T09:30:00Z",
+                    status="free",
+                )
+            ],
+        }
+
+    monkeypatch.setattr(
+        "app.modules.orchestration.service.FhirClient",
+        lambda: FakeFhirClient(),
+    )
+    monkeypatch.setattr(
+        "app.modules.orchestration.service.list_available_slots",
+        fake_list_available_slots,
+    )
+
+    client.post(
+        "/chat/direct/start",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "START_DIRECT_SCHEDULING",
+        },
+    )
+
+    client.post(
+        "/chat/selection",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "selectionType": "specialty",
+            "selectionId": "cardiology",
+            "action": "SELECT_SPECIALTY",
+        },
+    )
+
+    response = client.post(
+        "/chat/continuity/identify",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "nationalId": "2123456788",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["isChronicContinuity"] is True
     assert body["selectionLists"][0]["type"] == "slot"
     assert body["selectionLists"][0]["items"][0]["id"] == "slot-1"
+
+
+def test_chat_continuity_identify_returns_prioritized_slots(client, monkeypatch) -> None:
+    class FakePatient:
+        patientRef = "Patient/patient-1"
+
+    class FakeContinuity:
+        hasPriorAppointments = True
+        totalAppointments = 2
+        lastAppointmentStartUtc = "2026-04-10T09:00:00Z"
+        lastPractitionerRef = "Practitioner/prac-card-1"
+        lastPractitionerDisplay = "Dr. Lina Alharbi"
+
+    class FakeFhirClient:
+        async def get_patient_or_raise(self, *, tenant_id, patient_key_hash):
+            return FakePatient()
+
+        async def get_continuity_signals(self, *, patient_ref, specialty):
+            return FakeContinuity()
+
+    async def fake_list_available_slots(
+        *,
+        db,
+        header_tenant_id,
+        session_id,
+        body_tenant_id,
+        specialty,
+    ):
+        return {
+            "ok": True,
+            "specialty": specialty,
+            "reasonCode": "OK",
+            "items": [
+                {
+                    "slotId": "slot-2",
+                    "slotRef": "Slot/slot-2",
+                    "scheduleRef": "Schedule/schedule-2",
+                    "practitionerRef": "Practitioner/prac-card-2",
+                    "practitionerDisplay": "Dr. Omar Saleh",
+                    "specialty": specialty,
+                    "startUtc": "2026-04-12T11:00:00Z",
+                    "endUtc": "2026-04-12T11:30:00Z",
+                    "status": "free",
+                },
+                {
+                    "slotId": "slot-1",
+                    "slotRef": "Slot/slot-1",
+                    "scheduleRef": "Schedule/schedule-1",
+                    "practitionerRef": "Practitioner/prac-card-1",
+                    "practitionerDisplay": "Dr. Lina Alharbi",
+                    "specialty": specialty,
+                    "startUtc": "2026-04-12T09:00:00Z",
+                    "endUtc": "2026-04-12T09:30:00Z",
+                    "status": "free",
+                },
+            ],
+        }
+
+    monkeypatch.setattr(
+        "app.modules.orchestration.service.FhirClient",
+        lambda: FakeFhirClient(),
+    )
+    monkeypatch.setattr(
+        "app.modules.orchestration.service.list_available_slots",
+        fake_list_available_slots,
+    )
+
+    client.post(
+        "/chat/direct/start",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "START_DIRECT_SCHEDULING",
+        },
+    )
+
+    client.post(
+        "/chat/selection",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "selectionType": "specialty",
+            "selectionId": "cardiology",
+            "action": "SELECT_SPECIALTY",
+        },
+    )
+
+    response = client.post(
+        "/chat/continuity/identify",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "nationalId": "2123456788",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["isChronicContinuity"] is True
+    assert body["selectionLists"][0]["type"] == "slot"
+    assert body["selectionLists"][0]["items"][0]["label"].startswith("Dr. Lina Alharbi")
 
 
 def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypatch) -> None:
@@ -256,8 +368,8 @@ def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypat
     assert body["confirmationType"] == "appointment"
     assert body["bookingReferenceId"] == "Appointment/appt-1"
     assert body["confirmationSummary"]["doctorLabel"] == "Dr. Lina Alharbi"
-    
-    
+
+
 def test_chat_renewal_identify_returns_fhir_driven_medications(client, monkeypatch) -> None:
     class FakeItem:
         def __init__(self, ref: str, display: str, dosage: str) -> None:

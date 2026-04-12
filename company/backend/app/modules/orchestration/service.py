@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+from requests import session
 from sqlalchemy.orm import Session
 
 from app.api.schemas.chat import ConfirmationSummary
@@ -24,7 +25,12 @@ from app.modules.otp.validators import (
     IdentityValidationError,
     validate_national_id_and_infer_type,
 )
-from app.modules.scheduling.reason_codes import OK, SchedulingError
+from app.modules.scheduling.reason_codes import (
+    NO_PROVIDERS_AVAILABLE,
+    NO_SLOTS_AVAILABLE,
+    OK,
+    SchedulingError,
+)
 from app.modules.scheduling.service import (
     book_appointment,
     ensure_verified_otp_or_raise,
@@ -32,6 +38,7 @@ from app.modules.scheduling.service import (
 )
 from app.modules.orchestration.state_machine import (
     AWAITING_CONFIRMATION,
+    AWAITING_CONTINUITY_IDENTITY,
     AWAITING_RENEWAL_IDENTITY,
     AWAITING_RENEWAL_SELECTION,
     AWAITING_SLOT_SELECTION,
@@ -300,6 +307,137 @@ def _save_session(db: Session, session: AssistantSession) -> None:
     db.commit()
     db.refresh(session)
 
+def _reset_continuity_context(session: AssistantSession) -> None:
+    session.continuity_checked = False
+    session.continuity_patient_ref = None
+    session.continuity_preferred_practitioner_ref = None
+    session.continuity_preferred_practitioner_display = None
+    session.continuity_is_returning = False
+
+
+def _normalize_specialty_token(value: str | None) -> str:
+    if not value:
+        return ""
+    return value.strip().replace("_", " ").lower()
+
+
+def _sort_slots_for_preferred_practitioner(items: list[Any], preferred_practitioner_ref: str | None) -> list[Any]:
+    if not items or not preferred_practitioner_ref:
+        return items
+
+    def sort_key(item: Any) -> tuple[int, str, str]:
+        slot = _slot_to_mapping(item)
+        practitioner_ref = str(_pick(slot, "practitionerRef", "practitioner_ref") or "")
+        start_utc = str(_pick(slot, "startUtc", "start_utc") or "")
+        preferred_rank = 0 if practitioner_ref == preferred_practitioner_ref else 1
+        return (preferred_rank, start_utc, practitioner_ref)
+
+    return sorted(items, key=sort_key)
+
+
+def _slot_failure_message(*, reason_code: str, specialty_id: str | None) -> str:
+    specialty_label = _humanize_specialty(specialty_id or "selected")
+
+    if reason_code == NO_PROVIDERS_AVAILABLE:
+        return f"No providers are currently configured for {specialty_label}."
+
+    if reason_code == NO_SLOTS_AVAILABLE:
+        return f"No available {specialty_label} slots were found right now."
+
+    return "Unable to retrieve available slots right now."
+
+
+async def _load_slots_for_session(
+    *,
+    db: Session,
+    header_tenant_id: str,
+    header_session_id: str,
+    body_tenant_id: str,
+    session: AssistantSession,
+) -> dict:
+    slot_result = await list_available_slots(
+        db=db,
+        header_tenant_id=header_tenant_id,
+        session_id=header_session_id,
+        body_tenant_id=body_tenant_id,
+        specialty=session.selected_specialty_id or "",
+    )
+
+    if slot_result.get("items") and session.continuity_preferred_practitioner_ref:
+        slot_result["items"] = _sort_slots_for_preferred_practitioner(
+            slot_result["items"],
+            session.continuity_preferred_practitioner_ref,
+        )
+
+    return slot_result
+
+
+def _response(
+    *,
+    user_message: str,
+    selection_lists: list[dict] | None = None,
+    needs_clarification: bool | None = None,
+    is_chronic_continuity: bool | None = None,
+    show_consent_notice: bool | None = None,
+    requires_continuity_identity: bool | None = None,
+    booking_reference_id: str | None = None,
+    confirmation_type: str | None = None,
+    confirmation_summary: dict | None = None,
+    errors: list[dict] | None = None,
+) -> dict:
+    payload: dict = {
+        "userMessage": user_message,
+        "correlationId": get_correlation_id(),
+    }
+    if selection_lists is not None:
+        payload["selectionLists"] = selection_lists
+    if needs_clarification is not None:
+        payload["needsClarification"] = needs_clarification
+    if is_chronic_continuity is not None:
+        payload["isChronicContinuity"] = is_chronic_continuity
+    if show_consent_notice is not None:
+        payload["showConsentNotice"] = show_consent_notice
+    if requires_continuity_identity is not None:
+        payload["requiresContinuityIdentity"] = requires_continuity_identity
+    if booking_reference_id is not None:
+        payload["bookingReferenceId"] = booking_reference_id
+    if confirmation_type is not None:
+        payload["confirmationType"] = confirmation_type
+    if confirmation_summary is not None:
+        payload["confirmationSummary"] = confirmation_summary
+    if errors:
+        payload["errors"] = errors
+    return payload
+
+
+def _build_slot_response(
+    *,
+    slot_result: dict,
+    session: AssistantSession,
+    user_message: str | None = None,
+) -> dict:
+    if slot_result["reasonCode"] != OK:
+        message = slot_result.get("message") or _slot_failure_message(
+            reason_code=slot_result["reasonCode"],
+            specialty_id=session.selected_specialty_id,
+        )
+        return _response(
+            user_message=message,
+            is_chronic_continuity=session.continuity_is_returning,
+            errors=[
+                {
+                    "reasonCode": slot_result["reasonCode"],
+                    "userMessage": message,
+                }
+            ],
+        )
+
+    default_message = f"Choose one of the available {_humanize_specialty(session.selected_specialty_id or '')} slots."
+    return _response(
+        user_message=user_message or default_message,
+        selection_lists=_slot_selection_list(items=slot_result.get("items", [])),
+        is_chronic_continuity=session.continuity_is_returning,
+    )
 
 def _transition_session(session: AssistantSession, target_state: str) -> None:
     try:
@@ -316,36 +454,6 @@ def _transition_session(session: AssistantSession, target_state: str) -> None:
         ) from exc
 
 
-def _response(
-    *,
-    user_message: str,
-    selection_lists: list[dict] | None = None,
-    needs_clarification: bool | None = None,
-    show_consent_notice: bool | None = None,
-    booking_reference_id: str | None = None,
-    confirmation_type: str | None = None,
-    confirmation_summary: dict | None = None,
-    errors: list[dict] | None = None,
-) -> dict:
-    payload: dict = {
-        "userMessage": user_message,
-        "correlationId": get_correlation_id(),
-    }
-    if selection_lists is not None:
-        payload["selectionLists"] = selection_lists
-    if needs_clarification is not None:
-        payload["needsClarification"] = needs_clarification
-    if show_consent_notice is not None:
-        payload["showConsentNotice"] = show_consent_notice
-    if booking_reference_id is not None:
-        payload["bookingReferenceId"] = booking_reference_id
-    if confirmation_type is not None:
-        payload["confirmationType"] = confirmation_type
-    if confirmation_summary is not None:
-        payload["confirmationSummary"] = confirmation_summary
-    if errors:
-        payload["errors"] = errors
-    return payload
 
 
 async def process_chat_message(
@@ -365,6 +473,8 @@ async def process_chat_message(
     session, _ = _get_or_create_session(db=db, tenant_id=body_tenant_id, client_session_id=client_session_id)
     session.flow_mode = "complaint"
     session.last_input_summary = _safe_input_summary(message_text)
+    session.selected_slot_id = None
+    _reset_continuity_context(session)
 
     emit_event(
         db=db,
@@ -453,6 +563,8 @@ async def process_direct_start(
     session.selected_specialty_id = None
     session.selected_slot_id = None
     session.renewal_item_id = None
+    _reset_continuity_context(session)
+    
     _transition_session(session, AWAITING_SPECIALTY_SELECTION)
     _save_session(db, session)
     return _response(
@@ -615,6 +727,146 @@ async def process_renewal_identity(
         show_consent_notice=True,
     )
 
+async def process_continuity_identity(
+    *,
+    db: Session,
+    header_tenant_id: str,
+    header_session_id: str,
+    body_tenant_id: str,
+    client_session_id: str,
+    national_id: str,
+) -> dict:
+    ensure_tenant_header_matches_body(
+        header_tenant_id=header_tenant_id,
+        body_tenant_id=body_tenant_id,
+    )
+    ensure_tenant_exists(db=db, tenant_id=body_tenant_id)
+    _ensure_client_session_matches_header(
+        header_session_id=header_session_id,
+        client_session_id=client_session_id,
+    )
+
+    session, _ = _get_or_create_session(
+        db=db,
+        tenant_id=body_tenant_id,
+        client_session_id=client_session_id,
+    )
+
+    if not session.selected_specialty_id:
+        raise ChatOrchestrationError(
+            reason_code="INVALID_REQUEST",
+            user_message="A specialty must be selected before continuity lookup.",
+            status_code=422,
+        )
+
+    try:
+        normalized_identity_number, identity_type = validate_national_id_and_infer_type(
+            national_id
+        )
+    except IdentityValidationError as exc:
+        raise ChatOrchestrationError(
+            reason_code="INVALID_IDENTITY_NUMBER",
+            user_message="National ID, iqama, or Border ID is invalid.",
+            status_code=422,
+            details=exc.message,
+        ) from exc
+
+    patient_key_hash = build_patient_key_hash(
+        tenant_id=body_tenant_id,
+        identity_type=identity_type,
+        normalized_identity_number=normalized_identity_number,
+    )
+
+    fhir_client = FhirClient()
+
+    try:
+        patient = await fhir_client.get_patient_or_raise(
+            tenant_id=body_tenant_id,
+            patient_key_hash=patient_key_hash,
+        )
+        continuity = await fhir_client.get_continuity_signals(
+            patient_ref=patient.patientRef,
+            specialty=session.selected_specialty_id,
+        )
+    except Exception:
+        patient = None
+        continuity = None
+
+    session.continuity_checked = True
+
+    if patient is None:
+        session.continuity_patient_ref = None
+        session.continuity_preferred_practitioner_ref = None
+        session.continuity_preferred_practitioner_display = None
+        session.continuity_is_returning = False
+
+        emit_event(
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            actor_type="system",
+            event_type="CONTINUITY_NOT_FOUND",
+            outcome="INFO",
+            reason_code="PATIENT_NOT_FOUND",
+            payload={
+                "component": "assistant-api",
+                "safeSummary": "No prior patient record found for continuity lookup.",
+            },
+        )
+    else:
+        session.continuity_patient_ref = patient.patientRef
+        session.continuity_preferred_practitioner_ref = continuity.lastPractitionerRef if continuity else None
+        session.continuity_preferred_practitioner_display = continuity.lastPractitionerDisplay if continuity else None
+        session.continuity_is_returning = bool(
+            continuity
+            and continuity.hasPriorAppointments
+            and continuity.lastPractitionerRef
+        )
+
+        emit_event(
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            actor_type="system",
+            event_type="CONTINUITY_DETECTED" if session.continuity_is_returning else "CONTINUITY_NOT_FOUND",
+            outcome="SUCCESS" if session.continuity_is_returning else "INFO",
+            reason_code=OK if session.continuity_is_returning else "NO_CONTINUITY_MATCH",
+            payload={
+                "component": "assistant-api",
+                "safeSummary": (
+                    f"Previous physician matched: {session.continuity_preferred_practitioner_display}"
+                    if session.continuity_is_returning
+                    else "No same-specialty continuity match found."
+                ),
+            },
+        )
+
+    _transition_session(session, AWAITING_SLOT_SELECTION)
+    _save_session(db, session)
+
+    slot_result = await _load_slots_for_session(
+        db=db,
+        header_tenant_id=header_tenant_id,
+        header_session_id=header_session_id,
+        body_tenant_id=body_tenant_id,
+        session=session,
+    )
+
+    if session.continuity_is_returning:
+        doctor_label = session.continuity_preferred_practitioner_display or "your previous physician"
+        return _build_slot_response(
+            slot_result=slot_result,
+            session=session,
+            user_message=(
+                f"You are a returning patient. {doctor_label} has been prioritized when available."
+            ),
+        )
+
+    return _build_slot_response(
+        slot_result=slot_result,
+        session=session,
+        user_message=f"Showing available {_humanize_specialty(session.selected_specialty_id)} slots.",
+    )
 
 async def process_selection(
     *,
@@ -657,34 +909,54 @@ async def process_selection(
                 status_code=422,
             )
 
-        session.selected_specialty_id = resolved_selection_id.lower()
+        new_specialty_id = resolved_selection_id.lower()
 
-        slot_result = await list_available_slots(
-            db=db,
-            header_tenant_id=header_tenant_id,
-            session_id=header_session_id,
-            body_tenant_id=body_tenant_id,
-            specialty=session.selected_specialty_id,
-        )
+        if session.selected_specialty_id != new_specialty_id:
+            session.selected_slot_id = None
+            _reset_continuity_context(session)
 
-        if slot_result["reasonCode"] != OK:
+        session.selected_specialty_id = new_specialty_id
+
+        if session.flow_mode in {"complaint", "direct"} and not session.continuity_checked:
+            _transition_session(session, AWAITING_CONTINUITY_IDENTITY)
+
+            emit_event(
+                db=db,
+                tenant_id=body_tenant_id,
+                session_id=client_session_id,
+                actor_type="system",
+                event_type="CONTINUITY_CHECK_REQUESTED",
+                outcome="INFO",
+                reason_code=OK,
+                payload={
+                    "component": "assistant-api",
+                    "safeSummary": f"Continuity identity step requested for {session.selected_specialty_id}.",
+                },
+            )
+
+            _save_session(db, session)
+
             return _response(
-                user_message=slot_result["message"],
-                errors=[
-                    {
-                        "reasonCode": slot_result["reasonCode"],
-                        "userMessage": slot_result["message"],
-                    }
-                ],
+                user_message=(
+                    "To prioritize your previous physician, enter your National ID / Iqama / Border ID. "
+                    "You can also skip this step and see all available slots."
+                ),
+                show_consent_notice=True,
+                requires_continuity_identity=True,
             )
 
         _transition_session(session, AWAITING_SLOT_SELECTION)
         _save_session(db, session)
 
-        return _response(
-            user_message=f"Choose one of the available {_humanize_specialty(session.selected_specialty_id)} slots.",
-            selection_lists=_slot_selection_list(items=slot_result.get("items", [])),
+        slot_result = await _load_slots_for_session(
+            db=db,
+            header_tenant_id=header_tenant_id,
+            header_session_id=header_session_id,
+            body_tenant_id=body_tenant_id,
+            session=session,
         )
+
+        return _build_slot_response(slot_result=slot_result, session=session)
 
     if normalized_selection_type == "slot":
         if not resolved_selection_id:
@@ -733,6 +1005,59 @@ async def process_selection(
 
         return _response(
             user_message="Medication captured. Continue to identity verification to receive your OTP code.",
+        )
+        
+    if normalized_selection_type == "continuity":
+        if normalized_action != "SKIP_CONTINUITY_CHECK":
+            raise ChatOrchestrationError(
+                reason_code="INVALID_REQUEST",
+                user_message="Unsupported continuity action.",
+                status_code=422,
+            )
+
+        if not session.selected_specialty_id:
+            raise ChatOrchestrationError(
+                reason_code="INVALID_REQUEST",
+                user_message="Select a specialty before skipping continuity.",
+                status_code=422,
+            )
+
+        session.continuity_checked = True
+        session.continuity_is_returning = False
+        session.continuity_patient_ref = None
+        session.continuity_preferred_practitioner_ref = None
+        session.continuity_preferred_practitioner_display = None
+
+        _transition_session(session, AWAITING_SLOT_SELECTION)
+
+        emit_event(
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            actor_type="patient",
+            event_type="CONTINUITY_SKIPPED",
+            outcome="INFO",
+            reason_code=OK,
+            payload={
+                "component": "assistant-api",
+                "safeSummary": "Patient skipped continuity identity step.",
+            },
+        )
+
+        _save_session(db, session)
+
+        slot_result = await _load_slots_for_session(
+            db=db,
+            header_tenant_id=header_tenant_id,
+            header_session_id=header_session_id,
+            body_tenant_id=body_tenant_id,
+            session=session,
+        )
+
+        return _build_slot_response(
+            slot_result=slot_result,
+            session=session,
+            user_message=f"Showing all available {_humanize_specialty(session.selected_specialty_id)} slots.",
         )
 
     raise ChatOrchestrationError(
@@ -801,20 +1126,23 @@ async def process_confirm(
             ) from exc
 
         if booking_result["reasonCode"] != OK:
-            refreshed_slots = await list_available_slots(
+            refreshed_slots = await _load_slots_for_session(
                 db=db,
                 header_tenant_id=header_tenant_id,
-                session_id=header_session_id,
+                header_session_id=header_session_id,
                 body_tenant_id=body_tenant_id,
-                specialty=resolved_specialty_id,
+                session=session,
             )
+
+            message = booking_result["message"]
             return _response(
-                user_message=booking_result["message"],
+                user_message=message,
                 selection_lists=_slot_selection_list(items=refreshed_slots.get("items", [])) if refreshed_slots.get("items") else None,
+                is_chronic_continuity=session.continuity_is_returning,
                 errors=[
                     {
                         "reasonCode": booking_result["reasonCode"],
-                        "userMessage": booking_result["message"],
+                        "userMessage": message,
                     }
                 ],
             )

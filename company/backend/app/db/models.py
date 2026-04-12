@@ -94,6 +94,12 @@ class AssistantSession(Base):
     renewal_patient_key_hash = Column(String, nullable=True)
     renewal_patient_ref = Column(String, nullable=True)
 
+    continuity_checked = Column(Boolean, nullable=False, default=False)
+    continuity_patient_ref = Column(String, nullable=True)
+    continuity_preferred_practitioner_ref = Column(String, nullable=True)
+    continuity_preferred_practitioner_display = Column(String, nullable=True)
+    continuity_is_returning = Column(Boolean, nullable=False, default=False)
+
     created_at_utc = Column(DateTime(timezone=True), nullable=False, default=utcnow)
     updated_at_utc = Column(
         DateTime(timezone=True),

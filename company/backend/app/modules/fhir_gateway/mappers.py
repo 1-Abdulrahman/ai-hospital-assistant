@@ -386,6 +386,7 @@ def map_appointments_to_continuity_signals(
             totalAppointments=0,
             lastAppointmentStartUtc=None,
             lastPractitionerRef=None,
+            lastPractitionerDisplay=None,
         )
 
     sorted_items = sorted(
@@ -400,6 +401,7 @@ def map_appointments_to_continuity_signals(
         totalAppointments=len(appointments),
         lastAppointmentStartUtc=latest.startUtc,
         lastPractitionerRef=latest.practitionerRef,
+        lastPractitionerDisplay=latest.practitionerDisplay,
     )
 
 

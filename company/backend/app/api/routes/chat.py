@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import HospitalRequestContext, get_db, get_hospital_request_context
 from app.api.schemas.chat import (
     ChatConfirmRequest,
+    ChatContinuityIdentifyRequest,
     ChatDirectStartRequest,
     ChatMessageRequest,
     ChatRenewalRequest,
@@ -17,6 +18,7 @@ from app.modules.orchestration.service import (
     ChatOrchestrationError,
     process_chat_message,
     process_confirm,
+    process_continuity_identity,
     process_direct_start,
     process_renewal_request,
     process_selection,
@@ -155,6 +157,27 @@ async def chat_renewal_identify(
 ) -> ChatResponse:
     try:
         result = await process_renewal_identity(
+            db=db,
+            header_tenant_id=context.tenant_id,
+            header_session_id=context.session_id,
+            body_tenant_id=body.tenantId,
+            client_session_id=body.clientSessionId,
+            national_id=body.nationalId,
+        )
+    except ChatOrchestrationError as exc:
+        _raise_from_chat_error(exc)
+
+    return ChatResponse(**result)
+
+
+@router.post("/continuity/identify", response_model=ChatResponse)
+async def chat_continuity_identify(
+    body: ChatContinuityIdentifyRequest,
+    context: HospitalRequestContext = Depends(get_hospital_request_context),
+    db: Session = Depends(get_db),
+) -> ChatResponse:
+    try:
+        result = await process_continuity_identity(
             db=db,
             header_tenant_id=context.tenant_id,
             header_session_id=context.session_id,

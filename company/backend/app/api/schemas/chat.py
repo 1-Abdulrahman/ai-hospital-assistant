@@ -122,6 +122,7 @@ class ChatResponse(BaseModel):
     selectionLists: list[SelectionList] | None = None
     needsClarification: bool | None = None
     isChronicContinuity: bool | None = None
+    requiresContinuityIdentity: bool | None = None
     showConsentNotice: bool | None = None
     requiresDate: bool | None = None
     correlationId: str | None = None
@@ -132,6 +133,17 @@ class ChatResponse(BaseModel):
     
     
 class ChatRenewalIdentifyRequest(_BaseHospitalChatRequest):
+    nationalId: str = Field(min_length=1)
+
+    @field_validator("nationalId")
+    @classmethod
+    def strip_national_id(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("National ID cannot be empty.")
+        return cleaned
+    
+class ChatContinuityIdentifyRequest(_BaseHospitalChatRequest):
     nationalId: str = Field(min_length=1)
 
     @field_validator("nationalId")
