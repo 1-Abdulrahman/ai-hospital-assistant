@@ -7,10 +7,15 @@ import { useBookingFlow } from "@/hooks/use-booking-flow";
 import { requestOtp, verifyOtp, chatConfirm } from "@/lib/api-client";
 import { toast } from "sonner";
 
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
 export default function ChatWidgetOtp() {
   const [otp, setOtp] = useState("");
   const [otpRequested, setOtpRequested] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const {
     currentMode,
     renewalItemId,
@@ -25,11 +30,23 @@ export default function ChatWidgetOtp() {
 
   const nationalId = patientNationalId || "";
   const email = patientEmail || "";
-  const canRequestOtp = nationalId.trim().length > 0 && email.trim().length > 0;
+
+  const emailValid = isValidEmail(email);
+  const canRequestOtp = nationalId.trim().length > 0 && emailValid;
 
   const handleRequestOtp = async () => {
-    if (!canRequestOtp) {
-      toast.error("Enter national ID and email before requesting OTP.");
+    if (!nationalId.trim()) {
+      toast.error("Enter national ID before requesting OTP.");
+      return;
+    }
+
+    if (!email.trim()) {
+      toast.error("Enter email before requesting OTP.");
+      return;
+    }
+
+    if (!emailValid) {
+      toast.error("Please enter a valid email address before requesting OTP.");
       return;
     }
 
@@ -39,14 +56,33 @@ export default function ChatWidgetOtp() {
       setOtpRequested(true);
       toast.success(response.message || "OTP sent successfully.");
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message || "Failed to request OTP.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleVerify = async () => {
-    if (otp.length < 6) return;
+    if (!nationalId.trim()) {
+      toast.error("National ID is missing.");
+      return;
+    }
+
+    if (!email.trim()) {
+      toast.error("Email is missing.");
+      return;
+    }
+
+    if (!emailValid) {
+      toast.error("Please enter a valid email address before verifying OTP.");
+      return;
+    }
+
+    if (otp.length < 6) {
+      toast.error("Enter the 6-digit OTP.");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await verifyOtp({
@@ -54,8 +90,10 @@ export default function ChatWidgetOtp() {
         email: email.trim(),
         otp,
       });
+
       if (res.verified) {
         setOtpVerified(true);
+
         if (currentMode === "renewal") {
           const confirmRes = await chatConfirm({
             action: "CONFIRM_RENEWAL",
@@ -63,6 +101,7 @@ export default function ChatWidgetOtp() {
             nationalId: nationalId.trim(),
             email: email.trim(),
           });
+
           addMessage({
             role: "assistant",
             text: confirmRes.userMessage,
@@ -70,6 +109,7 @@ export default function ChatWidgetOtp() {
             confirmationSummary: confirmRes.confirmationSummary,
             bookingReferenceId: confirmRes.bookingReferenceId,
           });
+
           setStep("done");
         } else {
           setStep("confirm");
@@ -78,7 +118,7 @@ export default function ChatWidgetOtp() {
         toast.error(res.message || "Invalid OTP. Please try again.");
       }
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(err.message || "Failed to verify OTP.");
     } finally {
       setLoading(false);
     }
@@ -96,6 +136,7 @@ export default function ChatWidgetOtp() {
           className="h-8 text-xs"
           disabled={loading || otpRequested}
         />
+
         <Input
           value={email}
           onChange={(e) => setPatientEmail(e.target.value)}
@@ -104,6 +145,12 @@ export default function ChatWidgetOtp() {
           className="h-8 text-xs"
           disabled={loading || otpRequested}
         />
+
+        {!!email.trim() && !emailValid && (
+          <p className="text-[11px] text-destructive">
+            Please enter a valid email address.
+          </p>
+        )}
       </div>
 
       <div className="rounded-lg border border-border bg-accent/50 px-3 py-2 text-xs mb-4">
@@ -124,7 +171,12 @@ export default function ChatWidgetOtp() {
       </div>
 
       {!otpRequested ? (
-        <Button size="sm" onClick={handleRequestOtp} disabled={loading || !canRequestOtp} className="w-full h-8 text-xs">
+        <Button
+          size="sm"
+          onClick={handleRequestOtp}
+          disabled={loading || !canRequestOtp}
+          className="w-full h-8 text-xs"
+        >
           {loading && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
           Request OTP
         </Button>
@@ -142,15 +194,17 @@ export default function ChatWidgetOtp() {
               </InputOTPGroup>
             </InputOTP>
           </div>
+
           <Button
             size="sm"
             className="w-full h-8 text-xs"
             onClick={handleVerify}
-            disabled={loading || otp.length < 6}
+            disabled={loading || otp.length < 6 || !emailValid}
           >
             {loading && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
             Verify OTP
           </Button>
+
           <Button
             variant="ghost"
             size="sm"
