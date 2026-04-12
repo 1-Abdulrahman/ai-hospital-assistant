@@ -37,18 +37,26 @@ class ChatRenewalRequest(_BaseHospitalChatRequest):
 
 
 class ChatSelectionRequest(_BaseHospitalChatRequest):
-    selectionType: str = Field(min_length=1)
+    selectionType: str
     selectionId: str | None = None
     selectionValue: str | None = None
-    action: str = Field(min_length=1)
+    action: str
 
     @field_validator("selectionType", "action")
     @classmethod
-    def strip_choice_fields(cls, value: str) -> str:
+    def validate_non_empty_strings(cls, value: str) -> str:
         cleaned = value.strip()
         if not cleaned:
-            raise ValueError("Value cannot be empty.")
+            raise ValueError("Field cannot be empty.")
         return cleaned
+
+    @field_validator("selectionId", "selectionValue")
+    @classmethod
+    def normalize_optional_strings(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        cleaned = value.strip()
+        return cleaned or None
 
 
 class ChatConfirmRequest(_BaseHospitalChatRequest):

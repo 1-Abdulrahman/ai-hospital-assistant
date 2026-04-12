@@ -113,9 +113,11 @@ async def chat_selection(
             selection_type=body.selectionType,
             selection_id=body.selectionId,
             selection_value=body.selectionValue,
+            action=body.action,
         )
     except ChatOrchestrationError as exc:
         _raise_from_chat_error(exc)
+
     return ChatResponse(**result)
 
 

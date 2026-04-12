@@ -253,8 +253,7 @@ def _slot_selection_list(*, items: list[Any]) -> list[dict]:
     return [{"type": "slot", "items": slot_items}]
 
 
-def _renewal_selection_list() -> list[dict]:
-    return [{"type": "medication", "items": MEDICATION_ITEMS}]
+
 
 
 def _get_or_create_session(*, db: Session, tenant_id: str, client_session_id: str) -> tuple[AssistantSession, bool]:
@@ -486,8 +485,10 @@ async def process_renewal_request(
         tenant_id=body_tenant_id,
         client_session_id=client_session_id,
     )
+
     session.flow_mode = "renewal"
     session.renewal_item_id = None
+    session.renewal_item_label = None
     session.renewal_patient_key_hash = None
     session.renewal_patient_ref = None
 
@@ -625,102 +626,118 @@ async def process_selection(
     selection_type: str,
     selection_id: str | None,
     selection_value: str | None,
+    action: str,
 ) -> dict:
-    ensure_tenant_header_matches_body(header_tenant_id=header_tenant_id, body_tenant_id=body_tenant_id)
+    ensure_tenant_header_matches_body(
+        header_tenant_id=header_tenant_id,
+        body_tenant_id=body_tenant_id,
+    )
     ensure_tenant_exists(db=db, tenant_id=body_tenant_id)
-    _ensure_client_session_matches_header(header_session_id=header_session_id, client_session_id=client_session_id)
+    _ensure_client_session_matches_header(
+        header_session_id=header_session_id,
+        client_session_id=client_session_id,
+    )
 
-    session, _ = _get_or_create_session(db=db, tenant_id=body_tenant_id, client_session_id=client_session_id)
-    selected_value = (selection_id or selection_value or "").strip()
-    if not selected_value:
-        raise ChatOrchestrationError(
-            reason_code="INVALID_REQUEST",
-            user_message="A selection identifier is required.",
-            status_code=422,
-        )
+    session, _ = _get_or_create_session(
+        db=db,
+        tenant_id=body_tenant_id,
+        client_session_id=client_session_id,
+    )
 
-    kind = selection_type.strip().lower()
+    normalized_selection_type = selection_type.strip().lower()
+    normalized_action = action.strip().upper()
+    resolved_selection_id = (selection_id or "").strip()
+    resolved_selection_value = (selection_value or "").strip() or None
 
-    if kind == "specialty":
-        specialty_id = selected_value.lower()
-        if specialty_id not in SUPPORTED_SPECIALTIES:
+    if normalized_selection_type == "specialty":
+        if not resolved_selection_id:
             raise ChatOrchestrationError(
                 reason_code="INVALID_REQUEST",
-                user_message="Selected specialty is not supported.",
+                user_message="A specialty must be selected.",
                 status_code=422,
             )
 
-        session.selected_specialty_id = specialty_id
-        emit_event(
-            db=db,
-            tenant_id=body_tenant_id,
-            session_id=client_session_id,
-            actor_type="patient",
-            event_type="SPECIALTY_CONFIRMED",
-            outcome="SUCCESS",
-            reason_code=OK,
-            payload={
-                "component": "assistant-api",
-                "safeSummary": f"Selected specialty {specialty_id}.",
-            },
-        )
+        session.selected_specialty_id = resolved_selection_id.lower()
 
         slot_result = await list_available_slots(
             db=db,
             header_tenant_id=header_tenant_id,
             session_id=header_session_id,
             body_tenant_id=body_tenant_id,
-            specialty=specialty_id,
+            specialty=session.selected_specialty_id,
         )
+
+        if slot_result["reasonCode"] != OK:
+            return _response(
+                user_message=slot_result["message"],
+                errors=[
+                    {
+                        "reasonCode": slot_result["reasonCode"],
+                        "userMessage": slot_result["message"],
+                    }
+                ],
+            )
+
         _transition_session(session, AWAITING_SLOT_SELECTION)
         _save_session(db, session)
 
-        if not slot_result.get("items"):
-            reason_code = slot_result.get("reasonCode", "NO_SLOTS_AVAILABLE")
-            return _response(
-                user_message=f"No slots are currently available for {_humanize_specialty(specialty_id)}. Please choose another specialty.",
-                selection_lists=_specialty_selection_list(),
-                errors=[{"reasonCode": reason_code, "userMessage": "No available slots were found for the selected specialty."}],
-            )
-
         return _response(
-            user_message=f"Choose one of the available {_humanize_specialty(specialty_id)} slots.",
-            selection_lists=_slot_selection_list(items=slot_result["items"]),
+            user_message=f"Choose one of the available {_humanize_specialty(session.selected_specialty_id)} slots.",
+            selection_lists=_slot_selection_list(items=slot_result.get("items", [])),
         )
 
-    if kind == "slot":
-        session.selected_slot_id = selected_value
-        session.selected_slot_label = selected_value
+    if normalized_selection_type == "slot":
+        if not resolved_selection_id:
+            raise ChatOrchestrationError(
+                reason_code="INVALID_REQUEST",
+                user_message="A slot must be selected.",
+                status_code=422,
+            )
+
+        session.selected_slot_id = resolved_selection_id
         _transition_session(session, AWAITING_CONFIRMATION)
+        _save_session(db, session)
+
+        return _response(
+            user_message="Slot captured. Continue to identity verification to receive your OTP code.",
+        )
+
+    if normalized_selection_type == "medication":
+        if not resolved_selection_id:
+            raise ChatOrchestrationError(
+                reason_code="INVALID_REQUEST",
+                user_message="A medication must be selected.",
+                status_code=422,
+            )
+
+        session.renewal_item_id = resolved_selection_id
+        session.renewal_item_label = resolved_selection_value or resolved_selection_id
+
+        _transition_session(session, AWAITING_CONFIRMATION)
+
         emit_event(
             db=db,
             tenant_id=body_tenant_id,
             session_id=client_session_id,
             actor_type="patient",
-            event_type="SLOT_SELECTED",
+            event_type="RENEWAL_ITEM_SELECTED",
             outcome="SUCCESS",
             reason_code=OK,
             payload={
                 "component": "assistant-api",
-                "safeSummary": f"Selected slot {selected_value}.",
+                "safeSummary": f"Renewal item selected: {session.renewal_item_label}",
             },
         )
-        _save_session(db, session)
-        return _response(
-            user_message="Slot captured. Continue to identity verification to receive your OTP code.",
-        )
 
-    if kind == "medication":
-        session.renewal_item_id = selected_value
-        _transition_session(session, AWAITING_CONFIRMATION)
         _save_session(db, session)
+
         return _response(
             user_message="Medication captured. Continue to identity verification to receive your OTP code.",
         )
 
     raise ChatOrchestrationError(
         reason_code="INVALID_REQUEST",
-        user_message="This selection type is not supported.",
+        user_message="Unsupported selection type.",
         status_code=422,
     )
 
@@ -835,6 +852,10 @@ async def process_confirm(
 
     if normalized_action == "CONFIRM_RENEWAL":
         resolved_renewal_item_id = (renewal_item_id or session.renewal_item_id or "").strip()
+        resolved_renewal_item_label = (
+            (session.renewal_item_label or "").strip() or resolved_renewal_item_id
+        )
+
         if not resolved_renewal_item_id:
             raise ChatOrchestrationError(
                 reason_code="INVALID_REQUEST",
@@ -905,7 +926,7 @@ async def process_confirm(
 
         summary = ConfirmationSummary(
             correlationId=get_correlation_id(),
-            renewalItemLabel=resolved_renewal_item_id,
+            renewalItemLabel=resolved_renewal_item_label,
         )
 
         return _response(

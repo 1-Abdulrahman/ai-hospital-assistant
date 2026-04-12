@@ -82,22 +82,27 @@ class AssistantSession(Base):
     flow_mode = Column(String, nullable=True)
 
     selected_specialty_id = Column(String, nullable=True)
+    selected_doctor_id = Column(String, nullable=True)
     selected_slot_id = Column(String, nullable=True)
-    selected_slot_label = Column(String, nullable=True)
-    selected_slot_start_utc = Column(String, nullable=True)
+    selected_date = Column(String, nullable=True)
 
     renewal_item_id = Column(String, nullable=True)
+    renewal_item_label = Column(String, nullable=True)
     renewal_patient_key_hash = Column(String, nullable=True)
     renewal_patient_ref = Column(String, nullable=True)
 
-    last_input_summary = Column(String, nullable=True)
-    created_at_utc = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-    updated_at_utc = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+    created_at_utc = Column(DateTime(timezone=True), nullable=False, default=lambda: datetime.now(UTC))
+    updated_at_utc = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
+    )
 
     __table_args__ = (
         UniqueConstraint(
             "tenant_id",
             "client_session_id",
-            name="uq_assistant_session_tenant_client",
+            name="uq_assistant_sessions_tenant_client_session",
         ),
     )
