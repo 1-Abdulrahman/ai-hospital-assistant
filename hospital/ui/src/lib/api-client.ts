@@ -16,7 +16,6 @@ import type {
   HealthResponse,
   OtpRequestResponse,
   OtpVerifyResponse,
-  SelectionRequest,
   ConfirmRequest,
 } from "./types";
 
@@ -55,12 +54,20 @@ async function request<T>(
     const body = await res.json();
 
     if (!res.ok) {
-      const msg = body?.message || body?.userMessage || "Something went wrong. Please try again.";
-      if (body?.correlationId && !headerCorrelationId) setCorrelationId(body.correlationId);
+      const msg =
+        body?.message ||
+        body?.userMessage ||
+        "Something went wrong. Please try again.";
+      if (body?.correlationId && !headerCorrelationId) {
+        setCorrelationId(body.correlationId);
+      }
       throw new Error(msg);
     }
 
-    if (!headerCorrelationId && body?.correlationId) setCorrelationId(body.correlationId);
+    if (!headerCorrelationId && body?.correlationId) {
+      setCorrelationId(body.correlationId);
+    }
+
     return schema.parse(body) as T;
   } catch (err: any) {
     if (err.name === "AbortError") {
@@ -152,6 +159,20 @@ export async function chatSelection(input: {
   );
 }
 
+export async function chatContinuityIdentify(
+  nationalId: string,
+): Promise<ChatResponse> {
+  return request(
+    "/chat/continuity/identify",
+    {
+      method: "POST",
+      headers: buildHeaders(),
+      body: JSON.stringify(chatBody({ nationalId })),
+    },
+    chatResponseSchema,
+  );
+}
+
 export async function chatConfirm(
   data: Omit<ConfirmRequest, "tenantId" | "clientSessionId" | "correlationId">,
 ): Promise<ChatResponse> {
@@ -170,7 +191,10 @@ export async function chatConfirm(
   );
 }
 
-export async function requestOtp(nationalId: string, email: string): Promise<OtpRequestResponse> {
+export async function requestOtp(
+  nationalId: string,
+  email: string,
+): Promise<OtpRequestResponse> {
   return request(
     "/otp/request",
     {
@@ -186,7 +210,11 @@ export async function requestOtp(nationalId: string, email: string): Promise<Otp
   );
 }
 
-export async function verifyOtp(args: { nationalId: string; email: string; otp: string }): Promise<OtpVerifyResponse> {
+export async function verifyOtp(args: {
+  nationalId: string;
+  email: string;
+  otp: string;
+}): Promise<OtpVerifyResponse> {
   return request(
     "/otp/verify",
     {
@@ -208,20 +236,6 @@ export async function chatRenewalIdentify(
 ): Promise<ChatResponse> {
   return request(
     "/chat/renewal/identify",
-    {
-      method: "POST",
-      headers: buildHeaders(),
-      body: JSON.stringify(chatBody({ nationalId })),
-    },
-    chatResponseSchema,
-  );
-}
-
-export async function chatContinuityIdentify(
-  nationalId: string,
-): Promise<ChatResponse> {
-  return request(
-    "/chat/continuity/identify",
     {
       method: "POST",
       headers: buildHeaders(),

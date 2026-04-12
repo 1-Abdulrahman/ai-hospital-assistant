@@ -48,20 +48,15 @@ export const confirmationSummarySchema = z
 
 export const chatResponseSchema = z.object({
   userMessage: z.string(),
-
   quickReplies: z.array(quickReplySchema).optional().nullable(),
   selectionLists: z.array(selectionListSchema).optional().nullable(),
-
   needsClarification: z.boolean().optional().nullable(),
   isChronicContinuity: z.boolean().optional().nullable(),
-  requiresContinuityIdentity: z.boolean().optional().nullable(),
   showConsentNotice: z.boolean().optional().nullable(),
+  requiresContinuityIdentity: z.boolean().optional().nullable(),
   requiresDate: z.boolean().optional().nullable(),
-
   correlationId: z.string().optional().nullable(),
-
   errors: z.array(backendErrorSchema).optional().nullable(),
-
   bookingReferenceId: z.string().optional().nullable(),
   confirmationType: z.enum(["appointment", "renewal"]).optional().nullable(),
   confirmationSummary: confirmationSummarySchema,

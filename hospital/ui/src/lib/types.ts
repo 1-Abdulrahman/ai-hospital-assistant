@@ -44,8 +44,8 @@ export interface ChatResponse {
   selectionLists?: SelectionList[] | null;
   needsClarification?: boolean | null;
   isChronicContinuity?: boolean | null;
-  requiresContinuityIdentity?: boolean | null;
   showConsentNotice?: boolean | null;
+  requiresContinuityIdentity?: boolean | null;
   requiresDate?: boolean | null;
   correlationId?: string | null;
   errors?: BackendError[] | null;
@@ -79,8 +79,8 @@ export interface ChatMessage {
   selectionLists?: SelectionList[];
   needsClarification?: boolean;
   isChronicContinuity?: boolean;
-  requiresContinuityIdentity?: boolean;
   showConsentNotice?: boolean;
+  requiresContinuityIdentity?: boolean;
   bookingReferenceId?: string;
   confirmationType?: "appointment" | "renewal";
   confirmationSummary?: ConfirmationSummary;
@@ -93,6 +93,7 @@ export type FlowStep =
   | "done"
   | "renewal_identity"
   | "continuity_identity";
+
 export type FlowMode = "complaint" | "direct" | "renewal";
 
 export interface SelectionRequest {

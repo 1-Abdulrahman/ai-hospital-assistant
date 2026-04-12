@@ -174,7 +174,7 @@ export default function ChatWidgetContent() {
 
       addMessage(responseToMessage(res));
       handleResponseErrors(res);
-      
+
       if (res.requiresContinuityIdentity) {
         setStep("continuity_identity");
         return;
@@ -221,6 +221,8 @@ export default function ChatWidgetContent() {
   if (step === "continuity_identity") return <ChatWidgetContinuityIdentity />;
   if (step === "otp") return <ChatWidgetOtp />;
   if (step === "confirm") return <ChatWidgetConfirm />;
+
+  const firstConsentIndex = messages.findIndex((msg) => msg.showConsentNotice);
 
   return (
     <div className="flex flex-col h-full">
@@ -274,7 +276,7 @@ export default function ChatWidgetContent() {
           </div>
         )}
 
-        {messages.map((msg) => (
+        {messages.map((msg, idx) => (
           <div
             key={msg.id}
             className={cn(
@@ -295,7 +297,10 @@ export default function ChatWidgetContent() {
 
             {msg.role === "assistant" && (
               <>
-                {msg.showConsentNotice && <ConsentBanner />}
+                {msg.showConsentNotice && idx === firstConsentIndex && (
+                  <ConsentBanner />
+                )}
+
                 {msg.isChronicContinuity && <ContinuityBanner />}
 
                 {msg.confirmationSummary && (
@@ -306,9 +311,9 @@ export default function ChatWidgetContent() {
                   />
                 )}
 
-                {msg.selectionLists?.map((list, idx) => (
+                {msg.selectionLists?.map((list, listIdx) => (
                   <SelectionList
-                    key={`${list.type}-${idx}`}
+                    key={`${list.type}-${listIdx}`}
                     list={list}
                     onSelect={(item) => handleSelection(list.type, item)}
                     selectedId={

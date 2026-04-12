@@ -26,11 +26,7 @@ export default function ChatWidgetContinuityIdentity() {
   const [nationalId, setNationalId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const {
-    addMessage,
-    setStep,
-    setPatientNationalId,
-  } = useBookingFlow();
+  const { addMessage, setStep, setPatientNationalId } = useBookingFlow();
 
   const handleContinue = async () => {
     if (!nationalId.trim()) {
@@ -59,12 +55,13 @@ export default function ChatWidgetContinuityIdentity() {
       const res = await chatSelection({
         selectionType: "continuity",
         selectionId: "skip",
+        selectionValue: "skip",
         action: "SKIP_CONTINUITY_CHECK",
       });
       addMessage(responseToMessage(res));
       setStep("chat");
     } catch (err: any) {
-      toast.error(err.message || "Failed to skip continuity check.");
+      toast.error(err.message || "Failed to skip continuity of care.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +72,7 @@ export default function ChatWidgetContinuityIdentity() {
       <h3 className="font-semibold text-sm mb-3">Continuity of Care</h3>
 
       <p className="text-xs text-muted-foreground mb-3">
-        Enter your National ID / Iqama / Border ID so we can prioritize your previous physician for this specialty when available.
+        Enter your National ID / Iqama / Border ID to prioritize continuity of care when a matching previous physician exists.
       </p>
 
       <Input
@@ -93,7 +90,7 @@ export default function ChatWidgetContinuityIdentity() {
         disabled={loading || !nationalId.trim()}
       >
         {loading && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
-        Check Previous Physician
+        Check Continuity of Care
       </Button>
 
       <Button
