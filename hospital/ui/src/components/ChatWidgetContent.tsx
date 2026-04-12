@@ -166,6 +166,7 @@ export default function ChatWidgetContent() {
       const res = await chatSelection({
         selectionType: listType,
         selectionId: item.id,
+        selectionValue: item.label,
         action: actionMap[listType] || listType.toUpperCase(),
       });
 

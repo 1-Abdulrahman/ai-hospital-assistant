@@ -128,15 +128,25 @@ export async function chatRenewalRequest(): Promise<ChatResponse> {
   );
 }
 
-export async function chatSelection(
-  data: Omit<SelectionRequest, "tenantId" | "clientSessionId" | "correlationId">,
-): Promise<ChatResponse> {
+export async function chatSelection(input: {
+  selectionType: string;
+  selectionId?: string;
+  selectionValue?: string;
+  action: string;
+}): Promise<ChatResponse> {
   return request(
     "/chat/selection",
     {
       method: "POST",
       headers: buildHeaders(),
-      body: JSON.stringify(chatBody(data as Record<string, unknown>)),
+      body: JSON.stringify(
+        chatBody({
+          selectionType: input.selectionType,
+          selectionId: input.selectionId,
+          selectionValue: input.selectionValue,
+          action: input.action,
+        }),
+      ),
     },
     chatResponseSchema,
   );
