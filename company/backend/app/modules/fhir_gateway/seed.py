@@ -2,16 +2,19 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 from dataclasses import dataclass
 from datetime import UTC, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
-import re
 
 import httpx
 
 from app.core.config import settings
-from app.modules.fhir_gateway.client import SPECIALTY_SYSTEM
+from app.modules.fhir_gateway.client import (
+    SPECIALTY_SYSTEM,
+    build_patient_identifier_system,
+)
 from app.modules.fhir_gateway.mappers import TENANT_IDENTIFIER_SYSTEM
 from app.modules.otp.service import build_patient_key_hash
 
@@ -22,7 +25,8 @@ PROVIDERS_PATH = BASE_DIR / "modules" / "scheduling" / "providers_static.json"
 SEED_TENANT_ID = "demo"
 SEED_DAYS_AHEAD = 14
 SLOT_DURATION_MINUTES = 30
-PATIENT_KEY_IDENTIFIER_SYSTEM = "urn:tenant-patient-key"
+PATIENT_KEY_IDENTIFIER_SYSTEM = build_patient_identifier_system(SEED_TENANT_ID)
+LEGACY_PATIENT_KEY_IDENTIFIER_SYSTEM = "urn:tenant-patient-key"
 
 CLINIC_WINDOWS: tuple[tuple[time, time], ...] = (
     (time(hour=9, minute=0), time(hour=12, minute=0)),
@@ -58,6 +62,31 @@ DEMO_RENEWAL_PATIENTS = [
                 "dosageText": "50 mg daily",
             },
         ],
+    },
+]
+
+DEMO_CONTINUITY_PATIENTS = [
+    {
+        "national_id": "5000000010",
+        "identity_type": "border_id",
+        "display": "Demo Continuity Patient GP",
+        "specialty": "general_practice",
+        "practitioner_ref": "Practitioner/prac-gp-1",
+        "practitioner_display": "Dr. Mona Alqahtani",
+        "days_ago": 7,
+        "hour": 9,
+        "minute": 30,
+    },
+    {
+        "national_id": "5000000011",
+        "identity_type": "border_id",
+        "display": "Demo Continuity Patient Cardiology",
+        "specialty": "cardiology",
+        "practitioner_ref": "Practitioner/prac-card-1",
+        "practitioner_display": "Dr. Lina Alharbi",
+        "days_ago": 5,
+        "hour": 10,
+        "minute": 0,
     },
 ]
 
@@ -117,6 +146,20 @@ def _patient_id_for(patient_key_hash: str) -> str:
 def _medication_request_id_for(patient_ref: str, medication_code: str) -> str:
     patient_id = patient_ref.split("/", 1)[1]
     return _sanitize_fhir_id(f"medreq-{patient_id}-{medication_code}")
+
+
+def _appointment_id_for(
+    *,
+    patient_ref: str,
+    practitioner_ref: str,
+    specialty: str,
+    start_dt: datetime,
+) -> str:
+    patient_id = patient_ref.split("/", 1)[1]
+    practitioner_id = practitioner_ref.split("/", 1)[1]
+    return _sanitize_fhir_id(
+        f"appt-{patient_id}-{practitioner_id}-{specialty}-{start_dt.strftime('%Y%m%dT%H%M')}"
+    )
 
 
 def _build_headers() -> dict[str, str]:
@@ -326,6 +369,10 @@ def _build_demo_patient_resource(
                 "system": PATIENT_KEY_IDENTIFIER_SYSTEM,
                 "value": patient_key_hash,
             },
+            {
+                "system": LEGACY_PATIENT_KEY_IDENTIFIER_SYSTEM,
+                "value": patient_key_hash,
+            },
         ],
         "name": [
             {
@@ -334,6 +381,7 @@ def _build_demo_patient_resource(
         ],
         "active": True,
     }
+
 
 def _build_demo_medication_request_resource(
     *,
@@ -366,6 +414,74 @@ def _build_demo_medication_request_resource(
             {
                 "text": dosage_text,
             }
+        ],
+    }
+
+
+def _build_demo_appointment_resource(
+    *,
+    appointment_id: str,
+    patient_ref: str,
+    practitioner_ref: str,
+    specialty: str,
+    start_utc: str,
+    end_utc: str,
+    slot_ref: str,
+    description: str,
+) -> dict[str, Any]:
+    specialty_display = _normalize_display(specialty)
+
+    return {
+        "resourceType": "Appointment",
+        "id": appointment_id,
+        "status": "booked",
+        "description": description,
+        "start": start_utc,
+        "end": end_utc,
+        "identifier": [
+            {
+                "system": TENANT_IDENTIFIER_SYSTEM,
+                "value": SEED_TENANT_ID,
+            }
+        ],
+        "serviceType": [
+            {
+                "coding": [
+                    {
+                        "system": SPECIALTY_SYSTEM,
+                        "code": specialty,
+                        "display": specialty_display,
+                    }
+                ],
+                "text": specialty_display,
+            }
+        ],
+        "specialty": [
+            {
+                "coding": [
+                    {
+                        "system": SPECIALTY_SYSTEM,
+                        "code": specialty,
+                        "display": specialty_display,
+                    }
+                ],
+                "text": specialty_display,
+            }
+        ],
+        "slot": [
+            {
+                "reference": slot_ref,
+            }
+        ],
+        "participant": [
+            {
+                "actor": {"reference": patient_ref},
+                "status": "accepted",
+            },
+            {
+                "actor": {"reference": practitioner_ref},
+                "status": "accepted",
+            },
         ],
     }
 
@@ -419,6 +535,7 @@ async def _put_resource(
 
 async def run_async() -> None:
     provider_items = _load_provider_seed_items()
+    provider_by_ref = {item.practitioner_ref: item for item in provider_items}
 
     timeout = httpx.Timeout(
         connect=settings.fhir_timeout_connect,
@@ -582,6 +699,110 @@ async def run_async() -> None:
                         updated += 1 if slot_outcome == "updated" else 0
 
                         cursor = slot_end
+
+        # Seed continuity-of-care demo patients and historical booked appointments
+        for patient_def in DEMO_CONTINUITY_PATIENTS:
+            patient_key_hash = build_patient_key_hash(
+                tenant_id=SEED_TENANT_ID,
+                identity_type=patient_def["identity_type"],
+                normalized_identity_number=patient_def["national_id"],
+            )
+
+            patient_id = _patient_id_for(patient_key_hash)
+            patient_ref = f"Patient/{patient_id}"
+
+            patient_resource = _build_demo_patient_resource(
+                patient_id=patient_id,
+                patient_key_hash=patient_key_hash,
+                display=patient_def["display"],
+            )
+            patient_outcome = await _put_resource(
+                client,
+                "Patient",
+                patient_id,
+                patient_resource,
+            )
+            print(
+                f"[{patient_outcome.upper()}] {patient_ref} | "
+                f"{patient_def['display']} | continuity demo patient"
+            )
+            created += 1 if patient_outcome == "created" else 0
+            updated += 1 if patient_outcome == "updated" else 0
+
+            practitioner_ref = patient_def["practitioner_ref"]
+            provider_item = provider_by_ref.get(practitioner_ref)
+            if provider_item is None:
+                print(
+                    f"[SKIPPED] {patient_ref} | "
+                    f"{patient_def['display']} | missing provider {practitioner_ref} for continuity demo"
+                )
+                continue
+
+            schedule_id = _schedule_id_for(provider_item)
+
+            start_dt = datetime.combine(
+                datetime.now(UTC).date() - timedelta(days=patient_def["days_ago"]),
+                time(hour=patient_def["hour"], minute=patient_def["minute"]),
+                tzinfo=UTC,
+            )
+            end_dt = start_dt + timedelta(minutes=SLOT_DURATION_MINUTES)
+
+            continuity_slot_id = _slot_id_for(schedule_id, start_dt)
+            continuity_slot_ref = f"Slot/{continuity_slot_id}"
+
+            continuity_slot_resource = _build_slot_resource(
+                item=provider_item,
+                schedule_id=schedule_id,
+                slot_id=continuity_slot_id,
+                start_utc=_to_utc_z(start_dt),
+                end_utc=_to_utc_z(end_dt),
+                status="busy",
+                comment="Historical booked slot seeded for continuity-of-care demo.",
+            )
+
+            continuity_slot_outcome = await _put_resource(
+                client,
+                "Slot",
+                continuity_slot_id,
+                continuity_slot_resource,
+            )
+            print(
+                f"[{continuity_slot_outcome.upper()}] {continuity_slot_ref} | "
+                f"{patient_def['display']} | {patient_def['specialty']} historical slot"
+            )
+            created += 1 if continuity_slot_outcome == "created" else 0
+            updated += 1 if continuity_slot_outcome == "updated" else 0
+
+            appointment_id = _appointment_id_for(
+                patient_ref=patient_ref,
+                practitioner_ref=practitioner_ref,
+                specialty=patient_def["specialty"],
+                start_dt=start_dt,
+            )
+            appointment_resource = _build_demo_appointment_resource(
+                appointment_id=appointment_id,
+                patient_ref=patient_ref,
+                practitioner_ref=practitioner_ref,
+                specialty=patient_def["specialty"],
+                start_utc=_to_utc_z(start_dt),
+                end_utc=_to_utc_z(end_dt),
+                slot_ref=continuity_slot_ref,
+                description=f"Historical {patient_def['specialty']} follow-up seeded for continuity demo",
+            )
+
+            appointment_outcome = await _put_resource(
+                client,
+                "Appointment",
+                appointment_id,
+                appointment_resource,
+            )
+            print(
+                f"[{appointment_outcome.upper()}] Appointment/{appointment_id} | "
+                f"{patient_def['display']} | {patient_def['practitioner_display']} | "
+                f"{patient_def['specialty']}"
+            )
+            created += 1 if appointment_outcome == "created" else 0
+            updated += 1 if appointment_outcome == "updated" else 0
 
     print("")
     print("FHIR scheduling seed complete.")

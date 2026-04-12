@@ -128,6 +128,7 @@ async def test_seed_preserves_existing_slot_status_when_rerun(monkeypatch) -> No
         "CLINIC_WINDOWS",
         ((time(hour=9, minute=0), time(hour=9, minute=30)),),
     )
+    monkeypatch.setattr(seed, "DEMO_CONTINUITY_PATIENTS", [])
 
     async def fake_check_fhir_ready(client):
         return None
@@ -172,3 +173,24 @@ async def test_seed_preserves_existing_slot_status_when_rerun(monkeypatch) -> No
     assert len(captured_slot_resources) == 1
     assert captured_slot_resources[0]["status"] == "busy"
     assert captured_slot_resources[0]["comment"] == "Already booked"
+    
+    
+def test_build_demo_appointment_resource_contains_patient_practitioner_slot_and_specialty() -> None:
+    resource = seed._build_demo_appointment_resource(
+        appointment_id="appt-demo-1",
+        patient_ref="Patient/patient-1",
+        practitioner_ref="Practitioner/prac-gp-1",
+        specialty="general_practice",
+        start_utc="2026-04-05T09:30:00Z",
+        end_utc="2026-04-05T10:00:00Z",
+        slot_ref="Slot/slot-sched-general-practice-prac-gp-1-20260405T0930",
+        description="Historical general practice follow-up seeded for continuity demo",
+    )
+
+    assert resource["resourceType"] == "Appointment"
+    assert resource["id"] == "appt-demo-1"
+    assert resource["status"] == "booked"
+    assert resource["participant"][0]["actor"]["reference"] == "Patient/patient-1"
+    assert resource["participant"][1]["actor"]["reference"] == "Practitioner/prac-gp-1"
+    assert resource["slot"][0]["reference"] == "Slot/slot-sched-general-practice-prac-gp-1-20260405T0930"
+    assert resource["specialty"][0]["coding"][0]["code"] == "general_practice"
