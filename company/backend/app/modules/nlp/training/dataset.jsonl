@@ -1,0 +1,900 @@
+{"text": "I have chest pain when walking with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest pain when walking and I get breathless.", "label": "cardiology"}
+{"text": "I have chest pain when walking with sweating.", "label": "cardiology"}
+{"text": "I have chest pain when walking and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest pain when walking and I feel weak.", "label": "cardiology"}
+{"text": "I have chest pain when climbing stairs with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest pain when climbing stairs and I get breathless.", "label": "cardiology"}
+{"text": "I have chest pain when climbing stairs with sweating.", "label": "cardiology"}
+{"text": "I have chest pain when climbing stairs and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest pain when climbing stairs and I feel weak.", "label": "cardiology"}
+{"text": "I have chest pain when exercising with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest pain when exercising and I get breathless.", "label": "cardiology"}
+{"text": "I have chest pain when exercising with sweating.", "label": "cardiology"}
+{"text": "I have chest pain when exercising and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest pain when exercising and I feel weak.", "label": "cardiology"}
+{"text": "I have chest pain after light effort with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest pain after light effort and I get breathless.", "label": "cardiology"}
+{"text": "I have chest pain after light effort with sweating.", "label": "cardiology"}
+{"text": "I have chest pain after light effort and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest pain after light effort and I feel weak.", "label": "cardiology"}
+{"text": "I have chest pain when I move fast with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest pain when I move fast and I get breathless.", "label": "cardiology"}
+{"text": "I have chest pain when I move fast with sweating.", "label": "cardiology"}
+{"text": "I have chest pain when I move fast and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest pain when I move fast and I feel weak.", "label": "cardiology"}
+{"text": "I have tightness in my chest when walking with shortness of breath.", "label": "cardiology"}
+{"text": "I have tightness in my chest when walking and I get breathless.", "label": "cardiology"}
+{"text": "I have tightness in my chest when walking with sweating.", "label": "cardiology"}
+{"text": "I have tightness in my chest when walking and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have tightness in my chest when walking and I feel weak.", "label": "cardiology"}
+{"text": "I have tightness in my chest when climbing stairs with shortness of breath.", "label": "cardiology"}
+{"text": "I have tightness in my chest when climbing stairs and I get breathless.", "label": "cardiology"}
+{"text": "I have tightness in my chest when climbing stairs with sweating.", "label": "cardiology"}
+{"text": "I have tightness in my chest when climbing stairs and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have tightness in my chest when climbing stairs and I feel weak.", "label": "cardiology"}
+{"text": "I have tightness in my chest when exercising with shortness of breath.", "label": "cardiology"}
+{"text": "I have tightness in my chest when exercising and I get breathless.", "label": "cardiology"}
+{"text": "I have tightness in my chest when exercising with sweating.", "label": "cardiology"}
+{"text": "I have tightness in my chest when exercising and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have tightness in my chest when exercising and I feel weak.", "label": "cardiology"}
+{"text": "I have tightness in my chest after light effort with shortness of breath.", "label": "cardiology"}
+{"text": "I have tightness in my chest after light effort and I get breathless.", "label": "cardiology"}
+{"text": "I have tightness in my chest after light effort with sweating.", "label": "cardiology"}
+{"text": "I have tightness in my chest after light effort and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have tightness in my chest after light effort and I feel weak.", "label": "cardiology"}
+{"text": "I have tightness in my chest when I move fast with shortness of breath.", "label": "cardiology"}
+{"text": "I have tightness in my chest when I move fast and I get breathless.", "label": "cardiology"}
+{"text": "I have tightness in my chest when I move fast with sweating.", "label": "cardiology"}
+{"text": "I have tightness in my chest when I move fast and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have tightness in my chest when I move fast and I feel weak.", "label": "cardiology"}
+{"text": "I have pressure in my chest when walking with shortness of breath.", "label": "cardiology"}
+{"text": "I have pressure in my chest when walking and I get breathless.", "label": "cardiology"}
+{"text": "I have pressure in my chest when walking with sweating.", "label": "cardiology"}
+{"text": "I have pressure in my chest when walking and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have pressure in my chest when walking and I feel weak.", "label": "cardiology"}
+{"text": "I have pressure in my chest when climbing stairs with shortness of breath.", "label": "cardiology"}
+{"text": "I have pressure in my chest when climbing stairs and I get breathless.", "label": "cardiology"}
+{"text": "I have pressure in my chest when climbing stairs with sweating.", "label": "cardiology"}
+{"text": "I have pressure in my chest when climbing stairs and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have pressure in my chest when climbing stairs and I feel weak.", "label": "cardiology"}
+{"text": "I have pressure in my chest when exercising with shortness of breath.", "label": "cardiology"}
+{"text": "I have pressure in my chest when exercising and I get breathless.", "label": "cardiology"}
+{"text": "I have pressure in my chest when exercising with sweating.", "label": "cardiology"}
+{"text": "I have pressure in my chest when exercising and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have pressure in my chest when exercising and I feel weak.", "label": "cardiology"}
+{"text": "I have pressure in my chest after light effort with shortness of breath.", "label": "cardiology"}
+{"text": "I have pressure in my chest after light effort and I get breathless.", "label": "cardiology"}
+{"text": "I have pressure in my chest after light effort with sweating.", "label": "cardiology"}
+{"text": "I have pressure in my chest after light effort and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have pressure in my chest after light effort and I feel weak.", "label": "cardiology"}
+{"text": "I have pressure in my chest when I move fast with shortness of breath.", "label": "cardiology"}
+{"text": "I have pressure in my chest when I move fast and I get breathless.", "label": "cardiology"}
+{"text": "I have pressure in my chest when I move fast with sweating.", "label": "cardiology"}
+{"text": "I have pressure in my chest when I move fast and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have pressure in my chest when I move fast and I feel weak.", "label": "cardiology"}
+{"text": "I have chest discomfort when walking with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest discomfort when walking and I get breathless.", "label": "cardiology"}
+{"text": "I have chest discomfort when walking with sweating.", "label": "cardiology"}
+{"text": "I have chest discomfort when walking and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest discomfort when walking and I feel weak.", "label": "cardiology"}
+{"text": "I have chest discomfort when climbing stairs with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest discomfort when climbing stairs and I get breathless.", "label": "cardiology"}
+{"text": "I have chest discomfort when climbing stairs with sweating.", "label": "cardiology"}
+{"text": "I have chest discomfort when climbing stairs and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest discomfort when climbing stairs and I feel weak.", "label": "cardiology"}
+{"text": "I have chest discomfort when exercising with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest discomfort when exercising and I get breathless.", "label": "cardiology"}
+{"text": "I have chest discomfort when exercising with sweating.", "label": "cardiology"}
+{"text": "I have chest discomfort when exercising and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest discomfort when exercising and I feel weak.", "label": "cardiology"}
+{"text": "I have chest discomfort after light effort with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest discomfort after light effort and I get breathless.", "label": "cardiology"}
+{"text": "I have chest discomfort after light effort with sweating.", "label": "cardiology"}
+{"text": "I have chest discomfort after light effort and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest discomfort after light effort and I feel weak.", "label": "cardiology"}
+{"text": "I have chest discomfort when I move fast with shortness of breath.", "label": "cardiology"}
+{"text": "I have chest discomfort when I move fast and I get breathless.", "label": "cardiology"}
+{"text": "I have chest discomfort when I move fast with sweating.", "label": "cardiology"}
+{"text": "I have chest discomfort when I move fast and it spreads to my left arm.", "label": "cardiology"}
+{"text": "I have chest discomfort when I move fast and I feel weak.", "label": "cardiology"}
+{"text": "I have an itchy rash on my arms that keeps spreading.", "label": "dermatology"}
+{"text": "I have an itchy rash on my arms with a lot of itching.", "label": "dermatology"}
+{"text": "I have an itchy rash on my arms that gets worse at night.", "label": "dermatology"}
+{"text": "I have an itchy rash on my arms after using a new soap.", "label": "dermatology"}
+{"text": "I have an itchy rash on my arms with redness and dryness.", "label": "dermatology"}
+{"text": "I have an itchy rash on my hands that keeps spreading.", "label": "dermatology"}
+{"text": "I have an itchy rash on my hands with a lot of itching.", "label": "dermatology"}
+{"text": "I have an itchy rash on my hands that gets worse at night.", "label": "dermatology"}
+{"text": "I have an itchy rash on my hands after using a new soap.", "label": "dermatology"}
+{"text": "I have an itchy rash on my hands with redness and dryness.", "label": "dermatology"}
+{"text": "I have an itchy rash on my neck that keeps spreading.", "label": "dermatology"}
+{"text": "I have an itchy rash on my neck with a lot of itching.", "label": "dermatology"}
+{"text": "I have an itchy rash on my neck that gets worse at night.", "label": "dermatology"}
+{"text": "I have an itchy rash on my neck after using a new soap.", "label": "dermatology"}
+{"text": "I have an itchy rash on my neck with redness and dryness.", "label": "dermatology"}
+{"text": "I have an itchy rash on my legs that keeps spreading.", "label": "dermatology"}
+{"text": "I have an itchy rash on my legs with a lot of itching.", "label": "dermatology"}
+{"text": "I have an itchy rash on my legs that gets worse at night.", "label": "dermatology"}
+{"text": "I have an itchy rash on my legs after using a new soap.", "label": "dermatology"}
+{"text": "I have an itchy rash on my legs with redness and dryness.", "label": "dermatology"}
+{"text": "I have an itchy rash on my chest that keeps spreading.", "label": "dermatology"}
+{"text": "I have an itchy rash on my chest with a lot of itching.", "label": "dermatology"}
+{"text": "I have an itchy rash on my chest that gets worse at night.", "label": "dermatology"}
+{"text": "I have an itchy rash on my chest after using a new soap.", "label": "dermatology"}
+{"text": "I have an itchy rash on my chest with redness and dryness.", "label": "dermatology"}
+{"text": "I have an red rash on my arms that keeps spreading.", "label": "dermatology"}
+{"text": "I have an red rash on my arms with a lot of itching.", "label": "dermatology"}
+{"text": "I have an red rash on my arms that gets worse at night.", "label": "dermatology"}
+{"text": "I have an red rash on my arms after using a new soap.", "label": "dermatology"}
+{"text": "I have an red rash on my arms with redness and dryness.", "label": "dermatology"}
+{"text": "I have an red rash on my hands that keeps spreading.", "label": "dermatology"}
+{"text": "I have an red rash on my hands with a lot of itching.", "label": "dermatology"}
+{"text": "I have an red rash on my hands that gets worse at night.", "label": "dermatology"}
+{"text": "I have an red rash on my hands after using a new soap.", "label": "dermatology"}
+{"text": "I have an red rash on my hands with redness and dryness.", "label": "dermatology"}
+{"text": "I have an red rash on my neck that keeps spreading.", "label": "dermatology"}
+{"text": "I have an red rash on my neck with a lot of itching.", "label": "dermatology"}
+{"text": "I have an red rash on my neck that gets worse at night.", "label": "dermatology"}
+{"text": "I have an red rash on my neck after using a new soap.", "label": "dermatology"}
+{"text": "I have an red rash on my neck with redness and dryness.", "label": "dermatology"}
+{"text": "I have an red rash on my legs that keeps spreading.", "label": "dermatology"}
+{"text": "I have an red rash on my legs with a lot of itching.", "label": "dermatology"}
+{"text": "I have an red rash on my legs that gets worse at night.", "label": "dermatology"}
+{"text": "I have an red rash on my legs after using a new soap.", "label": "dermatology"}
+{"text": "I have an red rash on my legs with redness and dryness.", "label": "dermatology"}
+{"text": "I have an red rash on my chest that keeps spreading.", "label": "dermatology"}
+{"text": "I have an red rash on my chest with a lot of itching.", "label": "dermatology"}
+{"text": "I have an red rash on my chest that gets worse at night.", "label": "dermatology"}
+{"text": "I have an red rash on my chest after using a new soap.", "label": "dermatology"}
+{"text": "I have an red rash on my chest with redness and dryness.", "label": "dermatology"}
+{"text": "I have an skin rash on my arms that keeps spreading.", "label": "dermatology"}
+{"text": "I have an skin rash on my arms with a lot of itching.", "label": "dermatology"}
+{"text": "I have an skin rash on my arms that gets worse at night.", "label": "dermatology"}
+{"text": "I have an skin rash on my arms after using a new soap.", "label": "dermatology"}
+{"text": "I have an skin rash on my arms with redness and dryness.", "label": "dermatology"}
+{"text": "I have an skin rash on my hands that keeps spreading.", "label": "dermatology"}
+{"text": "I have an skin rash on my hands with a lot of itching.", "label": "dermatology"}
+{"text": "I have an skin rash on my hands that gets worse at night.", "label": "dermatology"}
+{"text": "I have an skin rash on my hands after using a new soap.", "label": "dermatology"}
+{"text": "I have an skin rash on my hands with redness and dryness.", "label": "dermatology"}
+{"text": "I have an skin rash on my neck that keeps spreading.", "label": "dermatology"}
+{"text": "I have an skin rash on my neck with a lot of itching.", "label": "dermatology"}
+{"text": "I have an skin rash on my neck that gets worse at night.", "label": "dermatology"}
+{"text": "I have an skin rash on my neck after using a new soap.", "label": "dermatology"}
+{"text": "I have an skin rash on my neck with redness and dryness.", "label": "dermatology"}
+{"text": "I have an skin rash on my legs that keeps spreading.", "label": "dermatology"}
+{"text": "I have an skin rash on my legs with a lot of itching.", "label": "dermatology"}
+{"text": "I have an skin rash on my legs that gets worse at night.", "label": "dermatology"}
+{"text": "I have an skin rash on my legs after using a new soap.", "label": "dermatology"}
+{"text": "I have an skin rash on my legs with redness and dryness.", "label": "dermatology"}
+{"text": "I have an skin rash on my chest that keeps spreading.", "label": "dermatology"}
+{"text": "I have an skin rash on my chest with a lot of itching.", "label": "dermatology"}
+{"text": "I have an skin rash on my chest that gets worse at night.", "label": "dermatology"}
+{"text": "I have an skin rash on my chest after using a new soap.", "label": "dermatology"}
+{"text": "I have an skin rash on my chest with redness and dryness.", "label": "dermatology"}
+{"text": "I have an dry rash on my arms that keeps spreading.", "label": "dermatology"}
+{"text": "I have an dry rash on my arms with a lot of itching.", "label": "dermatology"}
+{"text": "I have an dry rash on my arms that gets worse at night.", "label": "dermatology"}
+{"text": "I have an dry rash on my arms after using a new soap.", "label": "dermatology"}
+{"text": "I have an dry rash on my arms with redness and dryness.", "label": "dermatology"}
+{"text": "I have an dry rash on my hands that keeps spreading.", "label": "dermatology"}
+{"text": "I have an dry rash on my hands with a lot of itching.", "label": "dermatology"}
+{"text": "I have an dry rash on my hands that gets worse at night.", "label": "dermatology"}
+{"text": "I have an dry rash on my hands after using a new soap.", "label": "dermatology"}
+{"text": "I have an dry rash on my hands with redness and dryness.", "label": "dermatology"}
+{"text": "I have an dry rash on my neck that keeps spreading.", "label": "dermatology"}
+{"text": "I have an dry rash on my neck with a lot of itching.", "label": "dermatology"}
+{"text": "I have an dry rash on my neck that gets worse at night.", "label": "dermatology"}
+{"text": "I have an dry rash on my neck after using a new soap.", "label": "dermatology"}
+{"text": "I have an dry rash on my neck with redness and dryness.", "label": "dermatology"}
+{"text": "I have an dry rash on my legs that keeps spreading.", "label": "dermatology"}
+{"text": "I have an dry rash on my legs with a lot of itching.", "label": "dermatology"}
+{"text": "I have an dry rash on my legs that gets worse at night.", "label": "dermatology"}
+{"text": "I have an dry rash on my legs after using a new soap.", "label": "dermatology"}
+{"text": "I have an dry rash on my legs with redness and dryness.", "label": "dermatology"}
+{"text": "I have an dry rash on my chest that keeps spreading.", "label": "dermatology"}
+{"text": "I have an dry rash on my chest with a lot of itching.", "label": "dermatology"}
+{"text": "I have an dry rash on my chest that gets worse at night.", "label": "dermatology"}
+{"text": "I have an dry rash on my chest after using a new soap.", "label": "dermatology"}
+{"text": "I have an dry rash on my chest with redness and dryness.", "label": "dermatology"}
+{"text": "I have knee pain after a fall with swelling.", "label": "orthopedics"}
+{"text": "I have knee pain after a fall and I cannot move well.", "label": "orthopedics"}
+{"text": "I have knee pain after a fall with stiffness.", "label": "orthopedics"}
+{"text": "I have knee pain after a fall and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have knee pain after a fall with difficulty standing.", "label": "orthopedics"}
+{"text": "I have knee pain after lifting something heavy with swelling.", "label": "orthopedics"}
+{"text": "I have knee pain after lifting something heavy and I cannot move well.", "label": "orthopedics"}
+{"text": "I have knee pain after lifting something heavy with stiffness.", "label": "orthopedics"}
+{"text": "I have knee pain after lifting something heavy and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have knee pain after lifting something heavy with difficulty standing.", "label": "orthopedics"}
+{"text": "I have knee pain when I walk with swelling.", "label": "orthopedics"}
+{"text": "I have knee pain when I walk and I cannot move well.", "label": "orthopedics"}
+{"text": "I have knee pain when I walk with stiffness.", "label": "orthopedics"}
+{"text": "I have knee pain when I walk and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have knee pain when I walk with difficulty standing.", "label": "orthopedics"}
+{"text": "I have knee pain when I bend with swelling.", "label": "orthopedics"}
+{"text": "I have knee pain when I bend and I cannot move well.", "label": "orthopedics"}
+{"text": "I have knee pain when I bend with stiffness.", "label": "orthopedics"}
+{"text": "I have knee pain when I bend and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have knee pain when I bend with difficulty standing.", "label": "orthopedics"}
+{"text": "I have knee pain after exercise with swelling.", "label": "orthopedics"}
+{"text": "I have knee pain after exercise and I cannot move well.", "label": "orthopedics"}
+{"text": "I have knee pain after exercise with stiffness.", "label": "orthopedics"}
+{"text": "I have knee pain after exercise and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have knee pain after exercise with difficulty standing.", "label": "orthopedics"}
+{"text": "I have back pain after a fall with swelling.", "label": "orthopedics"}
+{"text": "I have back pain after a fall and I cannot move well.", "label": "orthopedics"}
+{"text": "I have back pain after a fall with stiffness.", "label": "orthopedics"}
+{"text": "I have back pain after a fall and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have back pain after a fall with difficulty standing.", "label": "orthopedics"}
+{"text": "I have back pain after lifting something heavy with swelling.", "label": "orthopedics"}
+{"text": "I have back pain after lifting something heavy and I cannot move well.", "label": "orthopedics"}
+{"text": "I have back pain after lifting something heavy with stiffness.", "label": "orthopedics"}
+{"text": "I have back pain after lifting something heavy and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have back pain after lifting something heavy with difficulty standing.", "label": "orthopedics"}
+{"text": "I have back pain when I walk with swelling.", "label": "orthopedics"}
+{"text": "I have back pain when I walk and I cannot move well.", "label": "orthopedics"}
+{"text": "I have back pain when I walk with stiffness.", "label": "orthopedics"}
+{"text": "I have back pain when I walk and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have back pain when I walk with difficulty standing.", "label": "orthopedics"}
+{"text": "I have back pain when I bend with swelling.", "label": "orthopedics"}
+{"text": "I have back pain when I bend and I cannot move well.", "label": "orthopedics"}
+{"text": "I have back pain when I bend with stiffness.", "label": "orthopedics"}
+{"text": "I have back pain when I bend and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have back pain when I bend with difficulty standing.", "label": "orthopedics"}
+{"text": "I have back pain after exercise with swelling.", "label": "orthopedics"}
+{"text": "I have back pain after exercise and I cannot move well.", "label": "orthopedics"}
+{"text": "I have back pain after exercise with stiffness.", "label": "orthopedics"}
+{"text": "I have back pain after exercise and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have back pain after exercise with difficulty standing.", "label": "orthopedics"}
+{"text": "I have lower back pain after a fall with swelling.", "label": "orthopedics"}
+{"text": "I have lower back pain after a fall and I cannot move well.", "label": "orthopedics"}
+{"text": "I have lower back pain after a fall with stiffness.", "label": "orthopedics"}
+{"text": "I have lower back pain after a fall and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have lower back pain after a fall with difficulty standing.", "label": "orthopedics"}
+{"text": "I have lower back pain after lifting something heavy with swelling.", "label": "orthopedics"}
+{"text": "I have lower back pain after lifting something heavy and I cannot move well.", "label": "orthopedics"}
+{"text": "I have lower back pain after lifting something heavy with stiffness.", "label": "orthopedics"}
+{"text": "I have lower back pain after lifting something heavy and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have lower back pain after lifting something heavy with difficulty standing.", "label": "orthopedics"}
+{"text": "I have lower back pain when I walk with swelling.", "label": "orthopedics"}
+{"text": "I have lower back pain when I walk and I cannot move well.", "label": "orthopedics"}
+{"text": "I have lower back pain when I walk with stiffness.", "label": "orthopedics"}
+{"text": "I have lower back pain when I walk and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have lower back pain when I walk with difficulty standing.", "label": "orthopedics"}
+{"text": "I have lower back pain when I bend with swelling.", "label": "orthopedics"}
+{"text": "I have lower back pain when I bend and I cannot move well.", "label": "orthopedics"}
+{"text": "I have lower back pain when I bend with stiffness.", "label": "orthopedics"}
+{"text": "I have lower back pain when I bend and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have lower back pain when I bend with difficulty standing.", "label": "orthopedics"}
+{"text": "I have lower back pain after exercise with swelling.", "label": "orthopedics"}
+{"text": "I have lower back pain after exercise and I cannot move well.", "label": "orthopedics"}
+{"text": "I have lower back pain after exercise with stiffness.", "label": "orthopedics"}
+{"text": "I have lower back pain after exercise and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have lower back pain after exercise with difficulty standing.", "label": "orthopedics"}
+{"text": "I have shoulder pain after a fall with swelling.", "label": "orthopedics"}
+{"text": "I have shoulder pain after a fall and I cannot move well.", "label": "orthopedics"}
+{"text": "I have shoulder pain after a fall with stiffness.", "label": "orthopedics"}
+{"text": "I have shoulder pain after a fall and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have shoulder pain after a fall with difficulty standing.", "label": "orthopedics"}
+{"text": "I have shoulder pain after lifting something heavy with swelling.", "label": "orthopedics"}
+{"text": "I have shoulder pain after lifting something heavy and I cannot move well.", "label": "orthopedics"}
+{"text": "I have shoulder pain after lifting something heavy with stiffness.", "label": "orthopedics"}
+{"text": "I have shoulder pain after lifting something heavy and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have shoulder pain after lifting something heavy with difficulty standing.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I walk with swelling.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I walk and I cannot move well.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I walk with stiffness.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I walk and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I walk with difficulty standing.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I bend with swelling.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I bend and I cannot move well.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I bend with stiffness.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I bend and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have shoulder pain when I bend with difficulty standing.", "label": "orthopedics"}
+{"text": "I have shoulder pain after exercise with swelling.", "label": "orthopedics"}
+{"text": "I have shoulder pain after exercise and I cannot move well.", "label": "orthopedics"}
+{"text": "I have shoulder pain after exercise with stiffness.", "label": "orthopedics"}
+{"text": "I have shoulder pain after exercise and it hurts more at night.", "label": "orthopedics"}
+{"text": "I have shoulder pain after exercise with difficulty standing.", "label": "orthopedics"}
+{"text": "I have sore throat since yesterday and headache.", "label": "ent"}
+{"text": "I have sore throat since yesterday and mild cough.", "label": "ent"}
+{"text": "I have sore throat since yesterday and swollen glands.", "label": "ent"}
+{"text": "I have sore throat since yesterday and trouble sleeping.", "label": "ent"}
+{"text": "I have sore throat since yesterday and bad breath.", "label": "ent"}
+{"text": "I have sore throat for three days and headache.", "label": "ent"}
+{"text": "I have sore throat for three days and mild cough.", "label": "ent"}
+{"text": "I have sore throat for three days and swollen glands.", "label": "ent"}
+{"text": "I have sore throat for three days and trouble sleeping.", "label": "ent"}
+{"text": "I have sore throat for three days and bad breath.", "label": "ent"}
+{"text": "I have sore throat that is getting worse and headache.", "label": "ent"}
+{"text": "I have sore throat that is getting worse and mild cough.", "label": "ent"}
+{"text": "I have sore throat that is getting worse and swollen glands.", "label": "ent"}
+{"text": "I have sore throat that is getting worse and trouble sleeping.", "label": "ent"}
+{"text": "I have sore throat that is getting worse and bad breath.", "label": "ent"}
+{"text": "I have sore throat with fever and headache.", "label": "ent"}
+{"text": "I have sore throat with fever and mild cough.", "label": "ent"}
+{"text": "I have sore throat with fever and swollen glands.", "label": "ent"}
+{"text": "I have sore throat with fever and trouble sleeping.", "label": "ent"}
+{"text": "I have sore throat with fever and bad breath.", "label": "ent"}
+{"text": "I have sore throat with body aches and headache.", "label": "ent"}
+{"text": "I have sore throat with body aches and mild cough.", "label": "ent"}
+{"text": "I have sore throat with body aches and swollen glands.", "label": "ent"}
+{"text": "I have sore throat with body aches and trouble sleeping.", "label": "ent"}
+{"text": "I have sore throat with body aches and bad breath.", "label": "ent"}
+{"text": "I have throat pain since yesterday and headache.", "label": "ent"}
+{"text": "I have throat pain since yesterday and mild cough.", "label": "ent"}
+{"text": "I have throat pain since yesterday and swollen glands.", "label": "ent"}
+{"text": "I have throat pain since yesterday and trouble sleeping.", "label": "ent"}
+{"text": "I have throat pain since yesterday and bad breath.", "label": "ent"}
+{"text": "I have throat pain for three days and headache.", "label": "ent"}
+{"text": "I have throat pain for three days and mild cough.", "label": "ent"}
+{"text": "I have throat pain for three days and swollen glands.", "label": "ent"}
+{"text": "I have throat pain for three days and trouble sleeping.", "label": "ent"}
+{"text": "I have throat pain for three days and bad breath.", "label": "ent"}
+{"text": "I have throat pain that is getting worse and headache.", "label": "ent"}
+{"text": "I have throat pain that is getting worse and mild cough.", "label": "ent"}
+{"text": "I have throat pain that is getting worse and swollen glands.", "label": "ent"}
+{"text": "I have throat pain that is getting worse and trouble sleeping.", "label": "ent"}
+{"text": "I have throat pain that is getting worse and bad breath.", "label": "ent"}
+{"text": "I have throat pain with fever and headache.", "label": "ent"}
+{"text": "I have throat pain with fever and mild cough.", "label": "ent"}
+{"text": "I have throat pain with fever and swollen glands.", "label": "ent"}
+{"text": "I have throat pain with fever and trouble sleeping.", "label": "ent"}
+{"text": "I have throat pain with fever and bad breath.", "label": "ent"}
+{"text": "I have throat pain with body aches and headache.", "label": "ent"}
+{"text": "I have throat pain with body aches and mild cough.", "label": "ent"}
+{"text": "I have throat pain with body aches and swollen glands.", "label": "ent"}
+{"text": "I have throat pain with body aches and trouble sleeping.", "label": "ent"}
+{"text": "I have throat pain with body aches and bad breath.", "label": "ent"}
+{"text": "I have difficulty swallowing since yesterday and headache.", "label": "ent"}
+{"text": "I have difficulty swallowing since yesterday and mild cough.", "label": "ent"}
+{"text": "I have difficulty swallowing since yesterday and swollen glands.", "label": "ent"}
+{"text": "I have difficulty swallowing since yesterday and trouble sleeping.", "label": "ent"}
+{"text": "I have difficulty swallowing since yesterday and bad breath.", "label": "ent"}
+{"text": "I have difficulty swallowing for three days and headache.", "label": "ent"}
+{"text": "I have difficulty swallowing for three days and mild cough.", "label": "ent"}
+{"text": "I have difficulty swallowing for three days and swollen glands.", "label": "ent"}
+{"text": "I have difficulty swallowing for three days and trouble sleeping.", "label": "ent"}
+{"text": "I have difficulty swallowing for three days and bad breath.", "label": "ent"}
+{"text": "I have difficulty swallowing that is getting worse and headache.", "label": "ent"}
+{"text": "I have difficulty swallowing that is getting worse and mild cough.", "label": "ent"}
+{"text": "I have difficulty swallowing that is getting worse and swollen glands.", "label": "ent"}
+{"text": "I have difficulty swallowing that is getting worse and trouble sleeping.", "label": "ent"}
+{"text": "I have difficulty swallowing that is getting worse and bad breath.", "label": "ent"}
+{"text": "I have difficulty swallowing with fever and headache.", "label": "ent"}
+{"text": "I have difficulty swallowing with fever and mild cough.", "label": "ent"}
+{"text": "I have difficulty swallowing with fever and swollen glands.", "label": "ent"}
+{"text": "I have difficulty swallowing with fever and trouble sleeping.", "label": "ent"}
+{"text": "I have difficulty swallowing with fever and bad breath.", "label": "ent"}
+{"text": "I have difficulty swallowing with body aches and headache.", "label": "ent"}
+{"text": "I have difficulty swallowing with body aches and mild cough.", "label": "ent"}
+{"text": "I have difficulty swallowing with body aches and swollen glands.", "label": "ent"}
+{"text": "I have difficulty swallowing with body aches and trouble sleeping.", "label": "ent"}
+{"text": "I have difficulty swallowing with body aches and bad breath.", "label": "ent"}
+{"text": "I have ear pain since yesterday and headache.", "label": "ent"}
+{"text": "I have ear pain since yesterday and mild cough.", "label": "ent"}
+{"text": "I have ear pain since yesterday and swollen glands.", "label": "ent"}
+{"text": "I have ear pain since yesterday and trouble sleeping.", "label": "ent"}
+{"text": "I have ear pain since yesterday and bad breath.", "label": "ent"}
+{"text": "I have ear pain for three days and headache.", "label": "ent"}
+{"text": "I have ear pain for three days and mild cough.", "label": "ent"}
+{"text": "I have ear pain for three days and swollen glands.", "label": "ent"}
+{"text": "I have ear pain for three days and trouble sleeping.", "label": "ent"}
+{"text": "I have ear pain for three days and bad breath.", "label": "ent"}
+{"text": "I have ear pain that is getting worse and headache.", "label": "ent"}
+{"text": "I have ear pain that is getting worse and mild cough.", "label": "ent"}
+{"text": "I have ear pain that is getting worse and swollen glands.", "label": "ent"}
+{"text": "I have ear pain that is getting worse and trouble sleeping.", "label": "ent"}
+{"text": "I have ear pain that is getting worse and bad breath.", "label": "ent"}
+{"text": "I have ear pain with fever and headache.", "label": "ent"}
+{"text": "I have ear pain with fever and mild cough.", "label": "ent"}
+{"text": "I have ear pain with fever and swollen glands.", "label": "ent"}
+{"text": "I have ear pain with fever and trouble sleeping.", "label": "ent"}
+{"text": "I have ear pain with fever and bad breath.", "label": "ent"}
+{"text": "I have ear pain with body aches and headache.", "label": "ent"}
+{"text": "I have ear pain with body aches and mild cough.", "label": "ent"}
+{"text": "I have ear pain with body aches and swollen glands.", "label": "ent"}
+{"text": "I have ear pain with body aches and trouble sleeping.", "label": "ent"}
+{"text": "I have ear pain with body aches and bad breath.", "label": "ent"}
+{"text": "I have blurred vision since this morning and light bothers me.", "label": "ophthalmology"}
+{"text": "I have blurred vision since this morning and I see redness.", "label": "ophthalmology"}
+{"text": "I have blurred vision since this morning and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have blurred vision since this morning with mild headache.", "label": "ophthalmology"}
+{"text": "I have blurred vision since this morning and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have blurred vision for two days and light bothers me.", "label": "ophthalmology"}
+{"text": "I have blurred vision for two days and I see redness.", "label": "ophthalmology"}
+{"text": "I have blurred vision for two days and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have blurred vision for two days with mild headache.", "label": "ophthalmology"}
+{"text": "I have blurred vision for two days and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have blurred vision that is getting worse and light bothers me.", "label": "ophthalmology"}
+{"text": "I have blurred vision that is getting worse and I see redness.", "label": "ophthalmology"}
+{"text": "I have blurred vision that is getting worse and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have blurred vision that is getting worse with mild headache.", "label": "ophthalmology"}
+{"text": "I have blurred vision that is getting worse and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have blurred vision after screen use and light bothers me.", "label": "ophthalmology"}
+{"text": "I have blurred vision after screen use and I see redness.", "label": "ophthalmology"}
+{"text": "I have blurred vision after screen use and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have blurred vision after screen use with mild headache.", "label": "ophthalmology"}
+{"text": "I have blurred vision after screen use and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have blurred vision with tearing and light bothers me.", "label": "ophthalmology"}
+{"text": "I have blurred vision with tearing and I see redness.", "label": "ophthalmology"}
+{"text": "I have blurred vision with tearing and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have blurred vision with tearing with mild headache.", "label": "ophthalmology"}
+{"text": "I have blurred vision with tearing and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have eye pain since this morning and light bothers me.", "label": "ophthalmology"}
+{"text": "I have eye pain since this morning and I see redness.", "label": "ophthalmology"}
+{"text": "I have eye pain since this morning and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have eye pain since this morning with mild headache.", "label": "ophthalmology"}
+{"text": "I have eye pain since this morning and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have eye pain for two days and light bothers me.", "label": "ophthalmology"}
+{"text": "I have eye pain for two days and I see redness.", "label": "ophthalmology"}
+{"text": "I have eye pain for two days and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have eye pain for two days with mild headache.", "label": "ophthalmology"}
+{"text": "I have eye pain for two days and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have eye pain that is getting worse and light bothers me.", "label": "ophthalmology"}
+{"text": "I have eye pain that is getting worse and I see redness.", "label": "ophthalmology"}
+{"text": "I have eye pain that is getting worse and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have eye pain that is getting worse with mild headache.", "label": "ophthalmology"}
+{"text": "I have eye pain that is getting worse and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have eye pain after screen use and light bothers me.", "label": "ophthalmology"}
+{"text": "I have eye pain after screen use and I see redness.", "label": "ophthalmology"}
+{"text": "I have eye pain after screen use and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have eye pain after screen use with mild headache.", "label": "ophthalmology"}
+{"text": "I have eye pain after screen use and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have eye pain with tearing and light bothers me.", "label": "ophthalmology"}
+{"text": "I have eye pain with tearing and I see redness.", "label": "ophthalmology"}
+{"text": "I have eye pain with tearing and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have eye pain with tearing with mild headache.", "label": "ophthalmology"}
+{"text": "I have eye pain with tearing and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have red eye since this morning and light bothers me.", "label": "ophthalmology"}
+{"text": "I have red eye since this morning and I see redness.", "label": "ophthalmology"}
+{"text": "I have red eye since this morning and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have red eye since this morning with mild headache.", "label": "ophthalmology"}
+{"text": "I have red eye since this morning and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have red eye for two days and light bothers me.", "label": "ophthalmology"}
+{"text": "I have red eye for two days and I see redness.", "label": "ophthalmology"}
+{"text": "I have red eye for two days and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have red eye for two days with mild headache.", "label": "ophthalmology"}
+{"text": "I have red eye for two days and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have red eye that is getting worse and light bothers me.", "label": "ophthalmology"}
+{"text": "I have red eye that is getting worse and I see redness.", "label": "ophthalmology"}
+{"text": "I have red eye that is getting worse and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have red eye that is getting worse with mild headache.", "label": "ophthalmology"}
+{"text": "I have red eye that is getting worse and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have red eye after screen use and light bothers me.", "label": "ophthalmology"}
+{"text": "I have red eye after screen use and I see redness.", "label": "ophthalmology"}
+{"text": "I have red eye after screen use and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have red eye after screen use with mild headache.", "label": "ophthalmology"}
+{"text": "I have red eye after screen use and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have red eye with tearing and light bothers me.", "label": "ophthalmology"}
+{"text": "I have red eye with tearing and I see redness.", "label": "ophthalmology"}
+{"text": "I have red eye with tearing and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have red eye with tearing with mild headache.", "label": "ophthalmology"}
+{"text": "I have red eye with tearing and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have itchy eyes since this morning and light bothers me.", "label": "ophthalmology"}
+{"text": "I have itchy eyes since this morning and I see redness.", "label": "ophthalmology"}
+{"text": "I have itchy eyes since this morning and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have itchy eyes since this morning with mild headache.", "label": "ophthalmology"}
+{"text": "I have itchy eyes since this morning and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have itchy eyes for two days and light bothers me.", "label": "ophthalmology"}
+{"text": "I have itchy eyes for two days and I see redness.", "label": "ophthalmology"}
+{"text": "I have itchy eyes for two days and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have itchy eyes for two days with mild headache.", "label": "ophthalmology"}
+{"text": "I have itchy eyes for two days and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have itchy eyes that is getting worse and light bothers me.", "label": "ophthalmology"}
+{"text": "I have itchy eyes that is getting worse and I see redness.", "label": "ophthalmology"}
+{"text": "I have itchy eyes that is getting worse and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have itchy eyes that is getting worse with mild headache.", "label": "ophthalmology"}
+{"text": "I have itchy eyes that is getting worse and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have itchy eyes after screen use and light bothers me.", "label": "ophthalmology"}
+{"text": "I have itchy eyes after screen use and I see redness.", "label": "ophthalmology"}
+{"text": "I have itchy eyes after screen use and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have itchy eyes after screen use with mild headache.", "label": "ophthalmology"}
+{"text": "I have itchy eyes after screen use and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have itchy eyes with tearing and light bothers me.", "label": "ophthalmology"}
+{"text": "I have itchy eyes with tearing and I see redness.", "label": "ophthalmology"}
+{"text": "I have itchy eyes with tearing and my vision feels off.", "label": "ophthalmology"}
+{"text": "I have itchy eyes with tearing with mild headache.", "label": "ophthalmology"}
+{"text": "I have itchy eyes with tearing and I want to keep my eyes closed.", "label": "ophthalmology"}
+{"text": "I have headache since this morning and I cannot focus.", "label": "neurology"}
+{"text": "I have headache since this morning and I feel weak.", "label": "neurology"}
+{"text": "I have headache since this morning with blurred vision.", "label": "neurology"}
+{"text": "I have headache since this morning and I need to lie down.", "label": "neurology"}
+{"text": "I have headache since this morning and noise makes it worse.", "label": "neurology"}
+{"text": "I have headache for two days and I cannot focus.", "label": "neurology"}
+{"text": "I have headache for two days and I feel weak.", "label": "neurology"}
+{"text": "I have headache for two days with blurred vision.", "label": "neurology"}
+{"text": "I have headache for two days and I need to lie down.", "label": "neurology"}
+{"text": "I have headache for two days and noise makes it worse.", "label": "neurology"}
+{"text": "I have headache that keeps coming back and I cannot focus.", "label": "neurology"}
+{"text": "I have headache that keeps coming back and I feel weak.", "label": "neurology"}
+{"text": "I have headache that keeps coming back with blurred vision.", "label": "neurology"}
+{"text": "I have headache that keeps coming back and I need to lie down.", "label": "neurology"}
+{"text": "I have headache that keeps coming back and noise makes it worse.", "label": "neurology"}
+{"text": "I have headache with nausea and I cannot focus.", "label": "neurology"}
+{"text": "I have headache with nausea and I feel weak.", "label": "neurology"}
+{"text": "I have headache with nausea with blurred vision.", "label": "neurology"}
+{"text": "I have headache with nausea and I need to lie down.", "label": "neurology"}
+{"text": "I have headache with nausea and noise makes it worse.", "label": "neurology"}
+{"text": "I have headache with sensitivity to light and I cannot focus.", "label": "neurology"}
+{"text": "I have headache with sensitivity to light and I feel weak.", "label": "neurology"}
+{"text": "I have headache with sensitivity to light with blurred vision.", "label": "neurology"}
+{"text": "I have headache with sensitivity to light and I need to lie down.", "label": "neurology"}
+{"text": "I have headache with sensitivity to light and noise makes it worse.", "label": "neurology"}
+{"text": "I have severe headache since this morning and I cannot focus.", "label": "neurology"}
+{"text": "I have severe headache since this morning and I feel weak.", "label": "neurology"}
+{"text": "I have severe headache since this morning with blurred vision.", "label": "neurology"}
+{"text": "I have severe headache since this morning and I need to lie down.", "label": "neurology"}
+{"text": "I have severe headache since this morning and noise makes it worse.", "label": "neurology"}
+{"text": "I have severe headache for two days and I cannot focus.", "label": "neurology"}
+{"text": "I have severe headache for two days and I feel weak.", "label": "neurology"}
+{"text": "I have severe headache for two days with blurred vision.", "label": "neurology"}
+{"text": "I have severe headache for two days and I need to lie down.", "label": "neurology"}
+{"text": "I have severe headache for two days and noise makes it worse.", "label": "neurology"}
+{"text": "I have severe headache that keeps coming back and I cannot focus.", "label": "neurology"}
+{"text": "I have severe headache that keeps coming back and I feel weak.", "label": "neurology"}
+{"text": "I have severe headache that keeps coming back with blurred vision.", "label": "neurology"}
+{"text": "I have severe headache that keeps coming back and I need to lie down.", "label": "neurology"}
+{"text": "I have severe headache that keeps coming back and noise makes it worse.", "label": "neurology"}
+{"text": "I have severe headache with nausea and I cannot focus.", "label": "neurology"}
+{"text": "I have severe headache with nausea and I feel weak.", "label": "neurology"}
+{"text": "I have severe headache with nausea with blurred vision.", "label": "neurology"}
+{"text": "I have severe headache with nausea and I need to lie down.", "label": "neurology"}
+{"text": "I have severe headache with nausea and noise makes it worse.", "label": "neurology"}
+{"text": "I have severe headache with sensitivity to light and I cannot focus.", "label": "neurology"}
+{"text": "I have severe headache with sensitivity to light and I feel weak.", "label": "neurology"}
+{"text": "I have severe headache with sensitivity to light with blurred vision.", "label": "neurology"}
+{"text": "I have severe headache with sensitivity to light and I need to lie down.", "label": "neurology"}
+{"text": "I have severe headache with sensitivity to light and noise makes it worse.", "label": "neurology"}
+{"text": "I have migraine since this morning and I cannot focus.", "label": "neurology"}
+{"text": "I have migraine since this morning and I feel weak.", "label": "neurology"}
+{"text": "I have migraine since this morning with blurred vision.", "label": "neurology"}
+{"text": "I have migraine since this morning and I need to lie down.", "label": "neurology"}
+{"text": "I have migraine since this morning and noise makes it worse.", "label": "neurology"}
+{"text": "I have migraine for two days and I cannot focus.", "label": "neurology"}
+{"text": "I have migraine for two days and I feel weak.", "label": "neurology"}
+{"text": "I have migraine for two days with blurred vision.", "label": "neurology"}
+{"text": "I have migraine for two days and I need to lie down.", "label": "neurology"}
+{"text": "I have migraine for two days and noise makes it worse.", "label": "neurology"}
+{"text": "I have migraine that keeps coming back and I cannot focus.", "label": "neurology"}
+{"text": "I have migraine that keeps coming back and I feel weak.", "label": "neurology"}
+{"text": "I have migraine that keeps coming back with blurred vision.", "label": "neurology"}
+{"text": "I have migraine that keeps coming back and I need to lie down.", "label": "neurology"}
+{"text": "I have migraine that keeps coming back and noise makes it worse.", "label": "neurology"}
+{"text": "I have migraine with nausea and I cannot focus.", "label": "neurology"}
+{"text": "I have migraine with nausea and I feel weak.", "label": "neurology"}
+{"text": "I have migraine with nausea with blurred vision.", "label": "neurology"}
+{"text": "I have migraine with nausea and I need to lie down.", "label": "neurology"}
+{"text": "I have migraine with nausea and noise makes it worse.", "label": "neurology"}
+{"text": "I have migraine with sensitivity to light and I cannot focus.", "label": "neurology"}
+{"text": "I have migraine with sensitivity to light and I feel weak.", "label": "neurology"}
+{"text": "I have migraine with sensitivity to light with blurred vision.", "label": "neurology"}
+{"text": "I have migraine with sensitivity to light and I need to lie down.", "label": "neurology"}
+{"text": "I have migraine with sensitivity to light and noise makes it worse.", "label": "neurology"}
+{"text": "I have dizziness since this morning and I cannot focus.", "label": "neurology"}
+{"text": "I have dizziness since this morning and I feel weak.", "label": "neurology"}
+{"text": "I have dizziness since this morning with blurred vision.", "label": "neurology"}
+{"text": "I have dizziness since this morning and I need to lie down.", "label": "neurology"}
+{"text": "I have dizziness since this morning and noise makes it worse.", "label": "neurology"}
+{"text": "I have dizziness for two days and I cannot focus.", "label": "neurology"}
+{"text": "I have dizziness for two days and I feel weak.", "label": "neurology"}
+{"text": "I have dizziness for two days with blurred vision.", "label": "neurology"}
+{"text": "I have dizziness for two days and I need to lie down.", "label": "neurology"}
+{"text": "I have dizziness for two days and noise makes it worse.", "label": "neurology"}
+{"text": "I have dizziness that keeps coming back and I cannot focus.", "label": "neurology"}
+{"text": "I have dizziness that keeps coming back and I feel weak.", "label": "neurology"}
+{"text": "I have dizziness that keeps coming back with blurred vision.", "label": "neurology"}
+{"text": "I have dizziness that keeps coming back and I need to lie down.", "label": "neurology"}
+{"text": "I have dizziness that keeps coming back and noise makes it worse.", "label": "neurology"}
+{"text": "I have dizziness with nausea and I cannot focus.", "label": "neurology"}
+{"text": "I have dizziness with nausea and I feel weak.", "label": "neurology"}
+{"text": "I have dizziness with nausea with blurred vision.", "label": "neurology"}
+{"text": "I have dizziness with nausea and I need to lie down.", "label": "neurology"}
+{"text": "I have dizziness with nausea and noise makes it worse.", "label": "neurology"}
+{"text": "I have dizziness with sensitivity to light and I cannot focus.", "label": "neurology"}
+{"text": "I have dizziness with sensitivity to light and I feel weak.", "label": "neurology"}
+{"text": "I have dizziness with sensitivity to light with blurred vision.", "label": "neurology"}
+{"text": "I have dizziness with sensitivity to light and I need to lie down.", "label": "neurology"}
+{"text": "I have dizziness with sensitivity to light and noise makes it worse.", "label": "neurology"}
+{"text": "I have stomach pain since yesterday and nausea.", "label": "gastroenterology"}
+{"text": "I have stomach pain since yesterday and vomiting.", "label": "gastroenterology"}
+{"text": "I have stomach pain since yesterday and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have stomach pain since yesterday with heartburn.", "label": "gastroenterology"}
+{"text": "I have stomach pain since yesterday and loose stool.", "label": "gastroenterology"}
+{"text": "I have stomach pain after eating and nausea.", "label": "gastroenterology"}
+{"text": "I have stomach pain after eating and vomiting.", "label": "gastroenterology"}
+{"text": "I have stomach pain after eating and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have stomach pain after eating with heartburn.", "label": "gastroenterology"}
+{"text": "I have stomach pain after eating and loose stool.", "label": "gastroenterology"}
+{"text": "I have stomach pain for three days and nausea.", "label": "gastroenterology"}
+{"text": "I have stomach pain for three days and vomiting.", "label": "gastroenterology"}
+{"text": "I have stomach pain for three days and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have stomach pain for three days with heartburn.", "label": "gastroenterology"}
+{"text": "I have stomach pain for three days and loose stool.", "label": "gastroenterology"}
+{"text": "I have stomach pain that comes and goes and nausea.", "label": "gastroenterology"}
+{"text": "I have stomach pain that comes and goes and vomiting.", "label": "gastroenterology"}
+{"text": "I have stomach pain that comes and goes and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have stomach pain that comes and goes with heartburn.", "label": "gastroenterology"}
+{"text": "I have stomach pain that comes and goes and loose stool.", "label": "gastroenterology"}
+{"text": "I have stomach pain with bloating and nausea.", "label": "gastroenterology"}
+{"text": "I have stomach pain with bloating and vomiting.", "label": "gastroenterology"}
+{"text": "I have stomach pain with bloating and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have stomach pain with bloating with heartburn.", "label": "gastroenterology"}
+{"text": "I have stomach pain with bloating and loose stool.", "label": "gastroenterology"}
+{"text": "I have abdominal pain since yesterday and nausea.", "label": "gastroenterology"}
+{"text": "I have abdominal pain since yesterday and vomiting.", "label": "gastroenterology"}
+{"text": "I have abdominal pain since yesterday and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have abdominal pain since yesterday with heartburn.", "label": "gastroenterology"}
+{"text": "I have abdominal pain since yesterday and loose stool.", "label": "gastroenterology"}
+{"text": "I have abdominal pain after eating and nausea.", "label": "gastroenterology"}
+{"text": "I have abdominal pain after eating and vomiting.", "label": "gastroenterology"}
+{"text": "I have abdominal pain after eating and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have abdominal pain after eating with heartburn.", "label": "gastroenterology"}
+{"text": "I have abdominal pain after eating and loose stool.", "label": "gastroenterology"}
+{"text": "I have abdominal pain for three days and nausea.", "label": "gastroenterology"}
+{"text": "I have abdominal pain for three days and vomiting.", "label": "gastroenterology"}
+{"text": "I have abdominal pain for three days and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have abdominal pain for three days with heartburn.", "label": "gastroenterology"}
+{"text": "I have abdominal pain for three days and loose stool.", "label": "gastroenterology"}
+{"text": "I have abdominal pain that comes and goes and nausea.", "label": "gastroenterology"}
+{"text": "I have abdominal pain that comes and goes and vomiting.", "label": "gastroenterology"}
+{"text": "I have abdominal pain that comes and goes and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have abdominal pain that comes and goes with heartburn.", "label": "gastroenterology"}
+{"text": "I have abdominal pain that comes and goes and loose stool.", "label": "gastroenterology"}
+{"text": "I have abdominal pain with bloating and nausea.", "label": "gastroenterology"}
+{"text": "I have abdominal pain with bloating and vomiting.", "label": "gastroenterology"}
+{"text": "I have abdominal pain with bloating and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have abdominal pain with bloating with heartburn.", "label": "gastroenterology"}
+{"text": "I have abdominal pain with bloating and loose stool.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain since yesterday and nausea.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain since yesterday and vomiting.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain since yesterday and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain since yesterday with heartburn.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain since yesterday and loose stool.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain after eating and nausea.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain after eating and vomiting.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain after eating and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain after eating with heartburn.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain after eating and loose stool.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain for three days and nausea.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain for three days and vomiting.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain for three days and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain for three days with heartburn.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain for three days and loose stool.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain that comes and goes and nausea.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain that comes and goes and vomiting.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain that comes and goes and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain that comes and goes with heartburn.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain that comes and goes and loose stool.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain with bloating and nausea.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain with bloating and vomiting.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain with bloating and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain with bloating with heartburn.", "label": "gastroenterology"}
+{"text": "I have upper stomach pain with bloating and loose stool.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain since yesterday and nausea.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain since yesterday and vomiting.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain since yesterday and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain since yesterday with heartburn.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain since yesterday and loose stool.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain after eating and nausea.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain after eating and vomiting.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain after eating and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain after eating with heartburn.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain after eating and loose stool.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain for three days and nausea.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain for three days and vomiting.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain for three days and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain for three days with heartburn.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain for three days and loose stool.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain that comes and goes and nausea.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain that comes and goes and vomiting.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain that comes and goes and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain that comes and goes with heartburn.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain that comes and goes and loose stool.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain with bloating and nausea.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain with bloating and vomiting.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain with bloating and I cannot eat well.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain with bloating with heartburn.", "label": "gastroenterology"}
+{"text": "I have lower abdominal pain with bloating and loose stool.", "label": "gastroenterology"}
+{"text": "My baby has fever since yesterday.", "label": "pediatrics"}
+{"text": "My baby has fever for two days.", "label": "pediatrics"}
+{"text": "My baby has fever and is less active.", "label": "pediatrics"}
+{"text": "My baby has fever and is not eating well.", "label": "pediatrics"}
+{"text": "My baby has fever and is not sleeping well.", "label": "pediatrics"}
+{"text": "My baby has cough since yesterday.", "label": "pediatrics"}
+{"text": "My baby has cough for two days.", "label": "pediatrics"}
+{"text": "My baby has cough and is less active.", "label": "pediatrics"}
+{"text": "My baby has cough and is not eating well.", "label": "pediatrics"}
+{"text": "My baby has cough and is not sleeping well.", "label": "pediatrics"}
+{"text": "My baby is vomiting since yesterday.", "label": "pediatrics"}
+{"text": "My baby is vomiting for two days.", "label": "pediatrics"}
+{"text": "My baby is vomiting and is less active.", "label": "pediatrics"}
+{"text": "My baby is vomiting and is not eating well.", "label": "pediatrics"}
+{"text": "My baby is vomiting and is not sleeping well.", "label": "pediatrics"}
+{"text": "My baby has diarrhea since yesterday.", "label": "pediatrics"}
+{"text": "My baby has diarrhea for two days.", "label": "pediatrics"}
+{"text": "My baby has diarrhea and is less active.", "label": "pediatrics"}
+{"text": "My baby has diarrhea and is not eating well.", "label": "pediatrics"}
+{"text": "My baby has diarrhea and is not sleeping well.", "label": "pediatrics"}
+{"text": "My baby has a rash since yesterday.", "label": "pediatrics"}
+{"text": "My baby has a rash for two days.", "label": "pediatrics"}
+{"text": "My baby has a rash and is less active.", "label": "pediatrics"}
+{"text": "My baby has a rash and is not eating well.", "label": "pediatrics"}
+{"text": "My baby has a rash and is not sleeping well.", "label": "pediatrics"}
+{"text": "My child has fever since yesterday.", "label": "pediatrics"}
+{"text": "My child has fever for two days.", "label": "pediatrics"}
+{"text": "My child has fever and is less active.", "label": "pediatrics"}
+{"text": "My child has fever and is not eating well.", "label": "pediatrics"}
+{"text": "My child has fever and is not sleeping well.", "label": "pediatrics"}
+{"text": "My child has cough since yesterday.", "label": "pediatrics"}
+{"text": "My child has cough for two days.", "label": "pediatrics"}
+{"text": "My child has cough and is less active.", "label": "pediatrics"}
+{"text": "My child has cough and is not eating well.", "label": "pediatrics"}
+{"text": "My child has cough and is not sleeping well.", "label": "pediatrics"}
+{"text": "My child is vomiting since yesterday.", "label": "pediatrics"}
+{"text": "My child is vomiting for two days.", "label": "pediatrics"}
+{"text": "My child is vomiting and is less active.", "label": "pediatrics"}
+{"text": "My child is vomiting and is not eating well.", "label": "pediatrics"}
+{"text": "My child is vomiting and is not sleeping well.", "label": "pediatrics"}
+{"text": "My child has diarrhea since yesterday.", "label": "pediatrics"}
+{"text": "My child has diarrhea for two days.", "label": "pediatrics"}
+{"text": "My child has diarrhea and is less active.", "label": "pediatrics"}
+{"text": "My child has diarrhea and is not eating well.", "label": "pediatrics"}
+{"text": "My child has diarrhea and is not sleeping well.", "label": "pediatrics"}
+{"text": "My child has a rash since yesterday.", "label": "pediatrics"}
+{"text": "My child has a rash for two days.", "label": "pediatrics"}
+{"text": "My child has a rash and is less active.", "label": "pediatrics"}
+{"text": "My child has a rash and is not eating well.", "label": "pediatrics"}
+{"text": "My child has a rash and is not sleeping well.", "label": "pediatrics"}
+{"text": "My son has fever since yesterday.", "label": "pediatrics"}
+{"text": "My son has fever for two days.", "label": "pediatrics"}
+{"text": "My son has fever and is less active.", "label": "pediatrics"}
+{"text": "My son has fever and is not eating well.", "label": "pediatrics"}
+{"text": "My son has fever and is not sleeping well.", "label": "pediatrics"}
+{"text": "My son has cough since yesterday.", "label": "pediatrics"}
+{"text": "My son has cough for two days.", "label": "pediatrics"}
+{"text": "My son has cough and is less active.", "label": "pediatrics"}
+{"text": "My son has cough and is not eating well.", "label": "pediatrics"}
+{"text": "My son has cough and is not sleeping well.", "label": "pediatrics"}
+{"text": "My son is vomiting since yesterday.", "label": "pediatrics"}
+{"text": "My son is vomiting for two days.", "label": "pediatrics"}
+{"text": "My son is vomiting and is less active.", "label": "pediatrics"}
+{"text": "My son is vomiting and is not eating well.", "label": "pediatrics"}
+{"text": "My son is vomiting and is not sleeping well.", "label": "pediatrics"}
+{"text": "My son has diarrhea since yesterday.", "label": "pediatrics"}
+{"text": "My son has diarrhea for two days.", "label": "pediatrics"}
+{"text": "My son has diarrhea and is less active.", "label": "pediatrics"}
+{"text": "My son has diarrhea and is not eating well.", "label": "pediatrics"}
+{"text": "My son has diarrhea and is not sleeping well.", "label": "pediatrics"}
+{"text": "My son has a rash since yesterday.", "label": "pediatrics"}
+{"text": "My son has a rash for two days.", "label": "pediatrics"}
+{"text": "My son has a rash and is less active.", "label": "pediatrics"}
+{"text": "My son has a rash and is not eating well.", "label": "pediatrics"}
+{"text": "My son has a rash and is not sleeping well.", "label": "pediatrics"}
+{"text": "My daughter has fever since yesterday.", "label": "pediatrics"}
+{"text": "My daughter has fever for two days.", "label": "pediatrics"}
+{"text": "My daughter has fever and is less active.", "label": "pediatrics"}
+{"text": "My daughter has fever and is not eating well.", "label": "pediatrics"}
+{"text": "My daughter has fever and is not sleeping well.", "label": "pediatrics"}
+{"text": "My daughter has cough since yesterday.", "label": "pediatrics"}
+{"text": "My daughter has cough for two days.", "label": "pediatrics"}
+{"text": "My daughter has cough and is less active.", "label": "pediatrics"}
+{"text": "My daughter has cough and is not eating well.", "label": "pediatrics"}
+{"text": "My daughter has cough and is not sleeping well.", "label": "pediatrics"}
+{"text": "My daughter is vomiting since yesterday.", "label": "pediatrics"}
+{"text": "My daughter is vomiting for two days.", "label": "pediatrics"}
+{"text": "My daughter is vomiting and is less active.", "label": "pediatrics"}
+{"text": "My daughter is vomiting and is not eating well.", "label": "pediatrics"}
+{"text": "My daughter is vomiting and is not sleeping well.", "label": "pediatrics"}
+{"text": "My daughter has diarrhea since yesterday.", "label": "pediatrics"}
+{"text": "My daughter has diarrhea for two days.", "label": "pediatrics"}
+{"text": "My daughter has diarrhea and is less active.", "label": "pediatrics"}
+{"text": "My daughter has diarrhea and is not eating well.", "label": "pediatrics"}
+{"text": "My daughter has diarrhea and is not sleeping well.", "label": "pediatrics"}
+{"text": "My daughter has a rash since yesterday.", "label": "pediatrics"}
+{"text": "My daughter has a rash for two days.", "label": "pediatrics"}
+{"text": "My daughter has a rash and is less active.", "label": "pediatrics"}
+{"text": "My daughter has a rash and is not eating well.", "label": "pediatrics"}
+{"text": "My daughter has a rash and is not sleeping well.", "label": "pediatrics"}
+{"text": "I have fever and body aches for two days and I want a general check.", "label": "general_practice"}
+{"text": "I have fever and body aches for two days and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fever and body aches for two days with mild dizziness.", "label": "general_practice"}
+{"text": "I have fever and body aches for two days and I feel run down.", "label": "general_practice"}
+{"text": "I have fever and body aches for two days and I cannot work well.", "label": "general_practice"}
+{"text": "I have fever and body aches since yesterday and I want a general check.", "label": "general_practice"}
+{"text": "I have fever and body aches since yesterday and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fever and body aches since yesterday with mild dizziness.", "label": "general_practice"}
+{"text": "I have fever and body aches since yesterday and I feel run down.", "label": "general_practice"}
+{"text": "I have fever and body aches since yesterday and I cannot work well.", "label": "general_practice"}
+{"text": "I have fever and body aches for a week and I want a general check.", "label": "general_practice"}
+{"text": "I have fever and body aches for a week and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fever and body aches for a week with mild dizziness.", "label": "general_practice"}
+{"text": "I have fever and body aches for a week and I feel run down.", "label": "general_practice"}
+{"text": "I have fever and body aches for a week and I cannot work well.", "label": "general_practice"}
+{"text": "I have fever and body aches with headache and I want a general check.", "label": "general_practice"}
+{"text": "I have fever and body aches with headache and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fever and body aches with headache with mild dizziness.", "label": "general_practice"}
+{"text": "I have fever and body aches with headache and I feel run down.", "label": "general_practice"}
+{"text": "I have fever and body aches with headache and I cannot work well.", "label": "general_practice"}
+{"text": "I have fever and body aches after a viral illness and I want a general check.", "label": "general_practice"}
+{"text": "I have fever and body aches after a viral illness and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fever and body aches after a viral illness with mild dizziness.", "label": "general_practice"}
+{"text": "I have fever and body aches after a viral illness and I feel run down.", "label": "general_practice"}
+{"text": "I have fever and body aches after a viral illness and I cannot work well.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for two days and I want a general check.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for two days and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for two days with mild dizziness.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for two days and I feel run down.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for two days and I cannot work well.", "label": "general_practice"}
+{"text": "I have fatigue and low energy since yesterday and I want a general check.", "label": "general_practice"}
+{"text": "I have fatigue and low energy since yesterday and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fatigue and low energy since yesterday with mild dizziness.", "label": "general_practice"}
+{"text": "I have fatigue and low energy since yesterday and I feel run down.", "label": "general_practice"}
+{"text": "I have fatigue and low energy since yesterday and I cannot work well.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for a week and I want a general check.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for a week and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for a week with mild dizziness.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for a week and I feel run down.", "label": "general_practice"}
+{"text": "I have fatigue and low energy for a week and I cannot work well.", "label": "general_practice"}
+{"text": "I have fatigue and low energy with headache and I want a general check.", "label": "general_practice"}
+{"text": "I have fatigue and low energy with headache and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fatigue and low energy with headache with mild dizziness.", "label": "general_practice"}
+{"text": "I have fatigue and low energy with headache and I feel run down.", "label": "general_practice"}
+{"text": "I have fatigue and low energy with headache and I cannot work well.", "label": "general_practice"}
+{"text": "I have fatigue and low energy after a viral illness and I want a general check.", "label": "general_practice"}
+{"text": "I have fatigue and low energy after a viral illness and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have fatigue and low energy after a viral illness with mild dizziness.", "label": "general_practice"}
+{"text": "I have fatigue and low energy after a viral illness and I feel run down.", "label": "general_practice"}
+{"text": "I have fatigue and low energy after a viral illness and I cannot work well.", "label": "general_practice"}
+{"text": "I have general weakness for two days and I want a general check.", "label": "general_practice"}
+{"text": "I have general weakness for two days and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have general weakness for two days with mild dizziness.", "label": "general_practice"}
+{"text": "I have general weakness for two days and I feel run down.", "label": "general_practice"}
+{"text": "I have general weakness for two days and I cannot work well.", "label": "general_practice"}
+{"text": "I have general weakness since yesterday and I want a general check.", "label": "general_practice"}
+{"text": "I have general weakness since yesterday and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have general weakness since yesterday with mild dizziness.", "label": "general_practice"}
+{"text": "I have general weakness since yesterday and I feel run down.", "label": "general_practice"}
+{"text": "I have general weakness since yesterday and I cannot work well.", "label": "general_practice"}
+{"text": "I have general weakness for a week and I want a general check.", "label": "general_practice"}
+{"text": "I have general weakness for a week and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have general weakness for a week with mild dizziness.", "label": "general_practice"}
+{"text": "I have general weakness for a week and I feel run down.", "label": "general_practice"}
+{"text": "I have general weakness for a week and I cannot work well.", "label": "general_practice"}
+{"text": "I have general weakness with headache and I want a general check.", "label": "general_practice"}
+{"text": "I have general weakness with headache and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have general weakness with headache with mild dizziness.", "label": "general_practice"}
+{"text": "I have general weakness with headache and I feel run down.", "label": "general_practice"}
+{"text": "I have general weakness with headache and I cannot work well.", "label": "general_practice"}
+{"text": "I have general weakness after a viral illness and I want a general check.", "label": "general_practice"}
+{"text": "I have general weakness after a viral illness and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have general weakness after a viral illness with mild dizziness.", "label": "general_practice"}
+{"text": "I have general weakness after a viral illness and I feel run down.", "label": "general_practice"}
+{"text": "I have general weakness after a viral illness and I cannot work well.", "label": "general_practice"}
+{"text": "I have feeling unwell for two days and I want a general check.", "label": "general_practice"}
+{"text": "I have feeling unwell for two days and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have feeling unwell for two days with mild dizziness.", "label": "general_practice"}
+{"text": "I have feeling unwell for two days and I feel run down.", "label": "general_practice"}
+{"text": "I have feeling unwell for two days and I cannot work well.", "label": "general_practice"}
+{"text": "I have feeling unwell since yesterday and I want a general check.", "label": "general_practice"}
+{"text": "I have feeling unwell since yesterday and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have feeling unwell since yesterday with mild dizziness.", "label": "general_practice"}
+{"text": "I have feeling unwell since yesterday and I feel run down.", "label": "general_practice"}
+{"text": "I have feeling unwell since yesterday and I cannot work well.", "label": "general_practice"}
+{"text": "I have feeling unwell for a week and I want a general check.", "label": "general_practice"}
+{"text": "I have feeling unwell for a week and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have feeling unwell for a week with mild dizziness.", "label": "general_practice"}
+{"text": "I have feeling unwell for a week and I feel run down.", "label": "general_practice"}
+{"text": "I have feeling unwell for a week and I cannot work well.", "label": "general_practice"}
+{"text": "I have feeling unwell with headache and I want a general check.", "label": "general_practice"}
+{"text": "I have feeling unwell with headache and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have feeling unwell with headache with mild dizziness.", "label": "general_practice"}
+{"text": "I have feeling unwell with headache and I feel run down.", "label": "general_practice"}
+{"text": "I have feeling unwell with headache and I cannot work well.", "label": "general_practice"}
+{"text": "I have feeling unwell after a viral illness and I want a general check.", "label": "general_practice"}
+{"text": "I have feeling unwell after a viral illness and I am not sure what is wrong.", "label": "general_practice"}
+{"text": "I have feeling unwell after a viral illness with mild dizziness.", "label": "general_practice"}
+{"text": "I have feeling unwell after a viral illness and I feel run down.", "label": "general_practice"}
+{"text": "I have feeling unwell after a viral illness and I cannot work well.", "label": "general_practice"}

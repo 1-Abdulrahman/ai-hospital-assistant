@@ -5,19 +5,22 @@ export const quickReplySchema = z.object({
   value: z.string(),
 });
 
-export const selectionListItemMetaSchema = z.object({
-  isoDate: z.string().optional(),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
-  timezone: z.string().optional(),
-});
+export const selectionListItemMetaSchema = z
+  .object({
+    isoDate: z.string().optional(),
+    startTime: z.string().optional(),
+    endTime: z.string().optional(),
+    timezone: z.string().optional(),
+  })
+  .nullable()
+  .optional();
 
 export const selectionListItemSchema = z.object({
   id: z.string(),
   label: z.string(),
-  description: z.string().optional(),
-  confidence: z.number().optional(),
-  meta: selectionListItemMetaSchema.optional(),
+  description: z.string().optional().nullable(),
+  confidence: z.number().optional().nullable(),
+  meta: selectionListItemMetaSchema,
 });
 
 export const selectionListSchema = z.object({
@@ -30,29 +33,33 @@ export const backendErrorSchema = z.object({
   userMessage: z.string(),
 });
 
-export const confirmationSummarySchema = z.object({
-  bookingReferenceId: z.string().optional(),
-  correlationId: z.string().optional(),
-  doctorLabel: z.string().optional(),
-  specialtyLabel: z.string().optional(),
-  date: z.string().optional(),
-  slotLabel: z.string().optional(),
-  renewalItemLabel: z.string().optional(),
-});
+export const confirmationSummarySchema = z
+  .object({
+    bookingReferenceId: z.string().optional().nullable(),
+    correlationId: z.string().optional().nullable(),
+    doctorLabel: z.string().optional().nullable(),
+    specialtyLabel: z.string().optional().nullable(),
+    date: z.string().optional().nullable(),
+    slotLabel: z.string().optional().nullable(),
+    renewalItemLabel: z.string().optional().nullable(),
+  })
+  .nullable()
+  .optional();
 
 export const chatResponseSchema = z.object({
   userMessage: z.string(),
-  quickReplies: z.array(quickReplySchema).optional(),
-  selectionLists: z.array(selectionListSchema).optional(),
-  needsClarification: z.boolean().optional(),
-  isChronicContinuity: z.boolean().optional(),
-  showConsentNotice: z.boolean().optional(),
-  requiresDate: z.boolean().optional(),
-  correlationId: z.string().optional(),
-  errors: z.array(backendErrorSchema).optional(),
-  bookingReferenceId: z.string().optional(),
-  confirmationType: z.enum(["appointment", "renewal"]).optional(),
-  confirmationSummary: confirmationSummarySchema.optional(),
+  quickReplies: z.array(quickReplySchema).optional().nullable(),
+  selectionLists: z.array(selectionListSchema).optional().nullable(),
+  needsClarification: z.boolean().optional().nullable(),
+  isChronicContinuity: z.boolean().optional().nullable(),
+  showConsentNotice: z.boolean().optional().nullable(),
+  requiresContinuityIdentity: z.boolean().optional().nullable(),
+  requiresDate: z.boolean().optional().nullable(),
+  correlationId: z.string().optional().nullable(),
+  errors: z.array(backendErrorSchema).optional().nullable(),
+  bookingReferenceId: z.string().optional().nullable(),
+  confirmationType: z.enum(["appointment", "renewal"]).optional().nullable(),
+  confirmationSummary: confirmationSummarySchema,
 });
 
 export const healthResponseSchema = z.object({
@@ -60,11 +67,14 @@ export const healthResponseSchema = z.object({
 });
 
 export const otpRequestResponseSchema = z.object({
+  ok: z.boolean().optional().nullable(),
   message: z.string(),
-  correlationId: z.string().optional(),
+  expiresIn: z.number().optional().nullable(),
+  correlationId: z.string().optional().nullable(),
 });
 
 export const otpVerifyResponseSchema = z.object({
   verified: z.boolean(),
-  correlationId: z.string().optional(),
+  message: z.string().optional().nullable(),
+  correlationId: z.string().optional().nullable(),
 });

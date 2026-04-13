@@ -4,6 +4,10 @@ from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text, UniqueC
 from sqlalchemy.orm import declarative_base
 
 
+def utcnow() -> datetime:
+    return datetime.now(timezone.utc)
+
+
 Base = declarative_base()
 
 
@@ -47,11 +51,7 @@ class Event(Base):
     __tablename__ = "events"
 
     id = Column(String, primary_key=True)  # uuid
-    ts_utc = Column(
-        DateTime,
-        nullable=False,
-        default=lambda: datetime.now(timezone.utc),
-    )
+    ts_utc = Column(DateTime, nullable=False, default=utcnow)
     tenant_id = Column(String, nullable=False)
     session_id = Column(String, nullable=False)
     correlation_id = Column(String, nullable=False)
@@ -70,3 +70,48 @@ class IdempotencyKey(Base):
     session_id = Column(String, nullable=False)
     request_hash = Column(String, nullable=False)
     result_json = Column(Text, nullable=False)
+
+
+class AssistantSession(Base):
+    __tablename__ = "assistant_sessions"
+
+    id = Column(String, primary_key=True)
+    tenant_id = Column(String, nullable=False)
+    client_session_id = Column(String, nullable=False)
+    current_state = Column(String, nullable=False, default="NEW")
+    flow_mode = Column(String, nullable=True)
+
+    selected_specialty_id = Column(String, nullable=True)
+    selected_doctor_id = Column(String, nullable=True)
+    selected_slot_id = Column(String, nullable=True)
+    selected_slot_label = Column(String, nullable=True)
+    selected_slot_start_utc = Column(String, nullable=True)
+    selected_date = Column(String, nullable=True)
+    last_input_summary = Column(String, nullable=True)
+
+    renewal_item_id = Column(String, nullable=True)
+    renewal_item_label = Column(String, nullable=True)
+    renewal_patient_key_hash = Column(String, nullable=True)
+    renewal_patient_ref = Column(String, nullable=True)
+
+    continuity_checked = Column(Boolean, nullable=False, default=False)
+    continuity_patient_ref = Column(String, nullable=True)
+    continuity_preferred_practitioner_ref = Column(String, nullable=True)
+    continuity_preferred_practitioner_display = Column(String, nullable=True)
+    continuity_is_returning = Column(Boolean, nullable=False, default=False)
+
+    created_at_utc = Column(DateTime(timezone=True), nullable=False, default=utcnow)
+    updated_at_utc = Column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=utcnow,
+        onupdate=utcnow,
+    )
+
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "client_session_id",
+            name="uq_assistant_session_tenant_client",
+        ),
+    )

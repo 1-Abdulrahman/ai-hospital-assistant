@@ -30,6 +30,7 @@ class Settings(BaseSettings):
 
     jwt_secret: str = Field(default="change-me-offline", alias="JWT_SECRET")
     jwt_alg: str = Field(default="HS256", alias="JWT_ALG")
+    jwt_access_token_ttl_seconds: int = Field(default=3600, alias="JWT_ACCESS_TOKEN_TTL_SECONDS")
 
     otp_secret: str = Field(default="change-me-offline", alias="OTP_SECRET")
     otp_ttl_seconds: int = Field(default=300, alias="OTP_TTL_SECONDS")
