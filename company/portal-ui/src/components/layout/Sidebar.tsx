@@ -11,6 +11,9 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
+import { getIsMockMode } from '@/api/apiClient';
+
+const isMockMode = getIsMockMode();
 
 const allLinks = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -52,7 +55,7 @@ export function Sidebar() {
               <span className="truncate">{label}</span>
             </div>
 
-            {comingSoon && (
+            {comingSoon && !isMockMode && (
               <Badge
                 variant="outline"
                 className="text-[10px] bg-amber-500/15 text-amber-700 border-amber-300"
