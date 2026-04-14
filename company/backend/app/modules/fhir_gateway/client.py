@@ -403,8 +403,14 @@ class FhirClient:
         params: list[tuple[str, str]] = [
             ("schedule", _reference_search_value(schedule_ref)),
         ]
+
         if status.strip():
             params.append(("status", status.strip()))
+
+        if start_from_utc and start_from_utc.strip():
+            params.append(("start", f"ge{start_from_utc.strip()}"))
+
+        params.append(("_count", "200"))
 
         response = await self._request(
             "GET",
@@ -414,10 +420,26 @@ class FhirClient:
         )
         self._ensure_read_success(response, operation="search slots")
 
-        items = map_slot_bundle_to_dtos(
-            self._json_or_empty(response), schedule=schedule)
+        first_bundle = self._json_or_empty(response)
+        items = map_slot_bundle_to_dtos(first_bundle, schedule=schedule)
 
-        if start_from_utc:
+        next_url = self._extract_next_link(first_bundle)
+
+        while next_url:
+            next_response = await self._request_absolute(
+                "GET",
+                next_url,
+                retry_on_read=True,
+            )
+            self._ensure_read_success(next_response, operation="search slots next page")
+
+            next_bundle = self._json_or_empty(next_response)
+            items.extend(map_slot_bundle_to_dtos(next_bundle, schedule=schedule))
+
+            next_url = self._extract_next_link(next_bundle)
+
+        # Defensive safety filter.
+        if start_from_utc and start_from_utc.strip():
             filtered: list[SlotDTO] = []
             for item in items:
                 if item.startUtc and item.startUtc >= start_from_utc:
@@ -799,6 +821,75 @@ class FhirClient:
             user_message="FHIR service is unavailable.",
             status_code=503,
         )
+        
+    async def _request_absolute(
+        self,
+        method: str,
+        url: str,
+        *,
+        params: Any = None,
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+        retry_on_read: bool = False,
+    ) -> httpx.Response:
+        method_upper = method.upper()
+        attempts = 2 if retry_on_read and method_upper == "GET" else 1
+
+        for attempt in range(attempts):
+            try:
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    response = await client.request(
+                        method=method_upper,
+                        url=url,
+                        params=params,
+                        json=json,
+                        headers=headers,
+                    )
+            except httpx.TimeoutException as exc:
+                if attempt < attempts - 1:
+                    continue
+                raise FhirGatewayError(
+                    reason_code=FHIR_TIMEOUT,
+                    user_message="FHIR request timed out.",
+                    status_code=503,
+                    details=str(exc),
+                ) from exc
+            except httpx.RequestError as exc:
+                raise FhirGatewayError(
+                    reason_code=FHIR_UNAVAILABLE,
+                    user_message="FHIR service is unavailable.",
+                    status_code=503,
+                    details=str(exc),
+                ) from exc
+
+            if retry_on_read and response.status_code == 503 and attempt < attempts - 1:
+                continue
+
+            return response
+
+        raise FhirGatewayError(
+            reason_code=FHIR_UNAVAILABLE,
+            user_message="FHIR service is unavailable.",
+            status_code=503,
+        )
+        
+    @staticmethod
+    def _extract_next_link(bundle: dict[str, Any]) -> str | None:
+        links = bundle.get("link")
+        if not isinstance(links, list):
+            return None
+
+        for link in links:
+            if not isinstance(link, dict):
+                continue
+
+            relation = link.get("relation")
+            url = link.get("url")
+
+            if relation == "next" and isinstance(url, str) and url.strip():
+                return url.strip()
+
+        return None
 
     def _url(self, path: str) -> str:
         if path.startswith("/"):
