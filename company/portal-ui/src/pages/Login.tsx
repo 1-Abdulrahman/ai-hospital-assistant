@@ -48,9 +48,12 @@ export default function LoginPage() {
             {error && <div className="mb-4"><ErrorBanner error={error} /></div>}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
-              </div>
+                <Label htmlFor="username">Username or Email</Label>
+                <Input
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="admin or admin@company.local"
+                />              </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
@@ -74,9 +77,25 @@ export default function LoginPage() {
                 {loading ? 'Signing in…' : 'Sign In'}
               </Button>
             </form>
-            <div className="mt-4 text-xs text-muted-foreground text-center space-y-1">
-              <p><code className="bg-muted px-1 rounded">admin</code> / <code className="bg-muted px-1 rounded">admin</code> <span className="text-muted-foreground">(Platform Admin)</span></p>
-              <p><code className="bg-muted px-1 rounded">tenant</code> / <code className="bg-muted px-1 rounded">tenant</code> <span className="text-muted-foreground">(Tenant Admin)</span></p>
+            <div className="rounded-md border bg-muted/30 px-3 py-2 text-xs text-muted-foreground space-y-2">
+              <div className="font-medium text-foreground">Demo logins</div>
+
+              <div className="space-y-1">
+                <div>
+                  <span className="font-medium">Platform Admin:</span>{" "}
+                  <code>admin / CompanyAdmin123!</code>
+                </div>
+                <div>
+                  <span className="font-medium">Tenant Admin:</span>{" "}
+                  <code>tenant / Admin123!</code>
+                </div>
+              </div>
+
+              <div className="text-[11px] text-muted-foreground/80">
+                Email login also works in the username field:
+                <div className="mt-1 font-mono">admin@company.local</div>
+                <div className="font-mono">admin@mvp.local</div>
+              </div>
             </div>
           </CardContent>
         </Card>

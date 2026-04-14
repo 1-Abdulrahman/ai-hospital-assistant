@@ -105,7 +105,7 @@ export interface Session {
   sessionId: string;
   startedAt: string;
   lastEventAt: string;
-  status: 'COMPLETED' | 'DROPPED' | 'FAILED';
+  status: 'COMPLETED' | 'DROPPED' | 'FAILED' | 'ACTIVE';
   finalReasonCode?: string;
   correlationId?: string;
 }

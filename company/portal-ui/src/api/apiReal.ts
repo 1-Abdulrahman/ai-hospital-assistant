@@ -1,4 +1,20 @@
-import type { ApiAdapter, ApiResponse, LoginRequest, LoginResponse, HealthStatus, AnalyticsSummary, Booking, BookingsPage, Tenant, TenantDetail, AuditPage, TraceEvent, Session, SessionsPage, NlpStats, NlpClassification } from './types';
+import type {
+  ApiAdapter,
+  ApiResponse,
+  LoginResponse,
+  HealthStatus,
+  AnalyticsSummary,
+  Booking,
+  BookingsPage,
+  Tenant,
+  TenantDetail,
+  AuditPage,
+  TraceEvent,
+  Session,
+  SessionsPage,
+  NlpStats,
+  NlpClassification,
+} from './types';
 import { generateUUID } from '@/lib/uuid';
 import { sanitizeResponse } from '@/lib/sanitize';
 import { getEffectiveTenantId } from './authState';
@@ -18,7 +34,12 @@ function getPortalSessionId(): string {
   return sid;
 }
 
-async function request<T>(method: string, path: string, body?: unknown, skipAuth = false): Promise<ApiResponse<T>> {
+async function request<T>(
+  method: string,
+  path: string,
+  body?: unknown,
+  skipAuth = false,
+): Promise<ApiResponse<T>> {
   const requestCorrelationId = generateUUID();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -26,6 +47,7 @@ async function request<T>(method: string, path: string, body?: unknown, skipAuth
     'X-Tenant-Id': getEffectiveTenantId(),
     'X-Session-Id': getPortalSessionId(),
   };
+
   const jwt = getJwt();
   if (jwt && !skipAuth) {
     headers['Authorization'] = `Bearer ${jwt}`;
@@ -45,8 +67,8 @@ async function request<T>(method: string, path: string, body?: unknown, skipAuth
     };
   }
 
-  // Extract backend correlation ID
-  let backendCorrelationId: string | undefined = res.headers.get('X-Correlation-Id') || undefined;
+  let backendCorrelationId: string | undefined =
+    res.headers.get('X-Correlation-Id') || undefined;
 
   if (res.status === 401) {
     sessionStorage.removeItem('portal_jwt');
@@ -90,28 +112,56 @@ async function request<T>(method: string, path: string, body?: unknown, skipAuth
   };
 }
 
+function mapHealth(raw: any): HealthStatus {
+  return {
+    status: raw?.status || 'DOWN',
+    timestamp: raw?.timestamp || raw?.time,
+  };
+}
+
 export const apiReal: ApiAdapter = {
   login: (req) => request<LoginResponse>('POST', '/auth/login', req, true),
-  getHealth: () => request<HealthStatus>('GET', '/health'),
-  getFhirStatus: () => request<HealthStatus>('GET', '/integrations/fhir/status'),
-  getAnalyticsSummary: (from, to) => request<AnalyticsSummary>('GET', `/portal/analytics/summary?from=${from}&to=${to}`),
-  getRecentBookings: (limit = 10) => request<Booking[]>('GET', `/portal/bookings/recent?limit=${limit}`),
+
+  async getHealth() {
+    const res = await request<any>('GET', '/health');
+    return { ...res, data: mapHealth(res.data) };
+  },
+
+  async getFhirStatus() {
+    const res = await request<any>('GET', '/integrations/fhir/status');
+    return { ...res, data: mapHealth(res.data) };
+  },
+
+  getAnalyticsSummary: (from, to) =>
+    request<AnalyticsSummary>('GET', `/portal/analytics/summary?from=${from}&to=${to}`),
+
+  getRecentBookings: (limit = 10) =>
+    request<Booking[]>('GET', `/portal/bookings/recent?limit=${limit}`),
+
   getBookings: (params) => {
     const qs = new URLSearchParams(params).toString();
     return request<BookingsPage>('GET', `/portal/bookings?${qs}`);
   },
+
   getTenants: () => request<Tenant[]>('GET', '/portal/tenants'),
   getTenantDetail: (id) => request<TenantDetail>('GET', `/portal/tenants/${id}`),
   getAuditLogs: (params) => {
     const qs = new URLSearchParams(params).toString();
     return request<AuditPage>('GET', `/portal/audit?${qs}`);
   },
-  getTracesByCorrelationId: (id) => request<TraceEvent[]>('GET', `/portal/traces/${id}`),
-  getTracesBySessionId: (id) => request<TraceEvent[]>('GET', `/portal/traces/by-session/${id}`),
+
+  getTracesByCorrelationId: (id) =>
+    request<TraceEvent[]>('GET', `/portal/traces/${id}`),
+
+  getTracesBySessionId: (id) =>
+    request<TraceEvent[]>('GET', `/portal/traces/by-session/${id}`),
+
   getSessions: (params) => {
     const qs = new URLSearchParams(params).toString();
     return request<SessionsPage>('GET', `/portal/sessions?${qs}`);
   },
+
   getNlpStats: () => request<NlpStats>('GET', '/portal/nlp/stats'),
-  getNlpRecent: (limit = 20) => request<NlpClassification[]>('GET', `/portal/nlp/recent?limit=${limit}`),
+  getNlpRecent: (limit = 20) =>
+    request<NlpClassification[]>('GET', `/portal/nlp/recent?limit=${limit}`),
 };

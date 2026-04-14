@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,10 +13,20 @@ import type { TraceEvent } from '@/api/types';
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
+
   const copy = () => {
-    navigator.clipboard.writeText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
-  return <Button variant="outline" size="sm" onClick={copy}>{copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}{copied ? 'Copied' : 'Copy ID'}</Button>;
+
+  return (
+    <Button variant="outline" size="sm" onClick={copy}>
+      {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+      {copied ? 'Copied' : 'Copy ID'}
+    </Button>
+  );
 }
 
 function Timeline({ events }: { events: TraceEvent[] }) {
@@ -28,16 +38,24 @@ function Timeline({ events }: { events: TraceEvent[] }) {
           <div className="relative z-10 mt-1.5">
             <div className="w-3 h-3 rounded-full bg-primary border-2 border-background" />
           </div>
+
           <Card className="flex-1">
             <CardContent className="p-4 space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-muted-foreground">{safeFormatDate(e.timestamp)}</span>
+                <span className="text-xs text-muted-foreground">
+                  {safeFormatDate(e.timestamp)}
+                </span>
                 <StatusBadge status={e.outcome} />
                 <span className="text-xs font-medium">{e.eventType || 'N/A'}</span>
               </div>
-              <p className="text-xs text-muted-foreground">Component: {e.component || 'N/A'}</p>
+
+              <p className="text-xs text-muted-foreground">
+                Component: {e.component || 'N/A'}
+              </p>
+
               {e.reasonCode && <p className="text-xs">Reason: {e.reasonCode}</p>}
-              <p className="text-sm">{e.message || e.summary || e.safeSummary || 'N/A'}</p>
+
+              <p className="text-sm">{e.safeSummary || e.summary || e.message || 'N/A'}</p>
             </CardContent>
           </Card>
         </div>
@@ -48,53 +66,107 @@ function Timeline({ events }: { events: TraceEvent[] }) {
 
 export default function TracesPage() {
   const [searchParams] = useSearchParams();
-  const [correlationId, setCorrelationId] = useState(searchParams.get('correlationId') || '');
-  const [sessionId, setSessionId] = useState('');
+
+  const initialCorrelationId = searchParams.get('correlationId') || '';
+  const initialSessionId = searchParams.get('sessionId') || '';
+
+  const [correlationId, setCorrelationId] = useState(initialCorrelationId);
+  const [sessionId, setSessionId] = useState(initialSessionId);
+
+  const initialSearchType =
+    initialCorrelationId ? 'correlation' : initialSessionId ? 'session' : null;
+  const initialSearchValue = initialCorrelationId || initialSessionId;
+
   const [searchType, setSearchType] = useState<'correlation' | 'session' | null>(
-    searchParams.get('correlationId') ? 'correlation' : null
+    initialSearchType,
   );
-  const [searchValue, setSearchValue] = useState(searchParams.get('correlationId') || '');
+  const [searchValue, setSearchValue] = useState(initialSearchValue);
 
   const { data, loading, error, refetch } = useApiCall(
     (api) => {
-      if (searchType === 'correlation' && searchValue) return api.getTracesByCorrelationId(searchValue);
-      if (searchType === 'session' && searchValue) return api.getTracesBySessionId(searchValue);
+      if (searchType === 'correlation' && searchValue) {
+        return api.getTracesByCorrelationId(searchValue);
+      }
+      if (searchType === 'session' && searchValue) {
+        return api.getTracesBySessionId(searchValue);
+      }
       return Promise.resolve({ data: [] as TraceEvent[], requestCorrelationId: '' });
     },
-    [searchType, searchValue]
+    [searchType, searchValue],
   );
 
-  const searchByCorrelation = () => { if (correlationId) { setSearchType('correlation'); setSearchValue(correlationId); } };
-  const searchBySession = () => { if (sessionId) { setSearchType('session'); setSearchValue(sessionId); } };
+  const searchByCorrelation = () => {
+    if (correlationId) {
+      setSearchType('correlation');
+      setSearchValue(correlationId);
+    }
+  };
+
+  const searchBySession = () => {
+    if (sessionId) {
+      setSearchType('session');
+      setSearchValue(sessionId);
+    }
+  };
 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Traces</h2>
+
       <div className="flex flex-wrap gap-3 items-end">
         <div className="flex gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Correlation ID" value={correlationId} onChange={(e) => setCorrelationId(e.target.value)} className="pl-9 w-[280px] h-9"
-              onKeyDown={(e) => e.key === 'Enter' && searchByCorrelation()} />
+            <Input
+              placeholder="Correlation ID"
+              value={correlationId}
+              onChange={(e) => setCorrelationId(e.target.value)}
+              className="pl-9 w-[280px] h-9"
+              onKeyDown={(e) => e.key === 'Enter' && searchByCorrelation()}
+            />
           </div>
-          <Button size="sm" onClick={searchByCorrelation}>Search</Button>
+          <Button size="sm" onClick={searchByCorrelation}>
+            Search
+          </Button>
         </div>
+
         <div className="flex gap-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Patient Session ID" value={sessionId} onChange={(e) => setSessionId(e.target.value)} className="pl-9 w-[280px] h-9"
-              onKeyDown={(e) => e.key === 'Enter' && searchBySession()} />
+            <Input
+              placeholder="Patient Session ID"
+              value={sessionId}
+              onChange={(e) => setSessionId(e.target.value)}
+              className="pl-9 w-[280px] h-9"
+              onKeyDown={(e) => e.key === 'Enter' && searchBySession()}
+            />
           </div>
-          <Button size="sm" onClick={searchBySession}>Search</Button>
+          <Button size="sm" onClick={searchBySession}>
+            Search
+          </Button>
         </div>
       </div>
 
-      {searchValue && <div className="flex items-center gap-2"><span className="text-sm text-muted-foreground">Showing trace for: <code className="font-mono">{searchValue.slice(0, 12)}…</code></span><CopyButton text={searchValue} /></div>}
+      {searchValue && (
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            Showing trace for:{' '}
+            <code className="font-mono">{searchValue.slice(0, 12)}…</code>
+          </span>
+          <CopyButton text={searchValue} />
+        </div>
+      )}
 
       {loading && <Skeleton className="h-48" />}
       {error && <ErrorBanner error={error} onRetry={refetch} />}
-      {data && data.length === 0 && searchValue && <p className="text-muted-foreground text-sm">No trace events found.</p>}
-      {!searchValue && <p className="text-muted-foreground text-sm">Enter a Correlation ID or Patient Session ID to view trace events.</p>}
+      {data && data.length === 0 && searchValue && (
+        <p className="text-muted-foreground text-sm">No trace events found.</p>
+      )}
+      {!searchValue && (
+        <p className="text-muted-foreground text-sm">
+          Enter a Correlation ID or Patient Session ID to view trace events.
+        </p>
+      )}
       {data && data.length > 0 && <Timeline events={data} />}
     </div>
   );
