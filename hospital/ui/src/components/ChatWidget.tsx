@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Minus, MessageCircle, Activity, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  X,
+  Minus,
+  MessageCircle,
+  Activity,
+  Loader2,
+  House,
+  TriangleAlert,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useWidgetState } from "@/hooks/use-widget-state";
 import { useHealthCheck } from "@/hooks/use-health-check";
 import { useBookingFlow } from "@/hooks/use-booking-flow";
@@ -24,7 +23,7 @@ export default function ChatWidget() {
   const health = useHealthCheck();
   const panelRef = useRef<HTMLDivElement>(null);
 
-  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [isResetPromptVisible, setIsResetPromptVisible] = useState(false);
   const [isResettingHome, setIsResettingHome] = useState(false);
   const [contentVersion, setContentVersion] = useState(0);
 
@@ -45,13 +44,21 @@ export default function ChatWidget() {
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) setIsOpen(false);
+      if (e.key === "Escape" && isOpen) {
+        if (isResetPromptVisible) {
+          setIsResetPromptVisible(false);
+          return;
+        }
+        setIsOpen(false);
+      }
     };
+
     const handleClickOutside = (e: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
         setIsOpen(false);
       }
     };
+
     if (isOpen) {
       document.addEventListener("keydown", handleEscape);
       document.addEventListener("mousedown", handleClickOutside);
@@ -60,7 +67,7 @@ export default function ChatWidget() {
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
-  }, [isOpen, setIsOpen]);
+  }, [isOpen, isResetPromptVisible, setIsOpen]);
 
   const hasProgressToLose =
     currentMode !== null ||
@@ -90,7 +97,14 @@ export default function ChatWidget() {
       return;
     }
 
-    setIsResetDialogOpen(true);
+    setIsResetPromptVisible(true);
+  };
+
+  const handleStayHere = () => {
+    if (isResettingHome) {
+      return;
+    }
+    setIsResetPromptVisible(false);
   };
 
   const handleConfirmHomeReset = async () => {
@@ -99,7 +113,7 @@ export default function ChatWidget() {
     try {
       await chatReset();
       applyLocalHomeReset();
-      setIsResetDialogOpen(false);
+      setIsResetPromptVisible(false);
       toast.success("Returned to the main menu.");
     } catch (err: any) {
       toast.error(
@@ -113,36 +127,11 @@ export default function ChatWidget() {
   return (
     <>
       {isOpen && !isMinimized && (
-        <div className="fixed inset-0 z-40 md:hidden" onClick={() => setIsOpen(false)} />
+        <div
+          className="fixed inset-0 z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
       )}
-
-      <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Return to the main menu?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will cancel the current booking or renewal flow and take you
-              back to the main menu.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isResettingHome}>
-              Stay here
-            </AlertDialogCancel>
-
-            <Button
-              onClick={() => void handleConfirmHomeReset()}
-              disabled={isResettingHome}
-            >
-              {isResettingHome && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Return to main menu
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <div
         ref={panelRef}
@@ -176,7 +165,8 @@ export default function ChatWidget() {
                       "h-1.5 w-1.5 rounded-full",
                       health === "ok" && "bg-[hsl(var(--success))]",
                       health === "error" && "bg-destructive",
-                      health === "checking" && "bg-muted-foreground animate-pulse",
+                      health === "checking" &&
+                        "bg-muted-foreground animate-pulse",
                     )}
                   />
                 </div>
@@ -186,6 +176,7 @@ export default function ChatWidget() {
                   variant="ghost"
                   className="h-7 w-7"
                   onClick={() => setIsMinimized(true)}
+                  disabled={isResettingHome}
                 >
                   <Minus className="h-3 w-3" />
                 </Button>
@@ -195,13 +186,69 @@ export default function ChatWidget() {
                   variant="ghost"
                   className="h-7 w-7"
                   onClick={() => setIsOpen(false)}
+                  disabled={isResettingHome}
                 >
                   <X className="h-3 w-3" />
                 </Button>
               </div>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-hidden">
+            {isResetPromptVisible && (
+              <div className="border-b bg-muted/25 px-3 py-3 shrink-0">
+                <div className="rounded-lg border bg-background p-3 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 rounded-full bg-amber-100 p-2 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                      <TriangleAlert className="h-4 w-4" />
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <House className="h-4 w-4 text-muted-foreground" />
+                        <p className="text-sm font-semibold">
+                          Return to the main menu?
+                        </p>
+                      </div>
+
+                      <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                        This will cancel the current booking or renewal flow and
+                        take you back to the main menu.
+                      </p>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleStayHere}
+                          disabled={isResettingHome}
+                        >
+                          Stay here
+                        </Button>
+
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={() => void handleConfirmHomeReset()}
+                          disabled={isResettingHome}
+                        >
+                          {isResettingHome && (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          )}
+                          Return to main menu
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div
+              className={cn(
+                "flex-1 min-h-0 overflow-hidden transition-opacity",
+                isResetPromptVisible && "opacity-60 pointer-events-none",
+              )}
+            >
               <ChatWidgetContent key={contentVersion} />
             </div>
           </>
