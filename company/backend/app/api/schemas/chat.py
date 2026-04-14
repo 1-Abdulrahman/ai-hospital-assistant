@@ -154,3 +154,15 @@ class ChatRenewalIdentifyRequest(_BaseHospitalChatRequest):
         if not cleaned:
             raise ValueError("National ID cannot be empty.")
         return cleaned
+    
+    
+class ChatResetRequest(_BaseHospitalChatRequest):
+    action: str = Field(default="RESET_FLOW", min_length=1)
+
+    @field_validator("action")
+    @classmethod
+    def strip_action(cls, value: str) -> str:
+        cleaned = value.strip()
+        if not cleaned:
+            raise ValueError("Action cannot be empty.")
+        return cleaned

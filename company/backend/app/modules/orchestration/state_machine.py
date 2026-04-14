@@ -72,3 +72,22 @@ def transition_or_raise(*, current_state: str | None, target_state: str) -> str:
     if target_state not in allowed:
         raise StateTransitionError(current_state=current, target_state=target_state)
     return target_state
+
+def reset_to_new_or_raise(*, current_state: str | None) -> str:
+    current = current_state or NEW
+
+    resettable_states = {
+        NEW,
+        AWAITING_SPECIALTY_SELECTION,
+        AWAITING_CONTINUITY_IDENTITY,
+        AWAITING_SLOT_SELECTION,
+        AWAITING_CONFIRMATION,
+        AWAITING_RENEWAL_IDENTITY,
+        AWAITING_RENEWAL_SELECTION,
+        COMPLETED,
+    }
+
+    if current not in resettable_states:
+        raise StateTransitionError(current_state=current, target_state=NEW)
+
+    return NEW

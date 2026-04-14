@@ -35,6 +35,7 @@ from app.modules.orchestration.state_machine import (
     COMPLETED,
     NEW,
     StateTransitionError,
+    reset_to_new_or_raise,
     transition_or_raise,
 )
 from app.modules.scheduling.reason_codes import (
@@ -330,6 +331,40 @@ def _save_session(db: Session, session: AssistantSession) -> None:
     db.commit()
     db.refresh(session)
 
+def _clear_session_flow_state(session: AssistantSession) -> None:
+    session.current_state = reset_to_new_or_raise(current_state=session.current_state)
+    session.flow_mode = None
+
+    session.selected_specialty_id = None
+    session.selected_doctor_id = None
+    session.selected_slot_id = None
+    session.selected_slot_label = None
+    session.selected_slot_start_utc = None
+    session.selected_date = None
+    session.last_input_summary = None
+
+    session.renewal_item_id = None
+    session.renewal_item_label = None
+    session.renewal_patient_key_hash = None
+    session.renewal_patient_ref = None
+
+    _reset_continuity_context(session)
+
+
+def _session_has_active_flow(session: AssistantSession) -> bool:
+    return any(
+        [
+            bool(session.flow_mode),
+            bool(session.selected_specialty_id),
+            bool(session.selected_doctor_id),
+            bool(session.selected_slot_id),
+            bool(session.selected_date),
+            bool(session.renewal_item_id),
+            bool(session.renewal_patient_ref),
+            bool(session.continuity_checked),
+            (session.current_state or NEW) != NEW,
+        ]
+    )
 
 def _reset_continuity_context(session: AssistantSession) -> None:
     session.continuity_checked = False
@@ -656,6 +691,57 @@ async def process_renewal_request(
         show_consent_notice=True,
     )
 
+async def process_reset(
+    *,
+    db: Session,
+    header_tenant_id: str,
+    header_session_id: str,
+    body_tenant_id: str,
+    client_session_id: str,
+) -> dict:
+    ensure_tenant_header_matches_body(
+        header_tenant_id=header_tenant_id,
+        body_tenant_id=body_tenant_id,
+    )
+    ensure_tenant_exists(db=db, tenant_id=body_tenant_id)
+    _ensure_client_session_matches_header(
+        header_session_id=header_session_id,
+        client_session_id=client_session_id,
+    )
+
+    session, _ = _get_or_create_session(
+        db=db,
+        tenant_id=body_tenant_id,
+        client_session_id=client_session_id,
+    )
+
+    previous_state = session.current_state or NEW
+    previous_flow_mode = session.flow_mode
+    had_active_flow = _session_has_active_flow(session)
+
+    if had_active_flow:
+        emit_event(
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            actor_type="patient",
+            event_type="SESSION_DROPPED",
+            outcome="INFO",
+            reason_code=OK,
+            payload={
+                "component": "assistant-api",
+                "safeSummary": "User returned to the main menu and reset the active flow.",
+                "previousState": previous_state,
+                "previousFlowMode": previous_flow_mode,
+            },
+        )
+
+    _clear_session_flow_state(session)
+    _save_session(db, session)
+
+    return _response(
+        user_message="Returned to the main menu. Choose how you would like to continue.",
+    )
 
 async def process_renewal_identity(
     *,

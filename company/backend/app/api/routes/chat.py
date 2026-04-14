@@ -10,6 +10,7 @@ from app.api.schemas.chat import (
     ChatDirectStartRequest,
     ChatMessageRequest,
     ChatRenewalRequest,
+    ChatResetRequest,
     ChatResponse,
     ChatSelectionRequest,
     ChatRenewalIdentifyRequest,
@@ -21,6 +22,7 @@ from app.modules.orchestration.service import (
     process_continuity_identity,
     process_direct_start,
     process_renewal_request,
+    process_reset,
     process_selection,
     process_renewal_identity,
 )
@@ -98,6 +100,24 @@ async def chat_renewal_request(
         _raise_from_chat_error(exc)
     return ChatResponse(**result)
 
+@router.post("/reset", response_model=ChatResponse)
+async def chat_reset(
+    body: ChatResetRequest,
+    context: HospitalRequestContext = Depends(get_hospital_request_context),
+    db: Session = Depends(get_db),
+) -> ChatResponse:
+    try:
+        result = await process_reset(
+            db=db,
+            header_tenant_id=context.tenant_id,
+            header_session_id=context.session_id,
+            body_tenant_id=body.tenantId,
+            client_session_id=body.clientSessionId,
+        )
+    except ChatOrchestrationError as exc:
+        _raise_from_chat_error(exc)
+
+    return ChatResponse(**result)
 
 @router.post("/selection", response_model=ChatResponse)
 async def chat_selection(
@@ -190,3 +210,4 @@ async def chat_renewal_identify(
         _raise_from_chat_error(exc)
 
     return ChatResponse(**result)
+

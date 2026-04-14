@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import json
+
+from app.db.models import AssistantSession, Event
 
 def hospital_headers() -> dict[str, str]:
     return {
@@ -431,3 +434,91 @@ def test_chat_renewal_identify_returns_fhir_driven_medications(client, monkeypat
     assert body["selectionLists"][0]["type"] == "medication"
     assert body["selectionLists"][0]["items"][0]["label"] == "Metformin"
     assert body["selectionLists"][0]["items"][1]["label"] == "Atorvastatin"
+    
+    
+def test_chat_reset_clears_session_and_logs_drop_event(client, db_session) -> None:
+    client.post(
+        "/chat/direct/start",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "START_DIRECT_SCHEDULING",
+        },
+    )
+
+    client.post(
+        "/chat/selection",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "selectionType": "specialty",
+            "selectionId": "cardiology",
+            "action": "SELECT_SPECIALTY",
+        },
+    )
+
+    response = client.post(
+        "/chat/reset",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "RESET_FLOW",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["userMessage"] == "Returned to the main menu. Choose how you would like to continue."
+    assert body["correlationId"] == "corr-chat-001"
+
+    session = (
+        db_session.query(AssistantSession)
+        .filter(
+            AssistantSession.tenant_id == "demo",
+            AssistantSession.client_session_id == "patient-session-001",
+        )
+        .first()
+    )
+
+    assert session is not None
+    assert session.current_state == "NEW"
+    assert session.flow_mode is None
+    assert session.selected_specialty_id is None
+    assert session.selected_doctor_id is None
+    assert session.selected_slot_id is None
+    assert session.selected_slot_label is None
+    assert session.selected_slot_start_utc is None
+    assert session.selected_date is None
+    assert session.last_input_summary is None
+    assert session.renewal_item_id is None
+    assert session.renewal_item_label is None
+    assert session.renewal_patient_key_hash is None
+    assert session.renewal_patient_ref is None
+    assert session.continuity_checked is False
+    assert session.continuity_patient_ref is None
+    assert session.continuity_preferred_practitioner_ref is None
+    assert session.continuity_preferred_practitioner_display is None
+    assert session.continuity_is_returning is False
+
+    dropped_event = (
+        db_session.query(Event)
+        .filter(
+            Event.tenant_id == "demo",
+            Event.session_id == "patient-session-001",
+            Event.event_type == "SESSION_DROPPED",
+        )
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert dropped_event is not None
+    assert dropped_event.reason_code == "OK"
+
+    payload = json.loads(dropped_event.payload_json)
+    assert payload["component"] == "assistant-api"
+    assert "returned to the main menu" in payload["safeSummary"].lower()
+    assert payload["previousState"] == "AWAITING_CONTINUITY_IDENTITY"
+    assert payload["previousFlowMode"] == "direct"
