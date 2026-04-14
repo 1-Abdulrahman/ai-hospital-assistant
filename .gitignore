@@ -20,6 +20,7 @@ company/backend/app/assets/nlp_models/*
 # Runtime data
 company/data/
 company/fhir-data/
+.runtime
 
 # Environment
 .env
