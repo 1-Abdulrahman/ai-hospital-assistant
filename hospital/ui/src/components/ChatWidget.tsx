@@ -1,16 +1,47 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Minus, MessageCircle, Activity } from "lucide-react";
+import { X, Minus, MessageCircle, Activity, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useWidgetState } from "@/hooks/use-widget-state";
 import { useHealthCheck } from "@/hooks/use-health-check";
+import { useBookingFlow } from "@/hooks/use-booking-flow";
+import { chatReset } from "@/lib/api-client";
+import { clearCorrelationId } from "@/lib/session";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 import ChatWidgetContent from "./ChatWidgetContent";
 
 export default function ChatWidget() {
   const { isOpen, isMinimized, setIsOpen, setIsMinimized } = useWidgetState();
   const health = useHealthCheck();
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [isResettingHome, setIsResettingHome] = useState(false);
+  const [contentVersion, setContentVersion] = useState(0);
+
+  const {
+    step,
+    messages,
+    currentMode,
+    isLoading: flowLoading,
+    selectedSpecialtyId,
+    selectedDoctorId,
+    selectedSlotId,
+    renewalItemId,
+    patientNationalId,
+    patientEmail,
+    otpVerified,
+    reset,
+  } = useBookingFlow();
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -31,11 +62,87 @@ export default function ChatWidget() {
     }
   }, [isOpen, setIsOpen]);
 
+  const hasProgressToLose =
+    currentMode !== null ||
+    messages.length > 0 ||
+    step !== "chat" ||
+    selectedSpecialtyId !== null ||
+    selectedDoctorId !== null ||
+    selectedSlotId !== null ||
+    renewalItemId !== null ||
+    patientNationalId !== null ||
+    patientEmail !== null ||
+    otpVerified;
+
+  const applyLocalHomeReset = () => {
+    clearCorrelationId();
+    reset();
+    setContentVersion((value) => value + 1);
+  };
+
+  const handleHomeClick = () => {
+    if (flowLoading || isResettingHome) {
+      return;
+    }
+
+    if (!hasProgressToLose) {
+      applyLocalHomeReset();
+      return;
+    }
+
+    setIsResetDialogOpen(true);
+  };
+
+  const handleConfirmHomeReset = async () => {
+    setIsResettingHome(true);
+
+    try {
+      await chatReset();
+      applyLocalHomeReset();
+      setIsResetDialogOpen(false);
+      toast.success("Returned to the main menu.");
+    } catch (err: any) {
+      toast.error(
+        err.message || "Unable to return to the main menu right now.",
+      );
+    } finally {
+      setIsResettingHome(false);
+    }
+  };
+
   return (
     <>
       {isOpen && !isMinimized && (
         <div className="fixed inset-0 z-40 md:hidden" onClick={() => setIsOpen(false)} />
       )}
+
+      <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Return to the main menu?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will cancel the current booking or renewal flow and take you
+              back to the main menu.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isResettingHome}>
+              Stay here
+            </AlertDialogCancel>
+
+            <Button
+              onClick={() => void handleConfirmHomeReset()}
+              disabled={isResettingHome}
+            >
+              {isResettingHome && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Return to main menu
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <div
         ref={panelRef}
@@ -43,16 +150,25 @@ export default function ChatWidget() {
           "fixed bottom-4 right-4 z-50 flex flex-col bg-card rounded-xl border shadow-lg transition-all duration-300",
           isOpen && !isMinimized
             ? "w-full h-[85vh] sm:w-[380px] sm:h-[560px] opacity-100 scale-100"
-            : "w-14 h-14 opacity-0 scale-0 pointer-events-none"
+            : "w-14 h-14 opacity-0 scale-0 pointer-events-none",
         )}
       >
         {isOpen && !isMinimized && (
           <>
             <div className="flex items-center justify-between border-b px-4 py-3 shrink-0">
-              <div className="flex items-center gap-2 min-w-0">
+              <button
+                type="button"
+                onClick={handleHomeClick}
+                disabled={flowLoading || isResettingHome}
+                aria-label="Return to the main menu"
+                className="flex items-center gap-2 min-w-0 text-left transition-colors hover:text-primary disabled:opacity-60 disabled:cursor-not-allowed"
+              >
                 <Activity className="h-4 w-4 text-primary shrink-0" />
-                <span className="font-semibold text-sm truncate">Hospital Booking</span>
-              </div>
+                <span className="font-semibold text-sm truncate hover:underline">
+                  Hospital Booking
+                </span>
+              </button>
+
               <div className="flex items-center gap-1 shrink-0 ml-2">
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                   <div
@@ -60,10 +176,11 @@ export default function ChatWidget() {
                       "h-1.5 w-1.5 rounded-full",
                       health === "ok" && "bg-[hsl(var(--success))]",
                       health === "error" && "bg-destructive",
-                      health === "checking" && "bg-muted-foreground animate-pulse"
+                      health === "checking" && "bg-muted-foreground animate-pulse",
                     )}
                   />
                 </div>
+
                 <Button
                   size="icon"
                   variant="ghost"
@@ -72,6 +189,7 @@ export default function ChatWidget() {
                 >
                   <Minus className="h-3 w-3" />
                 </Button>
+
                 <Button
                   size="icon"
                   variant="ghost"
@@ -84,7 +202,7 @@ export default function ChatWidget() {
             </div>
 
             <div className="flex-1 min-h-0 overflow-hidden">
-              <ChatWidgetContent />
+              <ChatWidgetContent key={contentVersion} />
             </div>
           </>
         )}
@@ -96,9 +214,7 @@ export default function ChatWidget() {
             setIsOpen(true);
             setIsMinimized(false);
           }}
-          className={cn(
-            "fixed bottom-4 right-4 z-50 flex items-center justify-center h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200"
-          )}
+          className="fixed bottom-4 right-4 z-50 flex items-center justify-center h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-200"
           aria-label="Open chat"
         >
           <MessageCircle className="h-5 w-5" />

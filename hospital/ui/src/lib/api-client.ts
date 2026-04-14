@@ -135,6 +135,19 @@ export async function chatRenewalRequest(): Promise<ChatResponse> {
   );
 }
 
+export async function chatReset(): Promise<ChatResponse> {
+  return request(
+    "/chat/reset",
+    {
+      method: "POST",
+      headers: buildHeaders(),
+      body: JSON.stringify(chatBody({ action: "RESET_FLOW" })),
+    },
+    chatResponseSchema,
+  );
+}
+
+
 export async function chatSelection(input: {
   selectionType: string;
   selectionId?: string;
