@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import SelectionList from "@/components/chat/SelectionList";
 import type { SelectionList as SelectionListType } from "@/lib/types";
 
@@ -26,11 +26,33 @@ describe("SelectionList", () => {
     items: [
       {
         id: "slot-1",
-        label: "Dr. Lina Alharbi • 2026-04-12 09:00:00 UTC",
+        label: "Dr. Lina Alharbi • 2026-04-14 09:00:00 UTC",
         description: "Cardiology appointment slot.",
         meta: {
-          isoDate: "2026-04-12T09:00:00Z",
-          startTime: "2026-04-12 09:00:00 UTC",
+          isoDate: "2026-04-14T09:00:00Z",
+          startTime: "2026-04-14 09:00:00 UTC",
+          endTime: "09:30:00 UTC",
+          timezone: "UTC",
+        },
+      },
+      {
+        id: "slot-2",
+        label: "Dr. Lina Alharbi • 2026-04-14 10:30:00 UTC",
+        description: "Cardiology appointment slot.",
+        meta: {
+          isoDate: "2026-04-14T10:30:00Z",
+          startTime: "2026-04-14 10:30:00 UTC",
+          endTime: "11:00:00 UTC",
+          timezone: "UTC",
+        },
+      },
+      {
+        id: "slot-3",
+        label: "Dr. Omar Salem • 2026-04-15 09:00:00 UTC",
+        description: "Cardiology appointment slot.",
+        meta: {
+          isoDate: "2026-04-15T09:00:00Z",
+          startTime: "2026-04-15 09:00:00 UTC",
           endTime: "09:30:00 UTC",
           timezone: "UTC",
         },
@@ -41,15 +63,12 @@ describe("SelectionList", () => {
   it("renders specialty items with description and confidence percentage", () => {
     const onSelect = vi.fn();
 
-    render(
-      <SelectionList
-        list={specialtyList}
-        onSelect={onSelect}
-      />,
-    );
+    render(<SelectionList list={specialtyList} onSelect={onSelect} />);
 
     expect(screen.getByText("Cardiology")).toBeInTheDocument();
-    expect(screen.getByText("Suggested by symptom interpretation.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Suggested by symptom interpretation."),
+    ).toBeInTheDocument();
     expect(screen.getByText("91%")).toBeInTheDocument();
 
     expect(screen.getByText("Neurology")).toBeInTheDocument();
@@ -57,15 +76,10 @@ describe("SelectionList", () => {
     expect(screen.getByText("6%")).toBeInTheDocument();
   });
 
-  it("calls onSelect when an enabled item is clicked", () => {
+  it("calls onSelect when an enabled specialty item is clicked", () => {
     const onSelect = vi.fn();
 
-    render(
-      <SelectionList
-        list={specialtyList}
-        onSelect={onSelect}
-      />,
-    );
+    render(<SelectionList list={specialtyList} onSelect={onSelect} />);
 
     fireEvent.click(screen.getByText("Cardiology"));
 
@@ -78,15 +92,11 @@ describe("SelectionList", () => {
     );
   });
 
-  it("does not call onSelect when disabled", () => {
+  it("does not call onSelect when specialty list is disabled", () => {
     const onSelect = vi.fn();
 
     render(
-      <SelectionList
-        list={specialtyList}
-        onSelect={onSelect}
-        disabled
-      />,
+      <SelectionList list={specialtyList} onSelect={onSelect} disabled />,
     );
 
     fireEvent.click(screen.getByText("Cardiology"));
@@ -94,22 +104,34 @@ describe("SelectionList", () => {
     expect(onSelect).not.toHaveBeenCalled();
   });
 
-  it("renders slot items without specialty confidence percentages", () => {
+  it("renders a doctor-first availability picker for slot lists", () => {
     const onSelect = vi.fn();
 
-    render(
-      <SelectionList
-        list={slotList}
-        onSelect={onSelect}
-      />,
-    );
+    render(<SelectionList list={slotList} onSelect={onSelect} />);
 
-    expect(screen.getByText("Dr. Lina Alharbi • 2026-04-12 09:00:00 UTC")).toBeInTheDocument();
-    expect(screen.getByText("Cardiology appointment slot.")).toBeInTheDocument();
-    expect(screen.queryByText("91%")).not.toBeInTheDocument();
+    expect(screen.getByText("Choose a doctor")).toBeInTheDocument();
+    expect(screen.getByText("Dr. Lina Alharbi")).toBeInTheDocument();
+    expect(screen.getByText("Dr. Omar Salem")).toBeInTheDocument();
+    expect(screen.getByText("Open time slots")).toBeInTheDocument();
   });
 
-  it("marks the selected item visually", () => {
+  it("selects a time slot from the doctor-first picker", () => {
+    const onSelect = vi.fn();
+
+    render(<SelectionList list={slotList} onSelect={onSelect} />);
+
+    fireEvent.click(screen.getByRole("button", { name: /10:30/i }));
+
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "slot-2",
+        label: "Dr. Lina Alharbi • 2026-04-14 10:30:00 UTC",
+      }),
+    );
+  });
+
+  it("marks the selected specialty visually", () => {
     const onSelect = vi.fn();
 
     const { container } = render(
