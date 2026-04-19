@@ -31,7 +31,10 @@ def test_slot_selection_list_accepts_slot_dto_objects() -> None:
         )
     ]
 
-    result = _slot_selection_list(items=items)
+    result = _slot_selection_list(
+        items=items,
+        preferred_practitioner_ref="Practitioner/prac-1",
+    )
 
     assert isinstance(result, list)
     assert result[0]["type"] == "slot"
@@ -43,3 +46,11 @@ def test_slot_selection_list_accepts_slot_dto_objects() -> None:
     assert first_item["description"] == "Cardiology appointment slot."
     assert first_item["meta"]["isoDate"] == "2026-04-12T09:00:00Z"
     assert first_item["meta"]["timezone"] == "UTC"
+    assert first_item["meta"]["practitionerRef"] == "Practitioner/prac-1"
+    assert first_item["meta"]["practitionerDisplay"] == "Dr. Lina Alharbi"
+    assert first_item["meta"]["specialtyId"] == "cardiology"
+    assert first_item["meta"]["specialtyDisplay"] == "Cardiology"
+    assert first_item["meta"]["dateKey"] == "2026-04-12"
+    assert first_item["meta"]["displayDate"] == "Sun 12 Apr 2026"
+    assert first_item["meta"]["displayTime"] == "9:00 AM"
+    assert first_item["meta"]["isPreferredPractitioner"] is True

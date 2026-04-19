@@ -205,9 +205,25 @@ def test_chat_continuity_identify_accepts_slot_dto_items(client, monkeypatch) ->
 
     assert response.status_code == 200
     body = response.json()
+
     assert body["isChronicContinuity"] is True
+    assert body["continuity"]["matched"] is True
+    assert body["continuity"]["preferredPractitionerRef"] == "Practitioner/prac-1"
+    assert body["continuity"]["preferredPractitionerDisplay"] == "Dr. Lina Alharbi"
+    assert body["continuity"]["preferredPractitionerHasAvailability"] is True
+    assert "prioritized" in body["continuity"]["message"].lower()
+
     assert body["selectionLists"][0]["type"] == "slot"
     assert body["selectionLists"][0]["items"][0]["id"] == "slot-1"
+
+    meta = body["selectionLists"][0]["items"][0]["meta"]
+    assert meta["practitionerRef"] == "Practitioner/prac-1"
+    assert meta["practitionerDisplay"] == "Dr. Lina Alharbi"
+    assert meta["specialtyId"] == "cardiology"
+    assert meta["specialtyDisplay"] == "Cardiology"
+    assert meta["dateKey"] == "2026-04-12"
+    assert meta["displayTime"] == "9:00 AM"
+    assert meta["isPreferredPractitioner"] is True
 
 
 def test_chat_continuity_identify_returns_prioritized_slots(client, monkeypatch) -> None:
@@ -309,9 +325,24 @@ def test_chat_continuity_identify_returns_prioritized_slots(client, monkeypatch)
 
     assert response.status_code == 200
     body = response.json()
+
     assert body["isChronicContinuity"] is True
+    assert body["continuity"]["matched"] is True
+    assert body["continuity"]["preferredPractitionerRef"] == "Practitioner/prac-card-1"
+    assert body["continuity"]["preferredPractitionerDisplay"] == "Dr. Lina Alharbi"
+    assert body["continuity"]["preferredPractitionerHasAvailability"] is True
+
     assert body["selectionLists"][0]["type"] == "slot"
     assert body["selectionLists"][0]["items"][0]["label"].startswith("Dr. Lina Alharbi")
+
+    first_meta = body["selectionLists"][0]["items"][0]["meta"]
+    second_meta = body["selectionLists"][0]["items"][1]["meta"]
+
+    assert first_meta["practitionerRef"] == "Practitioner/prac-card-1"
+    assert first_meta["isPreferredPractitioner"] is True
+
+    assert second_meta["practitionerRef"] == "Practitioner/prac-card-2"
+    assert second_meta["isPreferredPractitioner"] is False
 
 
 def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypatch) -> None:

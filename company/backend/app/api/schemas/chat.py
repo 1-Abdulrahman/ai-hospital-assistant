@@ -99,6 +99,17 @@ class SelectionListItemMeta(BaseModel):
     endTime: str | None = None
     timezone: str | None = None
 
+    practitionerRef: str | None = None
+    practitionerDisplay: str | None = None
+    specialtyId: str | None = None
+    specialtyDisplay: str | None = None
+
+    dateKey: str | None = None
+    displayDate: str | None = None
+    displayTime: str | None = None
+
+    isPreferredPractitioner: bool | None = None
+
 
 class SelectionListItem(BaseModel):
     id: str
@@ -118,6 +129,14 @@ class BackendError(BaseModel):
     userMessage: str
 
 
+class ContinuityPayload(BaseModel):
+    matched: bool = False
+    preferredPractitionerRef: str | None = None
+    preferredPractitionerDisplay: str | None = None
+    preferredPractitionerHasAvailability: bool | None = None
+    message: str | None = None
+
+
 class ConfirmationSummary(BaseModel):
     bookingReferenceId: str | None = None
     correlationId: str | None = None
@@ -134,6 +153,7 @@ class ChatResponse(BaseModel):
     selectionLists: list[SelectionList] | None = None
     needsClarification: bool | None = None
     isChronicContinuity: bool | None = None
+    continuity: ContinuityPayload | None = None
     showConsentNotice: bool | None = None
     requiresContinuityIdentity: bool | None = None
     requiresDate: bool | None = None
@@ -154,8 +174,8 @@ class ChatRenewalIdentifyRequest(_BaseHospitalChatRequest):
         if not cleaned:
             raise ValueError("National ID cannot be empty.")
         return cleaned
-    
-    
+
+
 class ChatResetRequest(_BaseHospitalChatRequest):
     action: str = Field(default="RESET_FLOW", min_length=1)
 

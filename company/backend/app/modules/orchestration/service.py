@@ -236,8 +236,90 @@ def _pick(mapping: Mapping[str, Any], *keys: str) -> Any:
             return mapping[key]
     return None
 
+def _parse_utc_datetime(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    normalized = value.replace("Z", "+00:00")
+    try:
+        return datetime.fromisoformat(normalized).astimezone(timezone.utc)
+    except ValueError:
+        return None
 
-def _slot_selection_list(*, items: list[Any]) -> list[dict]:
+
+def _format_slot_start_label(value: str | None) -> str:
+    parsed = _parse_utc_datetime(value)
+    if parsed is None:
+        return str(value or "Unknown start time")
+    return parsed.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
+def _format_slot_end_label(value: str | None) -> str | None:
+    parsed = _parse_utc_datetime(value)
+    if parsed is None:
+        return str(value).replace("Z", " UTC") if value else None
+    return parsed.strftime("%H:%M:%S UTC")
+
+
+def _format_display_date(value: str | None) -> str | None:
+    parsed = _parse_utc_datetime(value)
+    if parsed is None:
+        return value[:10] if value else None
+    return parsed.strftime("%a %d %b %Y")
+
+
+def _format_display_time(value: str | None) -> str | None:
+    parsed = _parse_utc_datetime(value)
+    if parsed is None:
+        return None
+    return parsed.strftime("%I:%M %p").lstrip("0")
+
+
+def _date_key_from_iso(value: str | None) -> str | None:
+    parsed = _parse_utc_datetime(value)
+    if parsed is None:
+        return value[:10] if value else None
+    return parsed.strftime("%Y-%m-%d")
+
+
+def _preferred_practitioner_has_availability(
+    *,
+    items: list[Any],
+    preferred_practitioner_ref: str | None,
+) -> bool | None:
+    if not preferred_practitioner_ref:
+        return None
+
+    for raw_slot in items:
+        slot = _slot_to_mapping(raw_slot)
+        practitioner_ref = str(_pick(slot, "practitionerRef", "practitioner_ref") or "")
+        if practitioner_ref == preferred_practitioner_ref:
+            return True
+
+    return False
+
+
+def _build_continuity_payload(
+    *,
+    session: AssistantSession,
+    preferred_practitioner_has_availability: bool | None,
+    message: str | None,
+) -> dict | None:
+    if not session.continuity_checked:
+        return None
+
+    return {
+        "matched": bool(session.continuity_is_returning),
+        "preferredPractitionerRef": session.continuity_preferred_practitioner_ref,
+        "preferredPractitionerDisplay": session.continuity_preferred_practitioner_display,
+        "preferredPractitionerHasAvailability": preferred_practitioner_has_availability,
+        "message": message,
+    }
+
+def _slot_selection_list(
+    *,
+    items: list[Any],
+    preferred_practitioner_ref: str | None = None,
+) -> list[dict]:
     slot_items: list[dict] = []
 
     for raw_slot in items:
@@ -245,21 +327,23 @@ def _slot_selection_list(*, items: list[Any]) -> list[dict]:
 
         slot_id = _pick(slot, "slotId", "slot_id", "id")
         slot_ref = _pick(slot, "slotRef", "slot_ref")
+        practitioner_ref = _pick(slot, "practitionerRef", "practitioner_ref")
         practitioner_display = _pick(slot, "practitionerDisplay", "practitioner_display")
         specialty = _pick(slot, "specialty")
         iso_start = _pick(slot, "startUtc", "start_utc")
         iso_end = _pick(slot, "endUtc", "end_utc")
 
-        start_label = (
-            str(iso_start).replace("T", " ").replace("Z", " UTC")
-            if iso_start
-            else "Unknown start time"
-        )
-
-        end_label = (
-            str(iso_end).split("T", 1)[1].replace("Z", " UTC")
-            if iso_end and "T" in str(iso_end)
-            else (str(iso_end).replace("Z", " UTC") if iso_end else None)
+        specialty_id = str(specialty) if specialty else None
+        specialty_display = _humanize_specialty(specialty_id or "") if specialty_id else None
+        date_key = _date_key_from_iso(str(iso_start) if iso_start else None)
+        display_date = _format_display_date(str(iso_start) if iso_start else None)
+        display_time = _format_display_time(str(iso_start) if iso_start else None)
+        start_label = _format_slot_start_label(str(iso_start) if iso_start else None)
+        end_label = _format_slot_end_label(str(iso_end) if iso_end else None)
+        is_preferred = bool(
+            preferred_practitioner_ref
+            and practitioner_ref
+            and str(practitioner_ref) == preferred_practitioner_ref
         )
 
         label = f"{practitioner_display or 'Available doctor'} • {start_label}"
@@ -268,12 +352,20 @@ def _slot_selection_list(*, items: list[Any]) -> list[dict]:
             _selection_item(
                 item_id=str(slot_id or slot_ref or ""),
                 label=label,
-                description=f"{_humanize_specialty(str(specialty or ''))} appointment slot.",
+                description=f"{specialty_display or 'Specialist'} appointment slot.",
                 meta={
                     "isoDate": str(iso_start) if iso_start else None,
                     "startTime": start_label,
                     "endTime": end_label,
                     "timezone": "UTC",
+                    "practitionerRef": str(practitioner_ref) if practitioner_ref else None,
+                    "practitionerDisplay": str(practitioner_display) if practitioner_display else None,
+                    "specialtyId": specialty_id,
+                    "specialtyDisplay": specialty_display,
+                    "dateKey": date_key,
+                    "displayDate": display_date,
+                    "displayTime": display_time,
+                    "isPreferredPractitioner": is_preferred,
                 },
             )
         )
@@ -417,6 +509,7 @@ def _response(
     selection_lists: list[dict] | None = None,
     needs_clarification: bool | None = None,
     is_chronic_continuity: bool | None = None,
+    continuity: dict | None = None,
     show_consent_notice: bool | None = None,
     requires_continuity_identity: bool | None = None,
     booking_reference_id: str | None = None,
@@ -434,6 +527,8 @@ def _response(
         payload["needsClarification"] = needs_clarification
     if is_chronic_continuity is not None:
         payload["isChronicContinuity"] = is_chronic_continuity
+    if continuity is not None:
+        payload["continuity"] = continuity
     if show_consent_notice is not None:
         payload["showConsentNotice"] = show_consent_notice
     if requires_continuity_identity is not None:
@@ -454,7 +549,18 @@ def _build_slot_response(
     slot_result: dict,
     session: AssistantSession,
     user_message: str | None = None,
+    continuity_message: str | None = None,
 ) -> dict:
+    preferred_has_availability = _preferred_practitioner_has_availability(
+        items=slot_result.get("items", []),
+        preferred_practitioner_ref=session.continuity_preferred_practitioner_ref,
+    )
+    continuity_payload = _build_continuity_payload(
+        session=session,
+        preferred_practitioner_has_availability=preferred_has_availability,
+        message=continuity_message,
+    )
+
     if slot_result["reasonCode"] != OK:
         message = slot_result.get("message") or _slot_failure_message(
             reason_code=slot_result["reasonCode"],
@@ -463,6 +569,7 @@ def _build_slot_response(
         return _response(
             user_message=message,
             is_chronic_continuity=session.continuity_is_returning,
+            continuity=continuity_payload,
             errors=[
                 {
                     "reasonCode": slot_result["reasonCode"],
@@ -476,8 +583,12 @@ def _build_slot_response(
     )
     return _response(
         user_message=user_message or default_message,
-        selection_lists=_slot_selection_list(items=slot_result.get("items", [])),
+        selection_lists=_slot_selection_list(
+            items=slot_result.get("items", []),
+            preferred_practitioner_ref=session.continuity_preferred_practitioner_ref,
+        ),
         is_chronic_continuity=session.continuity_is_returning,
+        continuity=continuity_payload,
     )
 
 
@@ -971,21 +1082,24 @@ async def process_continuity_identity(
 
     if session.continuity_is_returning:
         label = preferred_practitioner_display or "your previous physician"
+        message = f"Continuity of care found. {label} has been prioritized when available."
         return _build_slot_response(
             slot_result=slot_result,
             session=session,
-            user_message=f"Continuity of care found. {label} has been prioritized when available.",
+            user_message=message,
+            continuity_message=message,
         )
 
+    message = (
+        f"No matching continuity-of-care record was found. "
+        f"Showing available {_humanize_specialty(session.selected_specialty_id)} slots."
+    )
     return _build_slot_response(
         slot_result=slot_result,
         session=session,
-        user_message=(
-            f"No matching continuity-of-care record was found. "
-            f"Showing available {_humanize_specialty(session.selected_specialty_id)} slots."
-        ),
+        user_message=message,
+        continuity_message=message,
     )
-
 
 async def process_selection(
     *,
