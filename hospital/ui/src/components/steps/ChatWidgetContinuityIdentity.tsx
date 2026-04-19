@@ -14,6 +14,7 @@ function responseToMessage(res: any) {
     selectionLists: res.selectionLists ?? undefined,
     needsClarification: res.needsClarification ?? undefined,
     isChronicContinuity: res.isChronicContinuity ?? undefined,
+    continuity: res.continuity ?? undefined,
     showConsentNotice: res.showConsentNotice ?? undefined,
     requiresContinuityIdentity: res.requiresContinuityIdentity ?? undefined,
     bookingReferenceId: res.bookingReferenceId ?? undefined,

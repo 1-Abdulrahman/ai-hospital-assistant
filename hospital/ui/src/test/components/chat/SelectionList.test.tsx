@@ -33,6 +33,14 @@ describe("SelectionList", () => {
           startTime: "2026-04-14 09:00:00 UTC",
           endTime: "09:30:00 UTC",
           timezone: "UTC",
+          practitionerRef: "Practitioner/prac-card-1",
+          practitionerDisplay: "Dr. Lina Alharbi",
+          specialtyId: "cardiology",
+          specialtyDisplay: "Cardiology",
+          dateKey: "2026-04-14",
+          displayDate: "Tue 14 Apr 2026",
+          displayTime: "9:00 AM",
+          isPreferredPractitioner: true,
         },
       },
       {
@@ -44,6 +52,14 @@ describe("SelectionList", () => {
           startTime: "2026-04-14 10:30:00 UTC",
           endTime: "11:00:00 UTC",
           timezone: "UTC",
+          practitionerRef: "Practitioner/prac-card-1",
+          practitionerDisplay: "Dr. Lina Alharbi",
+          specialtyId: "cardiology",
+          specialtyDisplay: "Cardiology",
+          dateKey: "2026-04-14",
+          displayDate: "Tue 14 Apr 2026",
+          displayTime: "10:30 AM",
+          isPreferredPractitioner: true,
         },
       },
       {
@@ -55,6 +71,14 @@ describe("SelectionList", () => {
           startTime: "2026-04-15 09:00:00 UTC",
           endTime: "09:30:00 UTC",
           timezone: "UTC",
+          practitionerRef: "Practitioner/prac-card-2",
+          practitionerDisplay: "Dr. Omar Salem",
+          specialtyId: "cardiology",
+          specialtyDisplay: "Cardiology",
+          dateKey: "2026-04-15",
+          displayDate: "Wed 15 Apr 2026",
+          displayTime: "9:00 AM",
+          isPreferredPractitioner: false,
         },
       },
     ],
@@ -110,9 +134,10 @@ describe("SelectionList", () => {
     render(<SelectionList list={slotList} onSelect={onSelect} />);
 
     expect(screen.getByText("Choose a doctor")).toBeInTheDocument();
-    expect(screen.getByText("Dr. Lina Alharbi")).toBeInTheDocument();
+    expect(screen.getAllByText("Dr. Lina Alharbi")).toHaveLength(2);
     expect(screen.getByText("Dr. Omar Salem")).toBeInTheDocument();
     expect(screen.getByText("Open time slots")).toBeInTheDocument();
+    expect(screen.getAllByText("Continuity priority").length).toBeGreaterThan(0);
   });
 
   it("selects a time slot from the doctor-first picker", () => {

@@ -26,10 +26,7 @@ export default function DoctorAvailabilityPicker({
   selectedId,
   disabled,
 }: DoctorAvailabilityPickerProps) {
-  const doctorGroups = useMemo(
-    () => buildDoctorSlotGroups(list.items),
-    [list.items],
-  );
+  const doctorGroups = useMemo(() => buildDoctorSlotGroups(list.items), [list.items]);
 
   const [selectedDoctorKey, setSelectedDoctorKey] = useState<string | null>(null);
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
@@ -40,9 +37,7 @@ export default function DoctorAvailabilityPicker({
       return;
     }
 
-    const doctorStillExists = doctorGroups.some(
-      (doctor) => doctor.key === selectedDoctorKey,
-    );
+    const doctorStillExists = doctorGroups.some((doctor) => doctor.key === selectedDoctorKey);
 
     if (!selectedDoctorKey || !doctorStillExists) {
       setSelectedDoctorKey(doctorGroups[0].key);
@@ -60,9 +55,7 @@ export default function DoctorAvailabilityPicker({
       return;
     }
 
-    const dateStillExists = selectedDoctor.dates.some(
-      (dateGroup) => dateGroup.key === selectedDateKey,
-    );
+    const dateStillExists = selectedDoctor.dates.some((dateGroup) => dateGroup.key === selectedDateKey);
 
     if (!selectedDateKey || !dateStillExists) {
       setSelectedDateKey(selectedDoctor.dates[0].key);
@@ -70,15 +63,11 @@ export default function DoctorAvailabilityPicker({
   }, [selectedDoctor, selectedDateKey]);
 
   const selectedDateGroup = useMemo(
-    () =>
-      selectedDoctor?.dates.find((dateGroup) => dateGroup.key === selectedDateKey) ??
-      null,
+    () => selectedDoctor?.dates.find((dateGroup) => dateGroup.key === selectedDateKey) ?? null,
     [selectedDoctor, selectedDateKey],
   );
 
-  const selectedCalendarDate = selectedDateKey
-    ? dateKeyToCalendarDate(selectedDateKey)
-    : undefined;
+  const selectedCalendarDate = selectedDateKey ? dateKeyToCalendarDate(selectedDateKey) : undefined;
 
   const availableDateKeys = useMemo(
     () => new Set(selectedDoctor?.dates.map((dateGroup) => dateGroup.key) ?? []),
@@ -115,7 +104,7 @@ export default function DoctorAvailabilityPicker({
         </div>
 
         <div className="grid gap-2">
-          {doctorGroups.map((doctor, index) => {
+          {doctorGroups.map((doctor) => {
             const isSelected = doctor.key === selectedDoctorKey;
 
             return (
@@ -144,9 +133,9 @@ export default function DoctorAvailabilityPicker({
                   </div>
 
                   <div className="flex flex-col items-end gap-1 shrink-0">
-                    {index === 0 && (
+                    {doctor.isPreferredDoctor && (
                       <Badge variant="secondary" className="text-[10px]">
-                        Suggested
+                        Continuity priority
                       </Badge>
                     )}
                     <Badge variant="outline" className="text-[10px]">
@@ -173,9 +162,16 @@ export default function DoctorAvailabilityPicker({
               </p>
             </div>
 
-            <Badge variant="outline" className="text-[10px]">
-              {selectedDoctor.slotCount} open
-            </Badge>
+            <div className="flex flex-col items-end gap-1 shrink-0">
+              {selectedDoctor.isPreferredDoctor && (
+                <Badge variant="secondary" className="text-[10px]">
+                  Continuity priority
+                </Badge>
+              )}
+              <Badge variant="outline" className="text-[10px]">
+                {selectedDoctor.slotCount} open
+              </Badge>
+            </div>
           </div>
 
           <div className="rounded-md border bg-muted/20">
@@ -183,9 +179,7 @@ export default function DoctorAvailabilityPicker({
               mode="single"
               selected={selectedCalendarDate}
               onSelect={handleCalendarSelect}
-              disabled={(date) =>
-                !availableDateKeys.has(format(date, "yyyy-MM-dd"))
-              }
+              disabled={(date) => !availableDateKeys.has(format(date, "yyyy-MM-dd"))}
               className="mx-auto w-fit"
             />
           </div>

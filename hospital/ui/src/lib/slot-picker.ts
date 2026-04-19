@@ -11,13 +11,16 @@ export interface DoctorSlotDayGroup {
 export interface DoctorSlotGroup {
   key: string;
   name: string;
+  practitionerRef: string | null;
+  specialtyDisplay: string | null;
+  isPreferredDoctor: boolean;
   nextAvailableIso: string | null;
   nextAvailableLabel: string;
   slotCount: number;
   dates: DoctorSlotDayGroup[];
 }
 
-export function extractDoctorNameFromSlotLabel(label: string): string {
+function fallbackDoctorNameFromLabel(label: string): string {
   const [doctorPart] = label.split("•");
   const name = doctorPart?.trim();
   return name && name.length > 0 ? name : "Available doctor";
@@ -36,8 +39,19 @@ function getItemIsoDate(item: SelectionListItem): string | null {
   if (item.meta?.isoDate?.trim()) {
     return item.meta.isoDate.trim();
   }
-
   return null;
+}
+
+function getDoctorName(item: SelectionListItem): string {
+  return item.meta?.practitionerDisplay?.trim() || fallbackDoctorNameFromLabel(item.label);
+}
+
+function getDateKey(item: SelectionListItem): string | null {
+  if (item.meta?.dateKey?.trim()) {
+    return item.meta.dateKey.trim();
+  }
+  const isoDate = getItemIsoDate(item);
+  return isoDate ? isoDate.slice(0, 10) : null;
 }
 
 function formatNextAvailableLabel(isoDate: string | null): string {
@@ -54,8 +68,11 @@ function formatNextAvailableLabel(isoDate: string | null): string {
 }
 
 export function formatSlotChipLabel(item: SelectionListItem): string {
-  const isoDate = getItemIsoDate(item);
+  if (item.meta?.displayTime?.trim()) {
+    return item.meta.displayTime.trim();
+  }
 
+  const isoDate = getItemIsoDate(item);
   if (isoDate) {
     const parsed = parseISO(isoDate);
     if (isValid(parsed)) {
@@ -72,14 +89,15 @@ export function formatSlotChipLabel(item: SelectionListItem): string {
   return item.label;
 }
 
-export function buildDoctorSlotGroups(
-  items: SelectionListItem[],
-): DoctorSlotGroup[] {
+export function buildDoctorSlotGroups(items: SelectionListItem[]): DoctorSlotGroup[] {
   const doctorMap = new Map<
     string,
     {
       key: string;
       name: string;
+      practitionerRef: string | null;
+      specialtyDisplay: string | null;
+      isPreferredDoctor: boolean;
       firstSeenIndex: number;
       nextAvailableIso: string | null;
       dates: Map<string, SelectionListItem[]>;
@@ -87,29 +105,38 @@ export function buildDoctorSlotGroups(
   >();
 
   items.forEach((item, index) => {
-    const doctorName = extractDoctorNameFromSlotLabel(item.label);
+    const doctorName = getDoctorName(item);
+    const practitionerRef = item.meta?.practitionerRef?.trim() || null;
+    const specialtyDisplay = item.meta?.specialtyDisplay?.trim() || null;
+    const doctorKey = practitionerRef || `doctor:${doctorName}`;
     const isoDate = getItemIsoDate(item);
+    const dateKey = getDateKey(item);
 
-    if (!isoDate) {
+    if (!isoDate || !dateKey) {
       return;
     }
 
-    const dateKey = isoDate.slice(0, 10);
-
-    if (!doctorMap.has(doctorName)) {
-      doctorMap.set(doctorName, {
-        key: `doctor:${doctorName}`,
+    if (!doctorMap.has(doctorKey)) {
+      doctorMap.set(doctorKey, {
+        key: doctorKey,
         name: doctorName,
+        practitionerRef,
+        specialtyDisplay,
+        isPreferredDoctor: Boolean(item.meta?.isPreferredPractitioner),
         firstSeenIndex: index,
         nextAvailableIso: isoDate,
         dates: new Map<string, SelectionListItem[]>(),
       });
     }
 
-    const doctor = doctorMap.get(doctorName)!;
+    const doctor = doctorMap.get(doctorKey)!;
 
     if (!doctor.nextAvailableIso || isoDate < doctor.nextAvailableIso) {
       doctor.nextAvailableIso = isoDate;
+    }
+
+    if (item.meta?.isPreferredPractitioner) {
+      doctor.isPreferredDoctor = true;
     }
 
     const dateItems = doctor.dates.get(dateKey) ?? [];
@@ -118,7 +145,12 @@ export function buildDoctorSlotGroups(
   });
 
   return Array.from(doctorMap.values())
-    .sort((a, b) => a.firstSeenIndex - b.firstSeenIndex)
+    .sort((a, b) => {
+      if (a.isPreferredDoctor != b.isPreferredDoctor) {
+        return a.isPreferredDoctor ? -1 : 1;
+      }
+      return a.firstSeenIndex - b.firstSeenIndex;
+    })
     .map((doctor) => {
       const dates: DoctorSlotDayGroup[] = Array.from(doctor.dates.entries())
         .sort(([a], [b]) => a.localeCompare(b))
@@ -137,14 +169,14 @@ export function buildDoctorSlotGroups(
           };
         });
 
-      const slotCount = dates.reduce(
-        (total, dayGroup) => total + dayGroup.slots.length,
-        0,
-      );
+      const slotCount = dates.reduce((total, dayGroup) => total + dayGroup.slots.length, 0);
 
       return {
         key: doctor.key,
         name: doctor.name,
+        practitionerRef: doctor.practitionerRef,
+        specialtyDisplay: doctor.specialtyDisplay,
+        isPreferredDoctor: doctor.isPreferredDoctor,
         nextAvailableIso: doctor.nextAvailableIso,
         nextAvailableLabel: formatNextAvailableLabel(doctor.nextAvailableIso),
         slotCount,

@@ -30,6 +30,7 @@ function responseToMessage(res: ChatResponse) {
     selectionLists: res.selectionLists ?? undefined,
     needsClarification: res.needsClarification ?? undefined,
     isChronicContinuity: res.isChronicContinuity ?? undefined,
+    continuity: res.continuity ?? undefined,
     requiresContinuityIdentity: res.requiresContinuityIdentity ?? undefined,
     showConsentNotice: res.showConsentNotice ?? undefined,
     bookingReferenceId: res.bookingReferenceId ?? undefined,
@@ -161,10 +162,16 @@ export default function ChatWidgetContent() {
     if (listType === "slot") {
       setSelectedSlotId(item.id);
       setSelectedSlotLabel(item.label);
-      setSelectedDoctorLabel(item.label.split("•")[0]?.trim() || null);
+      setSelectedDoctorLabel(
+        item.meta?.practitionerDisplay ??
+          item.label.split("•")[0]?.trim() ??
+          null,
+      );
       setSelectedSlotStartUtc(item.meta?.isoDate ?? null);
 
-      if (item.meta?.isoDate) {
+      if (item.meta?.dateKey) {
+        setSelectedDate(item.meta.dateKey);
+      } else if (item.meta?.isoDate) {
         setSelectedDate(item.meta.isoDate);
       }
     }
@@ -312,7 +319,16 @@ export default function ChatWidgetContent() {
                   <ConsentBanner />
                 )}
 
-                {msg.isChronicContinuity && <ContinuityBanner />}
+                {msg.continuity ? (
+                  <ContinuityBanner continuity={msg.continuity} />
+                ) : msg.isChronicContinuity ? (
+                  <ContinuityBanner
+                    continuity={{
+                      matched: true,
+                      message: "Your previous physician will be prioritized when available.",
+                    }}
+                  />
+                ) : null}
 
                 {msg.confirmationSummary && (
                   <ConfirmationCard

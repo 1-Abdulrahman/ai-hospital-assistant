@@ -8,6 +8,17 @@ export interface SelectionListItemMeta {
   startTime?: string;
   endTime?: string;
   timezone?: string;
+
+  practitionerRef?: string;
+  practitionerDisplay?: string;
+  specialtyId?: string;
+  specialtyDisplay?: string;
+
+  dateKey?: string;
+  displayDate?: string;
+  displayTime?: string;
+
+  isPreferredPractitioner?: boolean;
 }
 
 export interface SelectionListItem {
@@ -28,6 +39,14 @@ export interface BackendError {
   userMessage: string;
 }
 
+export interface ContinuityPayload {
+  matched: boolean;
+  preferredPractitionerRef?: string | null;
+  preferredPractitionerDisplay?: string | null;
+  preferredPractitionerHasAvailability?: boolean | null;
+  message?: string | null;
+}
+
 export interface ConfirmationSummary {
   bookingReferenceId?: string | null;
   correlationId?: string | null;
@@ -44,6 +63,7 @@ export interface ChatResponse {
   selectionLists?: SelectionList[] | null;
   needsClarification?: boolean | null;
   isChronicContinuity?: boolean | null;
+  continuity?: ContinuityPayload | null;
   showConsentNotice?: boolean | null;
   requiresContinuityIdentity?: boolean | null;
   requiresDate?: boolean | null;
@@ -79,6 +99,7 @@ export interface ChatMessage {
   selectionLists?: SelectionList[];
   needsClarification?: boolean;
   isChronicContinuity?: boolean;
+  continuity?: ContinuityPayload;
   showConsentNotice?: boolean;
   requiresContinuityIdentity?: boolean;
   bookingReferenceId?: string;

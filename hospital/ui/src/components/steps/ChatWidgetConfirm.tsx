@@ -13,6 +13,7 @@ function responseToMessage(res: ChatResponse) {
     selectionLists: res.selectionLists ?? undefined,
     needsClarification: res.needsClarification ?? undefined,
     isChronicContinuity: res.isChronicContinuity ?? undefined,
+    continuity: res.continuity ?? undefined,
     requiresContinuityIdentity: res.requiresContinuityIdentity ?? undefined,
     showConsentNotice: res.showConsentNotice ?? undefined,
     bookingReferenceId: res.bookingReferenceId ?? undefined,

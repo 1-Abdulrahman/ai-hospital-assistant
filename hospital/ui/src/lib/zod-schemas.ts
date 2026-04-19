@@ -11,6 +11,17 @@ export const selectionListItemMetaSchema = z
     startTime: z.string().optional(),
     endTime: z.string().optional(),
     timezone: z.string().optional(),
+
+    practitionerRef: z.string().optional(),
+    practitionerDisplay: z.string().optional(),
+    specialtyId: z.string().optional(),
+    specialtyDisplay: z.string().optional(),
+
+    dateKey: z.string().optional(),
+    displayDate: z.string().optional(),
+    displayTime: z.string().optional(),
+
+    isPreferredPractitioner: z.boolean().optional(),
   })
   .nullable()
   .optional();
@@ -33,6 +44,17 @@ export const backendErrorSchema = z.object({
   userMessage: z.string(),
 });
 
+export const continuityPayloadSchema = z
+  .object({
+    matched: z.boolean(),
+    preferredPractitionerRef: z.string().optional().nullable(),
+    preferredPractitionerDisplay: z.string().optional().nullable(),
+    preferredPractitionerHasAvailability: z.boolean().optional().nullable(),
+    message: z.string().optional().nullable(),
+  })
+  .nullable()
+  .optional();
+
 export const confirmationSummarySchema = z
   .object({
     bookingReferenceId: z.string().optional().nullable(),
@@ -52,6 +74,7 @@ export const chatResponseSchema = z.object({
   selectionLists: z.array(selectionListSchema).optional().nullable(),
   needsClarification: z.boolean().optional().nullable(),
   isChronicContinuity: z.boolean().optional().nullable(),
+  continuity: continuityPayloadSchema,
   showConsentNotice: z.boolean().optional().nullable(),
   requiresContinuityIdentity: z.boolean().optional().nullable(),
   requiresDate: z.boolean().optional().nullable(),
