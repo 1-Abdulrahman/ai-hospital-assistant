@@ -26,7 +26,10 @@ export default function DoctorAvailabilityPicker({
   selectedId,
   disabled,
 }: DoctorAvailabilityPickerProps) {
-  const doctorGroups = useMemo(() => buildDoctorSlotGroups(list.items), [list.items]);
+  const doctorGroups = useMemo(
+    () => buildDoctorSlotGroups(list.items),
+    [list.items],
+  );
 
   const [selectedDoctorKey, setSelectedDoctorKey] = useState<string | null>(null);
   const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
@@ -37,7 +40,9 @@ export default function DoctorAvailabilityPicker({
       return;
     }
 
-    const doctorStillExists = doctorGroups.some((doctor) => doctor.key === selectedDoctorKey);
+    const doctorStillExists = doctorGroups.some(
+      (doctor) => doctor.key === selectedDoctorKey,
+    );
 
     if (!selectedDoctorKey || !doctorStillExists) {
       setSelectedDoctorKey(doctorGroups[0].key);
@@ -55,7 +60,9 @@ export default function DoctorAvailabilityPicker({
       return;
     }
 
-    const dateStillExists = selectedDoctor.dates.some((dateGroup) => dateGroup.key === selectedDateKey);
+    const dateStillExists = selectedDoctor.dates.some(
+      (dateGroup) => dateGroup.key === selectedDateKey,
+    );
 
     if (!selectedDateKey || !dateStillExists) {
       setSelectedDateKey(selectedDoctor.dates[0].key);
@@ -63,11 +70,15 @@ export default function DoctorAvailabilityPicker({
   }, [selectedDoctor, selectedDateKey]);
 
   const selectedDateGroup = useMemo(
-    () => selectedDoctor?.dates.find((dateGroup) => dateGroup.key === selectedDateKey) ?? null,
+    () =>
+      selectedDoctor?.dates.find((dateGroup) => dateGroup.key === selectedDateKey) ??
+      null,
     [selectedDoctor, selectedDateKey],
   );
 
-  const selectedCalendarDate = selectedDateKey ? dateKeyToCalendarDate(selectedDateKey) : undefined;
+  const selectedCalendarDate = selectedDateKey
+    ? dateKeyToCalendarDate(selectedDateKey)
+    : undefined;
 
   const availableDateKeys = useMemo(
     () => new Set(selectedDoctor?.dates.map((dateGroup) => dateGroup.key) ?? []),
@@ -104,7 +115,7 @@ export default function DoctorAvailabilityPicker({
         </div>
 
         <div className="grid gap-2">
-          {doctorGroups.map((doctor) => {
+          {doctorGroups.map((doctor, index) => {
             const isSelected = doctor.key === selectedDoctorKey;
 
             return (
@@ -179,7 +190,9 @@ export default function DoctorAvailabilityPicker({
               mode="single"
               selected={selectedCalendarDate}
               onSelect={handleCalendarSelect}
-              disabled={(date) => !availableDateKeys.has(format(date, "yyyy-MM-dd"))}
+              disabled={(date) =>
+                !availableDateKeys.has(format(date, "yyyy-MM-dd"))
+              }
               className="mx-auto w-fit"
             />
           </div>
