@@ -17,7 +17,13 @@ from sklearn.metrics import (
     confusion_matrix,
     f1_score,
 )
-from sklearn.model_selection import train_test_split
+from app.modules.nlp.training.split_utils import (
+    SPLIT_MANIFEST_PATH,
+    apply_saved_group_split,
+    load_split_manifest,
+    load_training_rows,
+    split_rows_family_aware,
+)
 from torch.utils.data import Dataset
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
@@ -26,7 +32,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 # Configuration
 # ============================================================
 
-RANDOM_SEED = 42
+RANDOM_SEED = int(os.getenv("NLP_RANDOM_SEED", "42"))
 MAX_LENGTH = 96
 
 # Strict offline option. Set to 1 in the environment when needed.
@@ -137,38 +143,24 @@ class ComplaintDataset(Dataset):
         return item
 
 
-def rebuild_test_split(
-    texts: list[str],
-    label_ids: list[int],
-) -> tuple[list[str], list[int]]:
-    """
-    Rebuild the exact same deterministic split logic used in train.py:
-    80% train, 10% validation, 10% test with stratification.
+def load_test_rows_from_family_aware_split(
+    random_seed: int,
+) -> tuple[list[Any], str, dict[str, Any]]:
+    rows = load_training_rows()
 
-    Important:
-    This works only if dataset.jsonl content and ordering are unchanged
-    since training time.
-    """
-    _, temp_texts, _, temp_ids = train_test_split(
-        texts,
-        label_ids,
-        test_size=0.20,
-        random_state=RANDOM_SEED,
-        shuffle=True,
-        stratify=label_ids,
-    )
+    if SPLIT_MANIFEST_PATH.exists():
+        split_manifest = load_split_manifest(SPLIT_MANIFEST_PATH)
+        split_result = apply_saved_group_split(rows, split_manifest)
+        split_strategy = split_manifest.get(
+            "splitStrategy",
+            "family-aware group split by family_ids",
+        )
+    else:
+        split_result = split_rows_family_aware(rows, seed=random_seed)
+        split_strategy = "family-aware group split by family_ids (reconstructed fallback)"
 
-    _, test_texts, _, test_ids = train_test_split(
-        temp_texts,
-        temp_ids,
-        test_size=0.50,
-        random_state=RANDOM_SEED,
-        shuffle=True,
-        stratify=temp_ids,
-    )
-
-    return test_texts, test_ids
-
+    test_rows = split_result["test_rows"]
+    return test_rows, split_strategy, split_result["summary"]
 
 def predict_all(
     model: Any,
@@ -237,9 +229,13 @@ def main() -> None:
 
     texts = [row["text"] for row in rows]
     labels = [row["label"] for row in rows]
-    label_ids = [label_to_id[label] for label in labels]
 
-    test_texts, test_ids = rebuild_test_split(texts, label_ids)
+    test_rows, split_strategy, split_summary = load_test_rows_from_family_aware_split(
+        random_seed=RANDOM_SEED
+    )
+
+    test_texts = [row.text for row in test_rows]
+    test_ids = [label_to_id[row.label] for row in test_rows]
 
     tokenizer = AutoTokenizer.from_pretrained(
         str(MODEL_DIR),
@@ -317,7 +313,9 @@ def main() -> None:
             "totalSamples": len(rows),
             "testSamples": len(test_dataset),
             "classCounts": dict(sorted(Counter(labels).items())),
-            "splitStrategy": "reconstructed deterministic 80/10/10 stratified split",
+            "splitStrategy": split_strategy,
+            "splitSummary": split_summary,
+            "splitManifestPath": str(SPLIT_MANIFEST_PATH),
             "randomSeed": RANDOM_SEED,
         },
         "metrics": {

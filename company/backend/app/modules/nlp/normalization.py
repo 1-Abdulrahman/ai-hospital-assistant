@@ -106,7 +106,7 @@ def _read_frequency_terms(path: Path) -> set[str]:
     return values
 
 
-def _basic_cleanup(text: str) -> str:
+def basic_cleanup_text(text: str) -> str:
     cleaned = unicodedata.normalize("NFKC", text)
     cleaned = cleaned.strip().lower()
     cleaned = SLASH_RE.sub(" / ", cleaned)
@@ -198,7 +198,7 @@ class ComplaintTextNormalizer:
         )
 
     def normalize(self, text: str) -> NormalizedComplaint:
-        cleaned = _basic_cleanup(text)
+        cleaned = basic_cleanup_text(text)
         applied_rules: list[str] = []
 
         if cleaned != text.strip():

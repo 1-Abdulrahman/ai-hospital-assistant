@@ -13,7 +13,6 @@ from typing import Any
 import numpy as np
 import torch
 from sklearn.metrics import accuracy_score, f1_score
-from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
 from transformers import (
     AutoModelForSequenceClassification,
@@ -21,12 +20,18 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+from app.modules.nlp.training.split_utils import (
+    SPLIT_MANIFEST_PATH,
+    load_training_rows,
+    save_split_manifest,
+    split_rows_family_aware,
+)
 
 # ============================================================
 # Configuration
 # ============================================================
 
-RANDOM_SEED = 42
+RANDOM_SEED = int(os.getenv("NLP_RANDOM_SEED", "42"))
 MAX_LENGTH = 96
 NUM_EPOCHS = 4
 TRAIN_BATCH_SIZE = 16
@@ -128,6 +133,37 @@ def read_jsonl(path: Path) -> list[dict[str, str]]:
         raise ValueError("Dataset is empty.")
 
     return items
+
+def prepare_family_aware_splits(
+    random_seed: int,
+) -> tuple[list[str], list[str], list[str], list[str], list[str], list[str], dict[str, Any]]:
+    rows = load_training_rows()
+
+    split_result = split_rows_family_aware(rows, seed=random_seed)
+    save_split_manifest(split_result, path=SPLIT_MANIFEST_PATH)
+
+    train_rows = split_result["train_rows"]
+    val_rows = split_result["val_rows"]
+    test_rows = split_result["test_rows"]
+
+    train_texts = [row.text for row in train_rows]
+    train_labels = [row.label for row in train_rows]
+
+    val_texts = [row.text for row in val_rows]
+    val_labels = [row.label for row in val_rows]
+
+    test_texts = [row.text for row in test_rows]
+    test_labels = [row.label for row in test_rows]
+
+    return (
+        train_texts,
+        train_labels,
+        val_texts,
+        val_labels,
+        test_texts,
+        test_labels,
+        split_result["summary"],
+    )
 
 
 # ============================================================
@@ -252,42 +288,34 @@ def main() -> None:
             f"Dataset contains labels not found in label_to_id.json: {unknown_labels}"
         )
 
-    texts = [row["text"] for row in rows]
     labels = [row["label"] for row in rows]
-    label_ids = [label_to_id[label] for label in labels]
-
     class_counts = Counter(labels)
+
+    (
+        train_texts,
+        train_labels,
+        val_texts,
+        val_labels,
+        test_texts,
+        test_labels,
+        split_summary,
+    ) = prepare_family_aware_splits(random_seed=RANDOM_SEED)
+
+    train_ids = [label_to_id[label] for label in train_labels]
+    val_ids = [label_to_id[label] for label in val_labels]
+    test_ids = [label_to_id[label] for label in test_labels]
 
     # 3) Save dataset report before training
     dataset_report = {
         "total_samples": len(rows),
         "labels_count": len(label_to_id),
         "class_counts": dict(sorted(class_counts.items())),
-        "split_strategy": "stratified train/val/test split (80/10/10)",
+        "split_strategy": "family-aware group split by family_ids",
         "random_seed": RANDOM_SEED,
+        "split_summary": split_summary,
+        "split_manifest_path": str(SPLIT_MANIFEST_PATH),
     }
     write_json(DATASET_REPORT_PATH, dataset_report)
-
-    # 4) Stratified 80/10/10 split
-    # First split: 80% train, 20% temp
-    train_texts, temp_texts, train_ids, temp_ids = train_test_split(
-        texts,
-        label_ids,
-        test_size=0.20,
-        random_state=RANDOM_SEED,
-        shuffle=True,
-        stratify=label_ids,
-    )
-
-    # Second split: temp -> 10% val, 10% test
-    val_texts, test_texts, val_ids, test_ids = train_test_split(
-        temp_texts,
-        temp_ids,
-        test_size=0.50,
-        random_state=RANDOM_SEED,
-        shuffle=True,
-        stratify=temp_ids,
-    )
 
     # 5) Tokenizer and model
     tokenizer = AutoTokenizer.from_pretrained(
