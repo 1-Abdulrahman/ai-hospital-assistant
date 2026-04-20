@@ -11,6 +11,7 @@ import torch
 import torch.nn.functional as F
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
+from app.modules.nlp.normalization import get_default_normalizer
 
 # ============================================================
 # Paths and constants
@@ -79,10 +80,7 @@ def _safe_read_text(path: Path) -> str | None:
 
 
 def _normalize_text(text: str) -> str:
-    # Minimal normalization only.
-    # Do not over-clean or remove medically relevant wording.
-    normalized = " ".join(text.strip().split())
-    return normalized
+    return get_default_normalizer().normalize(text).corrected_text
 
 
 def _safe_input_summary(text: str, max_len: int = 80) -> str:

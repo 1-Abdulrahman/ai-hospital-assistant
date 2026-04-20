@@ -1,0 +1,12 @@
+ent
+ibs
+uti
+otp
+iqama
+ehr
+fhir
+dr
+mr
+mrs
+ms
+id
