@@ -60,6 +60,46 @@
     ]
   },
   {
+    "text": "i almost feel faint but that happens only after my heart starts pounding and skipping beats",
+    "label": "cardiology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "cardio_gp_hn_v11_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "presyncope follows the arrhythmic sensation"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i become breathless much faster than usual and feel a pressing sensation in my chest",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_009"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "exertional dyspnea plus chest pressure"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i feel a squeezing pain in my chest when i hurry to catch my breath",
     "label": "cardiology",
     "source_types": [
@@ -97,6 +137,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "02_gold_seed_batch_v3.jsonl"
+    ]
+  },
+  {
+    "text": "i feel chest heaviness with nausea when i hurry to catch up with someone walking",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_013"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "effort-related chest heaviness with nausea"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -140,6 +200,26 @@
     ]
   },
   {
+    "text": "i feel generally tired and shaky today but the main issue is a sudden racing heartbeat that feels irregular",
+    "label": "cardiology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "cardio_gp_hn_v11_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "cardiology should win when rhythm cue dominates broad weakness"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i feel pressure in my chest after brisk walking and i start sweating",
     "label": "cardiology",
     "source_types": [
@@ -180,6 +260,46 @@
     ]
   },
   {
+    "text": "i feel pressure in the middle of my chest with sweating when i walk fast",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "exertional pressure with autonomic symptom"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i feel repeated skipped beats followed by a strong thumping heartbeat that makes me stop what i am doing",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v11_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "skipped beats followed by forceful rhythm"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v11.jsonl"
+    ]
+  },
+  {
     "text": "i feel tightness in my chest when i climb stairs and i start sweating",
     "label": "cardiology",
     "source_types": [
@@ -197,6 +317,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "03_gold_seed_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "i feel tightness in my chest when i walk uphill and it eases when i rest",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "classic exertional chest symptom"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i get breathless on stairs and feel a weight on my chest that fades after a few minutes of rest",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_016"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "effort-related pressure and dyspnea"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -260,6 +420,26 @@
     ]
   },
   {
+    "text": "i get chest pressure during brisk walking and it is not triggered by moving my arm",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_011"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "non-mechanical chest complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i get chest pressure when i walk uphill and it eases with rest",
     "label": "cardiology",
     "source_types": [
@@ -297,6 +477,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "03_gold_seed_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "i get chest pressure when walking uphill with shortness of breath and it is not worse with arm movement",
+    "label": "cardiology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "cardio_ortho_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "cardiology should beat musculoskeletal chest wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -340,6 +540,26 @@
     ]
   },
   {
+    "text": "i get chest uneasiness with a rapid heartbeat but it is not triggered by moving my arm or pressing on my chest",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v11_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "non-mechanical chest symptom plus tachycardia"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v11.jsonl"
+    ]
+  },
+  {
     "text": "i get pressure in my chest when i carry groceries upstairs",
     "label": "cardiology",
     "source_types": [
@@ -357,6 +577,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "i get short of breath when i lie flat and my ankles look swollen by evening",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "heart-failure style symptom cluster"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -520,6 +760,26 @@
     ]
   },
   {
+    "text": "i have episodes of irregular pounding heartbeat with weakness and near fainting",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "arrhythmia-style wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have i get chest discomfort when climbing stairs and i become short of breath",
     "label": "cardiology",
     "source_types": [
@@ -560,6 +820,86 @@
     ]
   },
   {
+    "text": "i have pounding palpitations with mild chest discomfort and dizziness",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_014"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "palpitations with associated symptoms"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i keep noticing a fast fluttering heartbeat even when i am sitting quietly",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_010"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "resting palpitations"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i notice a fluttering pulse in my chest and throat followed by weakness but the fluttering comes first",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v11_007"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "heartbeat-first ordering made explicit"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v11.jsonl"
+    ]
+  },
+  {
+    "text": "i wake up at night short of breath and need to sit upright to breathe better",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_007"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "orthopnea style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "my chest feels heavy when i hurry and i become short of breath",
     "label": "cardiology",
     "source_types": [
@@ -577,6 +917,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "06_gold_seed_batch_v7.jsonl"
+    ]
+  },
+  {
+    "text": "my chest feels squeezed when i climb stairs and the feeling settles with rest",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_008"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "stable exertional pattern"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -617,6 +977,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "my heart feels like it skips beats and then races for a minute or two",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_017"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "ectopy/palpitations wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -720,6 +1100,86 @@
     ]
   },
   {
+    "text": "my heart suddenly races and flutters and i feel lightheaded when it happens",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "palpitation-led complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my heartbeat feels uneven and i get tired and short of breath during simple activity",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_012"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "irregular rhythm style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my heartbeat suddenly becomes irregular and rapid while i am sitting still and that is the main thing i notice",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v11_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "heartbeat-first rhythm complaint at rest"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v11.jsonl"
+    ]
+  },
+  {
+    "text": "my pulse suddenly races and flutters for a minute at a time even though i am not moving much",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v11_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "episodic palpitations at rest"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v11.jsonl"
+    ]
+  },
+  {
     "text": "pressure in my chest when i walk fast and i start sweating",
     "label": "cardiology",
     "source_types": [
@@ -737,6 +1197,126 @@
     "include_in_stability_set": true,
     "source_files": [
       "12_generated_variants_auto.jsonl"
+    ]
+  },
+  {
+    "text": "the main problem is a pounding irregular heartbeat with lightheadedness coming after the rhythm starts",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v11_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "rhythm dominates and lightheadedness is secondary"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v11.jsonl"
+    ]
+  },
+  {
+    "text": "there are short attacks where my heartbeat feels chaotic and forceful and i have to sit quietly until it settles",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v11_008"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "chaotic forceful rhythm episode"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v11.jsonl"
+    ]
+  },
+  {
+    "text": "there is heaviness in my chest when i carry groceries and it improves after sitting down",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_006"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "effort-related chest heaviness"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "there is heaviness in my chest when i carry groceries relieved by rest and not tender to touch",
+    "label": "cardiology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "cardio_ortho_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "effort-related chest heaviness"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "there is pressure across my chest whenever i walk against the wind and it stops after rest",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v8_015"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "clear exertional trigger"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "when i walk uphill my heart starts racing unevenly and i need to pause because the rhythm feels wrong",
+    "label": "cardiology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "cardio_gold_v11_006"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "exertional rhythm complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v11.jsonl"
     ]
   },
   {
@@ -820,6 +1400,46 @@
     ]
   },
   {
+    "text": "i broke out in raised itchy welts after trying a new body wash",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_006"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "hive-like dermatology complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i developed a burning rash under my breast fold where the skin stays moist",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_010"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "intertrigo-style skin complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i developed a red itchy rash around my waist after switching detergent",
     "label": "dermatology",
     "source_types": [
@@ -900,6 +1520,46 @@
     ]
   },
   {
+    "text": "i got an itchy rash on my neck after spraying perfume there",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_016"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "contact dermatitis pattern"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i have a burning rash at the outer corner of one eye socket but the eyeball itself feels fine",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v12_002"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "surface skin irritation near eye without ocular involvement"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
     "text": "i have a flaky itchy rash behind my knees that keeps spreading",
     "label": "dermatology",
     "source_types": [
@@ -977,6 +1637,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "13_hard_negatives_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "i have a rash on the skin around my eye that burns and peels but i can see normally",
+    "label": "dermatology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "derm_oph_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "periocular skin complaint without eye symptoms"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -1080,6 +1760,26 @@
     ]
   },
   {
+    "text": "i have dry cracking skin behind my ears and along my hairline that keeps itching",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "clear skin surface complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have dry red patches on my neck and they get worse at night",
     "label": "dermatology",
     "source_types": [
@@ -1117,6 +1817,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "02_gold_seed_batch_v3.jsonl"
+    ]
+  },
+  {
+    "text": "i have flaky itchy eyebrows and redness around the nose folds",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_021"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "seborrheic dermatitis wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -1180,6 +1900,27 @@
     ]
   },
   {
+    "text": "i have itchy flaky skin on my eyelids and around my eyes but my vision is normal",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_001"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "ophthalmology"
+    ],
+    "notes": [
+      "periocular skin complaint without eye involvement"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have itchy red patches around my ankles after wearing new socks",
     "label": "dermatology",
     "source_types": [
@@ -1240,6 +1981,46 @@
     ]
   },
   {
+    "text": "i have round scaly patches on my forearm that are slowly getting bigger",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "ring-like skin lesion wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i have several swollen itchy bite-like bumps on my legs that are very red",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_014"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "insect bite reaction wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have small itchy bumps on my forearms and they keep spreading",
     "label": "dermatology",
     "source_types": [
@@ -1257,6 +2038,86 @@
     "include_in_stability_set": true,
     "source_files": [
       "03_gold_seed_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "i have tender red bumps on the back of my neck after shaving",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_018"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "folliculitis-like skin complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i have thick silvery patches on my elbows and knees that keep flaking",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_012"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "psoriasis-like wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i have very itchy red patches inside my elbows that come back often",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_009"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "eczema-style flexural rash"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "it looks like an eye problem because the rash is on the eyelid but the eyeball is not red and i can see clearly",
+    "label": "dermatology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "derm_oph_hn_v12_001"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "dermatology should win when only eyelid skin is involved"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
     ]
   },
   {
@@ -1320,6 +2181,26 @@
     ]
   },
   {
+    "text": "my eyelid skin burns and peels after makeup yet there is no eye pain or blurred vision",
+    "label": "dermatology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "derm_oph_hn_v12_002"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "surface skin irritation after product exposure"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
     "text": "my forearms get dry and itchy after hot showers",
     "label": "dermatology",
     "source_types": [
@@ -1337,6 +2218,66 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "my hands are red dry and cracked after washing them again and again",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_015"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "irritant dermatitis pattern"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my lower legs have itchy dry patches that become darker after scratching",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_019"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "chronic itchy skin complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my scalp is greasy flaky and shedding onto my shoulders",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_008"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "scalp dermatitis wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -1360,6 +2301,147 @@
     ]
   },
   {
+    "text": "painful acne-like bumps keep appearing along my jawline and chin",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_011"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "facial inflammatory skin complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "red cracked skin around my eye itches badly after using a new cream but the eye itself looks normal",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v12_004"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "ophthalmology"
+    ],
+    "notes": [
+      "contact-type periocular dermatitis wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "red dry patches on my eyelids and brow itch a lot with no eye pain or blurred vision",
+    "label": "dermatology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "derm_oph_hn_v6_003"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "eyelid dermatitis boundary row"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "small itchy blisters appeared on my fingers after i used cleaning chemicals",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "hand dermatitis pattern"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "the area around my eye is itchy and scaly but light does not bother me and the eye itself feels fine",
+    "label": "dermatology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "derm_oph_hn_v12_003"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "explicit non-photophobic periocular dermatitis"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "the skin above my lashes is peeling and irritated with no blurred vision or light sensitivity",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v12_003"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "eyelid skin complaint with explicit non-eye cues"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "the skin around my mouth is irritated and peeling after using a new cream",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_017"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "localized facial dermatitis"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "the skin around my nose is flaky red and irritated",
     "label": "dermatology",
     "source_types": [
@@ -1380,6 +2462,88 @@
     ]
   },
   {
+    "text": "the skin between my toes is peeling itchy and a little cracked",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_013"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "fungal-sounding skin complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "the skin near the corners of my eyes is red and burning but the eyeball itself is not painful",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_002"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "periocular dermatitis style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "the skin on my eyelids is itchy and flaky but my eyes are not red and my vision is normal",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v12_001"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "ophthalmology"
+    ],
+    "notes": [
+      "periocular skin complaint without true eye symptoms"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "the skin on my eyelids is itchy and flaky but my vision is normal and the eyeball is not red",
+    "label": "dermatology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "derm_oph_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "ophthalmology"
+    ],
+    "notes": [
+      "dermatology should beat eye-adjacent wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
     "text": "the skin on my hands is red itchy and peeling",
     "label": "dermatology",
     "source_types": [
@@ -1397,6 +2561,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "03_gold_seed_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "there is a painful boil in my armpit with red swollen skin around it",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_007"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "localized skin infection style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "there is a red itchy rash where my watch touches my wrist",
+    "label": "dermatology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "derm_gold_v8_020"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "contact rash from wearable"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -1457,6 +2661,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "12_generated_variants_auto.jsonl"
+    ]
+  },
+  {
+    "text": "ear pain and muffled hearing are much worse than the mild fever i have",
+    "label": "ent",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "ent_gp_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "ENT-specific local symptoms dominate"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -1640,6 +2864,26 @@
     ]
   },
   {
+    "text": "i have ear pain with fluid coming out after swimming",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_006"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "otitis externa style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have ear pain with mild cough and fever",
     "label": "ent",
     "source_types": [
@@ -1760,6 +3004,26 @@
     ]
   },
   {
+    "text": "i have sharp pain deep in my ear whenever i chew or yawn",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_013"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "local ear pain complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have sharp throat pain when i swallow and my neck glands feel swollen",
     "label": "ent",
     "source_types": [
@@ -1777,6 +3041,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "06_gold_seed_batch_v7.jsonl"
+    ]
+  },
+  {
+    "text": "i have sinus congestion with pressure around my forehead and under my eyes",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_009"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "sinus pressure complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -2043,6 +3327,26 @@
     ]
   },
   {
+    "text": "i have strong pressure in my cheeks with thick nasal mucus and blocked sinuses",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "sinus-dominant complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have trouble swallowing and bad breath with thorat pain",
     "label": "ent",
     "source_types": [
@@ -2080,6 +3384,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "01_gold_seed_batch_v2.jsonl"
+    ]
+  },
+  {
+    "text": "i keep getting nosebleeds from one nostril and the inside feels crusted",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_007"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "nasal-specific complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "it hurts to swallow and the pain seems to go toward my ear",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_010"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "referred ear pain from throat complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -2143,6 +3487,86 @@
     ]
   },
   {
+    "text": "my ear hurts and sounds muffled with popping and that bothers me more than the mild body aches",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v12_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "ear-led complaint against broad illness wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "my ear is painful blocked and my hearing sounds muffled on that side",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "clear ear-led complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my face feels heavy with thick nasal mucus and pain when i bend forward which feels more local than general illness",
+    "label": "ent",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "ent_gp_hn_v12_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "sinus-dominant facial complaint should stay ENT"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "my hearing became muffled with popping in my ears during a flight",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_011"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "eustachian tube style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "my nose is blocked and i have sinus pressure that is getting worse",
     "label": "ent",
     "source_types": [
@@ -2160,6 +3584,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "02_gold_seed_batch_v3.jsonl"
+    ]
+  },
+  {
+    "text": "my nose is blocked on one side with facial pain and a bad smell",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "localized sinus/nasal complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -2183,6 +3627,26 @@
     ]
   },
   {
+    "text": "my sore throat and painful swallowing are clearly worse than the mild fever i have",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v12_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "ENT local complaint should dominate mild systemic symptoms"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
     "text": "my sore throat is getting worse and i can see white spots in it",
     "label": "ent",
     "source_types": [
@@ -2200,6 +3664,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "my sore throat is the main problem and swallowing is sharply painful",
+    "label": "ent",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "ent_gp_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "ENT should beat general illness wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -2223,6 +3707,26 @@
     ]
   },
   {
+    "text": "my throat hurts and the glands in my neck are swollen and tender",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_008"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "throat-led complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "my throat is sore my voice is hoarse and swallowing hurts",
     "label": "ent",
     "source_types": [
@@ -2243,6 +3747,46 @@
     ]
   },
   {
+    "text": "my throat is very sore with white spots and it hurts sharply to swallow",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "tonsillitis-like wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my tonsils feel very swollen and swallowing saliva is painful",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_012"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "tonsil-dominant complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "my voice became hoarse after a cold and it has not improved",
     "label": "ent",
     "source_types": [
@@ -2260,6 +3804,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "my voice has been hoarse for days and my throat feels irritated",
+    "label": "ent",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ent_gold_v8_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "laryngeal / throat complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -2320,6 +3884,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "sinus pressure with thick nasal discharge is the main complaint not the body aches",
+    "label": "ent",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "ent_gp_hn_v6_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "sinus-focused complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -2583,6 +4167,46 @@
     ]
   },
   {
+    "text": "acid keeps coming up into my throat after meals and when i lie down",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "reflux-dominant complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "acid reflux after meals is the main issue even though i also feel tired",
+    "label": "gastroenterology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gastro_gp_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "reflux should beat vague fatigue"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
     "text": "burning pain in my upper stomach with heartburn and vomiting",
     "label": "gastroenterology",
     "source_types": [
@@ -2663,6 +4287,26 @@
     ]
   },
   {
+    "text": "i feel bloated and get diarrhea after eating spicy food",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "food-triggered GI complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i feel burning pain in my upper stomach with acid coming up",
     "label": "gastroenterology",
     "source_types": [
@@ -2680,6 +4324,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "03_gold_seed_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "i feel sick to my stomach and have repeated vomiting with belly pain",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_009"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "acute GI complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -2720,6 +4384,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "14_hard_negatives_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "i get cramping lower abdominal pain that feels better after i move my bowels",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "bowel-related abdominal pain"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -3243,6 +4927,26 @@
     ]
   },
   {
+    "text": "i have nausea and vomiting with upper stomach pain after eating greasy food",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "post-meal upper GI complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have pain below my belly button with diarrhea since yesterday",
     "label": "gastroenterology",
     "source_types": [
@@ -3340,6 +5044,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "14_hard_negatives_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "i have stomach cramps and loose stool since eating at a restaurant yesterday",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "infectious GI style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -3543,6 +5267,26 @@
     ]
   },
   {
+    "text": "i have urgent diarrhea with stomach rumbling and cramps all day",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_007"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "clear GI cluster"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i wake up with stomach pain at night and feel nauseated",
     "label": "gastroenterology",
     "source_types": [
@@ -3583,6 +5327,26 @@
     ]
   },
   {
+    "text": "my stomach burns and i feel sour fluid in my throat after dinner",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_008"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "reflux symptom phrasing"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "my stomach feels bloated after meals and i get upper abdominal discomfort",
     "label": "gastroenterology",
     "source_types": [
@@ -3620,6 +5384,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "06_gold_seed_batch_v7.jsonl"
+    ]
+  },
+  {
+    "text": "my upper abdomen hurts with nausea and i keep burping after meals",
+    "label": "gastroenterology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gastro_gold_v8_006"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "dyspepsia style wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "stomach cramps diarrhea and nausea are the main problem not the general fatigue",
+    "label": "gastroenterology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gastro_gp_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "GI cluster should dominate"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -3703,6 +5507,26 @@
     ]
   },
   {
+    "text": "vomiting and upper stomach pain after food are much stronger than the body aches",
+    "label": "gastroenterology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gastro_gp_hn_v6_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "GI complaint should dominate"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
     "text": "body aches and some dizziness for two days",
     "label": "general_practice",
     "source_types": [
@@ -3740,6 +5564,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "12_generated_variants_auto.jsonl"
+    ]
+  },
+  {
+    "text": "i am mostly fatigued and stressed with body heaviness and there is only mild occasional heartbeat awareness",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_cardio_hn_v11_002"
+    ],
+    "secondary_labels": [
+      "cardiology"
+    ],
+    "notes": [
+      "GP should win when cardiac framing is weak and nonspecific"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i am mostly tired and unwell all over with only a little stomach discomfort",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_gastro_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "gastroenterology"
+    ],
+    "notes": [
+      "broad illness with weak GI cue"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -3782,6 +5646,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "03_gold_seed_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "i feel feverish achy and tired all over with only a mild scratchy throat",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_ent_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "ent"
+    ],
+    "notes": [
+      "GP should beat weak throat cue"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "i feel feverish tired and achy all over with only a slight scratchy throat and nothing strongly local",
+    "label": "general_practice",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "gp_gold_v12_001"
+    ],
+    "secondary_labels": [
+      "ent"
+    ],
+    "notes": [
+      "broad systemic illness with weak ENT cue"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
     ]
   },
   {
@@ -4184,6 +6088,26 @@
     ]
   },
   {
+    "text": "i feel unwell and weak all over with poor sleep and sometimes i am just more aware of my heartbeat than usual",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_cardio_hn_v11_001"
+    ],
+    "secondary_labels": [
+      "cardiology"
+    ],
+    "notes": [
+      "broad systemic complaint with only weak heartbeat cue"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i feel weak achy and a little feverish but nothing feels clearly wrong in one place",
     "label": "general_practice",
     "source_types": [
@@ -4288,6 +6212,26 @@
     "source_files": [
       "01_gold_seed_batch_v2.jsonl",
       "02_gold_seed_batch_v3.jsonl"
+    ]
+  },
+  {
+    "text": "i feel weak feverish and achy with slight nausea but no clear stomach trigger",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_gastro_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "gastroenterology"
+    ],
+    "notes": [
+      "GP should beat mild nausea"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -4733,6 +6677,47 @@
     ]
   },
   {
+    "text": "i have low fever fatigue and chills all over with minor congestion but nothing local dominates",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_ent_hn_v6_003"
+    ],
+    "secondary_labels": [
+      "ent"
+    ],
+    "notes": [
+      "systemic illness over mild nasal cue"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "i have low fever headache and mild nausea but the illness feels general rather than stomach-centered",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_gastro_hn_v6_003"
+    ],
+    "secondary_labels": [
+      "gastroenterology",
+      "neurology"
+    ],
+    "notes": [
+      "systemic complaint with mild GI wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
     "text": "i have mild chest discomfort with body aches and feel generally sick",
     "label": "general_practice",
     "source_types": [
@@ -4964,6 +6949,46 @@
     ]
   },
   {
+    "text": "i mainly feel sick and weak with body aches and just a little throat irritation",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_ent_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "ent"
+    ],
+    "notes": [
+      "broad systemic complaint with weak ENT word"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "i mostly feel feverish drained and achy all over and the throat irritation is only minor",
+    "label": "general_practice",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "gp_ent_hn_v12_001"
+    ],
+    "secondary_labels": [
+      "ent"
+    ],
+    "notes": [
+      "GP should win when the local ENT cue is weak"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
     "text": "mild chest discomfort with fever and body aches",
     "label": "general_practice",
     "source_types": [
@@ -5149,6 +7174,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "12_generated_variants_auto.jsonl"
+    ]
+  },
+  {
+    "text": "before my headache starts my hand tingles and then i get pain on one side of my head",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v8_002"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "neurologic aura wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "before the headache starts i see shimmering zigzag lines and then the pain builds on one side of my head",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v9_002"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "visual aura followed by headache"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
     ]
   },
   {
@@ -5372,6 +7437,128 @@
     "include_in_stability_set": true,
     "source_files": [
       "05_gold_seed_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "i get a throbbing headache on one side with nausea and bright light makes it worse but my eye is not red or painful",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v9_001"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "ophthalmology"
+    ],
+    "notes": [
+      "migraine-style headache with explicit non-eye wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
+    ]
+  },
+  {
+    "text": "i get a throbbing headache with nausea and bright light makes it worse",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v8_001"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "ophthalmology"
+    ],
+    "notes": [
+      "migraine-style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i get electric facial pain triggered by touch not cheek pressure or blocked sinuses",
+    "label": "neurology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "neuro_gp_hn_v12_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "neuralgia-style pain kept away from vague GP framing"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "i get electric-shock pain across one cheek triggered by brushing my teeth or touching my face",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v12_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "facial neuralgia-style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "i get one-sided headache with nausea and flashing shapes with no eye redness or discharge",
+    "label": "neurology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "neuro_oph_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "migraine aura boundary row"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "i get sudden electric-shock pain across one side of my face triggered by brushing my teeth",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v9_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "facial neuralgia-style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
     ]
   },
   {
@@ -5702,6 +7889,26 @@
     ]
   },
   {
+    "text": "i have brief episodes of facial numbness followed by a severe headache",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v8_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "neurologic symptom with headache"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have dizziness and a headache and then my vision gets blurry",
     "label": "neurology",
     "source_types": [
@@ -5888,6 +8095,26 @@
     ]
   },
   {
+    "text": "i have repeated brief spells of spinning dizziness when i turn my head followed by imbalance and nausea",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v9_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "neurologic dizziness wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
+    ]
+  },
+  {
     "text": "i have repeated dizzy spells and then a headache starts behind my eyes",
     "label": "neurology",
     "source_types": [
@@ -5926,6 +8153,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "02_gold_seed_batch_v3.jsonl"
+    ]
+  },
+  {
+    "text": "i have tingling on one side of my face followed by a severe headache but my sinuses do not feel blocked",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v12_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "face sensory symptom moved away from sinus framing"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
     ]
   },
   {
@@ -6029,6 +8276,106 @@
     ]
   },
   {
+    "text": "i keep having numbness and pins-and-needles in one arm with neck pain not being the main issue",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v9_006"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "neurologic sensory complaint at ortho boundary"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
+    ]
+  },
+  {
+    "text": "i see flashing zigzag lights and then one side of my head starts throbbing but my eye is not red or painful",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v12_001"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "visual aura followed by headache with explicit non-eye wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "i see shimmering lights and then get a strong headache but my eye is not red or painful",
+    "label": "neurology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "neuro_oph_hn_v12_001"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "aura plus headache should stay neurology when true eye symptoms are absent"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "i see zigzag lights and then develop a pounding headache even though my eyes are not red or painful",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v8_004"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "visual aura but neuro-led complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i see zigzag lights and then get a pounding headache but my eyes are not red or painful",
+    "label": "neurology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "neuro_oph_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "ophthalmology"
+    ],
+    "notes": [
+      "neuro should beat visual aura without eye inflammation"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
     "text": "migraine since this morning and my vision gets blurry",
     "label": "neurology",
     "source_types": [
@@ -6046,6 +8393,67 @@
     "include_in_stability_set": true,
     "source_files": [
       "12_generated_variants_auto.jsonl"
+    ]
+  },
+  {
+    "text": "my balance suddenly feels off and i veer to one side with nausea even though my ears do not feel full",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v12_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "neurologic imbalance wording with explicit non-ear cue"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "my face feels numb and then i develop a strong headache with visual aura not eye pain",
+    "label": "neurology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "neuro_oph_hn_v6_003"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "ophthalmology"
+    ],
+    "notes": [
+      "neurologic symptoms dominate"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "my hand tingles and feels weak for a short time and then i develop a strong headache",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v9_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "transient neurologic symptom with headache"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
     ]
   },
   {
@@ -6106,6 +8514,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "one arm feels numb and weak briefly before a headache and pressing my neck does not reproduce it",
+    "label": "neurology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "neuro_gp_hn_v12_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "neurologic sensory event separated from mechanical discomfort"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "one arm goes numb and pins-and-needles start before a strong headache begins and moving my neck is not the trigger",
+    "label": "neurology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "neuro_gold_v12_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "sensory complaint pushed away from mechanical framing"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
     ]
   },
   {
@@ -6210,6 +8658,26 @@
     ]
   },
   {
+    "text": "bright light bothers me because one eye is watery painful and blurry",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_neuro_hn_v6_003"
+    ],
+    "secondary_labels": [
+      "neurology"
+    ],
+    "notes": [
+      "photophobia from eye complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
     "text": "bright light hurts my eyes and they keep tearing",
     "label": "ophthalmology",
     "source_types": [
@@ -6270,6 +8738,26 @@
     ]
   },
   {
+    "text": "i feel grit inside my eye and my vision turns hazy even though the eyelid only looks mildly irritated",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v12_003"
+    ],
+    "secondary_labels": [
+      "dermatology"
+    ],
+    "notes": [
+      "true eye symptom cluster with mild skin distraction"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
     "text": "i feel pain behind one eye and it keeps watering",
     "label": "ophthalmology",
     "source_types": [
@@ -6287,6 +8775,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "03_gold_seed_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "i feel pressure behind one eye with redness and blurred vision rather than a general headache",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_neuro_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "neurology"
+    ],
+    "notes": [
+      "eye-localized pressure and blur"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -6692,6 +9200,148 @@
     ]
   },
   {
+    "text": "i have scratchy eye pain after dust got in it and the eye keeps watering",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_008"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "foreign-body style eye complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i keep seeing floating specks and brief flashes in my vision",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_004"
+    ],
+    "secondary_labels": [
+      "neurology"
+    ],
+    "notes": [
+      "visual disturbance centered in the eye"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i see halos around lights and my eye aches at the same time",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_009"
+    ],
+    "secondary_labels": [
+      "neurology"
+    ],
+    "notes": [
+      "visual halo complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i see halos around lights and the eye aches from inside not just on the skin around it",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v12_004"
+    ],
+    "secondary_labels": [
+      "dermatology",
+      "neurology"
+    ],
+    "notes": [
+      "internal eye ache and halos"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "i suddenly noticed blurry vision in one eye with floating spots and flashes",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_002"
+    ],
+    "secondary_labels": [
+      "neurology"
+    ],
+    "notes": [
+      "retinal warning style wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i thought it was an eyelid rash but the eye hurts inside and my vision is blurry",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_derm_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "dermatology"
+    ],
+    "notes": [
+      "eye-localized symptoms should dominate"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "i thought it was skin irritation near the eye but the eye is watery red and hurts when i move it",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_derm_hn_v12_003"
+    ],
+    "secondary_labels": [
+      "dermatology",
+      "general_practice"
+    ],
+    "notes": [
+      "true eye involvement should beat periocular skin interpretation"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
     "text": "i woke up and one eye was red and blurry",
     "label": "ophthalmology",
     "source_types": [
@@ -6758,6 +9408,26 @@
     ]
   },
   {
+    "text": "it started like eyelid irritation but now the eye itself is red tearing and painful to light",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_derm_hn_v12_001"
+    ],
+    "secondary_labels": [
+      "dermatology"
+    ],
+    "notes": [
+      "ophthalmology should win once true eye symptoms appear"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
     "text": "itchy red eyes",
     "label": "ophthalmology",
     "source_types": [
@@ -6815,6 +9485,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "05_gold_seed_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "my eye feels sore and gritty and the vision is blurrier in that eye than the other",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_010"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "eye-localized soreness with blur"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my eye hurts inside and looks red with sticky discharge",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "red eye with discharge"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -6941,6 +9651,69 @@
     ]
   },
   {
+    "text": "my eyelid is puffy but the eye itself is painful and watery and light bothers me",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_006"
+    ],
+    "secondary_labels": [
+      "dermatology",
+      "general_practice"
+    ],
+    "notes": [
+      "eyelid skin look with true eye symptoms"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my eyelid is swollen yet the main problem is a painful red eye that is hard to keep open",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_derm_hn_v6_003"
+    ],
+    "secondary_labels": [
+      "dermatology",
+      "general_practice"
+    ],
+    "notes": [
+      "true eye inflammation with lid wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "my eyelid looks puffy but the real problem is deep eye pain with blurry vision",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v12_001"
+    ],
+    "secondary_labels": [
+      "dermatology",
+      "general_practice"
+    ],
+    "notes": [
+      "ocular symptoms dominate despite lid wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
     "text": "my eyes are itchy red and sensitive to light",
     "label": "ophthalmology",
     "source_types": [
@@ -6958,6 +9731,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "03_gold_seed_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "my eyes burn and feel dry on the computer and my vision blurs until i blink a lot",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "dry-eye style complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -7042,6 +9835,132 @@
     ]
   },
   {
+    "text": "one eye is red and my vision looks hazy and bright light makes it worse",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_007"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "neurology"
+    ],
+    "notes": [
+      "visual haze with photophobia"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "one eye is red painful and very sensitive to light with constant tearing",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v8_001"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "neurology"
+    ],
+    "notes": [
+      "eye-localized inflammatory complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "one eye is red watery and painful and bright light makes it hard to keep open",
+    "label": "ophthalmology",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "oph_gold_v12_002"
+    ],
+    "secondary_labels": [
+      "dermatology",
+      "general_practice"
+    ],
+    "notes": [
+      "clear red painful photophobic eye complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "the headache seems to come from one eye because that eye is red sore and light hurts it",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_neuro_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "neurology"
+    ],
+    "notes": [
+      "ophthalmology should beat headache wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "the lid is swollen yet the main issue is blurred vision with soreness inside the eye",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_derm_hn_v12_002"
+    ],
+    "secondary_labels": [
+      "dermatology",
+      "general_practice"
+    ],
+    "notes": [
+      "internal eye symptom dominates lid appearance"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v12.jsonl"
+    ]
+  },
+  {
+    "text": "the skin around my eyelids looks puffy but the eye itself is red watery and sensitive to light",
+    "label": "ophthalmology",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "oph_derm_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "dermatology",
+      "general_practice"
+    ],
+    "notes": [
+      "ophthalmology should beat periocular skin wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
     "text": "i fell on my shoulder and now i cannot raise my arm properly",
     "label": "orthopedics",
     "source_types": [
@@ -7082,6 +10001,26 @@
     ]
   },
   {
+    "text": "i get pain on the outside of my elbow when i grip tools or lift things",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_008"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "overuse elbow complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have ankle pain after rolling it and now i cannot put full weight on it",
     "label": "orthopedics",
     "source_types": [
@@ -7099,6 +10038,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "06_gold_seed_batch_v7.jsonl"
+    ]
+  },
+  {
+    "text": "i have chest wall pain after lifting and twisting and it gets worse when i press on the muscle or move my arm",
+    "label": "orthopedics",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "ortho_cardio_hn_v6_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "mechanical chest wall pain should stay orthopedic"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
     ]
   },
   {
@@ -7362,6 +10321,26 @@
     ]
   },
   {
+    "text": "i have pain over my rib muscles after coughing hard and twisting my body",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_014"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "mechanical chest wall complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i have shoulder pain after lifting and it hurts when i move the arm",
     "label": "orthopedics",
     "source_types": [
@@ -7425,6 +10404,46 @@
     ]
   },
   {
+    "text": "i have wrist pain and swelling after catching myself during a fall",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_006"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "post-fall wrist injury"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i hurt my lower back lifting a heavy box and it gets worse when i bend forward",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "mechanical low back strain"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "i rolled my ankle and now it hurts when i put weight on it",
     "label": "orthopedics",
     "source_types": [
@@ -7442,6 +10461,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "i rolled my ankle on the stairs and it is swollen and painful to stand on",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "acute ankle sprain wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "i strained my upper back carrying boxes and twisting makes it worse",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_011"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "thoracic muscular strain"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -7625,6 +10684,26 @@
     ]
   },
   {
+    "text": "my calf muscle started hurting after i sprinted and it is worse when i push off the foot",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_012"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "muscle strain wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "my elbow started hurting after lifting heavy bags yesterday",
     "label": "orthopedics",
     "source_types": [
@@ -7642,6 +10721,106 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "my finger became swollen and painful after i jammed it playing ball",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_013"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "small joint injury"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my heel hurts badly with the first few steps every morning",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_009"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "plantar heel pain wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my hip hurts when i walk and stand for long periods and it feels mechanical",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_007"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "weight-bearing hip pain"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my knee aches and grinds when i go down stairs or stand up from a chair",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_010"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "patellofemoral style knee complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my knee swelled up after i twisted it getting out of the car",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "twisting knee injury"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -7685,6 +10864,27 @@
     ]
   },
   {
+    "text": "my lower back pain shoots a little into my buttock when i move but it started after lifting",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_015"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "neurology"
+    ],
+    "notes": [
+      "mechanical back pain with mild radicular wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
     "text": "my neck became stiff and painful after lifting something heavy",
     "label": "orthopedics",
     "source_types": [
@@ -7705,6 +10905,47 @@
     ]
   },
   {
+    "text": "my neck feels stiff after sleeping badly and it hurts more when i turn my head",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_005"
+    ],
+    "secondary_labels": [
+      "general_practice",
+      "neurology"
+    ],
+    "notes": [
+      "mechanical neck pain with movement"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my shoulder and upper chest hurt after a hard workout and movement makes it worse rather than walking",
+    "label": "orthopedics",
+    "source_types": [
+      "hard_negative"
+    ],
+    "family_ids": [
+      "ortho_cardio_hn_v6_002"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "movement-linked shoulder/chest pain"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "15_hard_negatives_batch_v6.jsonl"
+    ]
+  },
+  {
     "text": "my shoulder hurts after exercise and i cannot move it fully",
     "label": "orthopedics",
     "source_types": [
@@ -7722,6 +10963,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "04_gold_seed_batch_v5.jsonl"
+    ]
+  },
+  {
+    "text": "my shoulder hurts after reaching overhead and now i cannot lift my arm well",
+    "label": "orthopedics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "ortho_gold_v8_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "movement-limited shoulder complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -8009,6 +11270,26 @@
     ]
   },
   {
+    "text": "my baby is feverish irritable and not drinking milk as well as normal today",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_005"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "infant unwell and poor feeding"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
+    ]
+  },
+  {
     "text": "my baby is vomiting and is not feeding well",
     "label": "pediatrics",
     "source_types": [
@@ -8047,6 +11328,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "12_hard_negatives_batch_v3.jsonl"
+    ]
+  },
+  {
+    "text": "my child has a barking cough at night and sounds hoarse when breathing in",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "pediatric upper airway complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
     ]
   },
   {
@@ -8255,6 +11556,27 @@
     ]
   },
   {
+    "text": "my child has stomach pain around the belly button with vomiting and will not eat",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_008"
+    ],
+    "secondary_labels": [
+      "gastroenterology",
+      "general_practice"
+    ],
+    "notes": [
+      "pediatric abdominal complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
+    ]
+  },
+  {
     "text": "my child has stomache pain and vomiting since yesterday",
     "label": "pediatrics",
     "source_types": [
@@ -8272,6 +11594,27 @@
     "include_in_stability_set": true,
     "source_files": [
       "12_generated_variants_auto.jsonl"
+    ]
+  },
+  {
+    "text": "my child has vomiting and diarrhea since last night and now seems tired and less playful",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_002"
+    ],
+    "secondary_labels": [
+      "gastroenterology",
+      "general_practice"
+    ],
+    "notes": [
+      "child GI illness complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
     ]
   },
   {
@@ -8312,6 +11655,46 @@
     "include_in_stability_set": true,
     "source_files": [
       "13_hard_negatives_batch_v4.jsonl"
+    ]
+  },
+  {
+    "text": "my child has wheezing with cough and fever and looks tired",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v8_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "pediatric respiratory complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my child has wheezing with cough and mild fever and is less active than usual",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_006"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "child wheeze complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
     ]
   },
   {
@@ -8440,6 +11823,66 @@
     ]
   },
   {
+    "text": "my infant has fever and keeps pulling at the ear and crying more than usual",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_003"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "young child ear-related complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
+    ]
+  },
+  {
+    "text": "my infant is feverish irritable and not drinking milk like usual",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v8_004"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "young child unwell complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my preschooler has high fever and a sore throat and refuses to drink because it hurts",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_009"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "child throat complaint with poor intake"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
+    ]
+  },
+  {
     "text": "my son has a bad cough at night and feels hot",
     "label": "pediatrics",
     "source_types": [
@@ -8521,6 +11964,67 @@
     "include_in_stability_set": true,
     "source_files": [
       "05_gold_seed_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "my three-year-old has fever cough and is not feeding well today",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v8_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "child systemic respiratory complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
+    ]
+  },
+  {
+    "text": "my toddler has a spreading rash with fever and seems unusually sleepy",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_007"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "child systemic rash complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
+    ]
+  },
+  {
+    "text": "my toddler has diarrhea and vomiting and seems much sleepier than usual",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v8_002"
+    ],
+    "secondary_labels": [
+      "gastroenterology",
+      "general_practice"
+    ],
+    "notes": [
+      "pediatric GI complaint"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v8.jsonl"
     ]
   },
   {
@@ -8663,6 +12167,26 @@
     "include_in_stability_set": true,
     "source_files": [
       "05_gold_seed_batch_v6.jsonl"
+    ]
+  },
+  {
+    "text": "my two-year-old has fever cough and is breathing faster than usual today",
+    "label": "pediatrics",
+    "source_types": [
+      "gold_seed"
+    ],
+    "family_ids": [
+      "peds_gold_v9_001"
+    ],
+    "secondary_labels": [
+      "general_practice"
+    ],
+    "notes": [
+      "pediatric respiratory illness wording"
+    ],
+    "include_in_stability_set": true,
+    "source_files": [
+      "07_gold_seed_batch_v9.jsonl"
     ]
   }
 ]

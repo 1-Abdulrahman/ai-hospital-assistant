@@ -1,5 +1,5 @@
 {
-  "totalFamilies": 332,
+  "totalFamilies": 507,
   "families": [
     {
       "familyId": "cardio_exertional_chest_pain_001",
@@ -95,6 +95,166 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "cardio_gold_v11_001",
+      "cases": [
+        {
+          "text": "my heartbeat suddenly becomes irregular and rapid while i am sitting still and that is the main thing i notice",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v11_002",
+      "cases": [
+        {
+          "text": "i feel repeated skipped beats followed by a strong thumping heartbeat that makes me stop what i am doing",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v11_003",
+      "cases": [
+        {
+          "text": "my pulse suddenly races and flutters for a minute at a time even though i am not moving much",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v11_004",
+      "cases": [
+        {
+          "text": "the main problem is a pounding irregular heartbeat with lightheadedness coming after the rhythm starts",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v11_005",
+      "cases": [
+        {
+          "text": "i get chest uneasiness with a rapid heartbeat but it is not triggered by moving my arm or pressing on my chest",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v11_006",
+      "cases": [
+        {
+          "text": "when i walk uphill my heart starts racing unevenly and i need to pause because the rhythm feels wrong",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v11_007",
+      "cases": [
+        {
+          "text": "i notice a fluttering pulse in my chest and throat followed by weakness but the fluttering comes first",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v11_008",
+      "cases": [
+        {
+          "text": "there are short attacks where my heartbeat feels chaotic and forceful and i have to sit quietly until it settles",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "cardio_gold_v3_001",
       "cases": [
         {
@@ -183,7 +343,7 @@
           "predictedTop1": "cardiology",
           "predictedTop2": [
             "cardiology",
-            "general_practice"
+            "orthopedics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -323,7 +483,7 @@
           "predictedTop1": "cardiology",
           "predictedTop2": [
             "cardiology",
-            "gastroenterology"
+            "orthopedics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -495,6 +655,346 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "cardio_gold_v8_001",
+      "cases": [
+        {
+          "text": "i feel tightness in my chest when i walk uphill and it eases when i rest",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_002",
+      "cases": [
+        {
+          "text": "my heart suddenly races and flutters and i feel lightheaded when it happens",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_003",
+      "cases": [
+        {
+          "text": "i get short of breath when i lie flat and my ankles look swollen by evening",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_004",
+      "cases": [
+        {
+          "text": "i feel pressure in the middle of my chest with sweating when i walk fast",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_005",
+      "cases": [
+        {
+          "text": "i have episodes of irregular pounding heartbeat with weakness and near fainting",
+          "goldLabel": "cardiology",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_006",
+      "cases": [
+        {
+          "text": "there is heaviness in my chest when i carry groceries and it improves after sitting down",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_007",
+      "cases": [
+        {
+          "text": "i wake up at night short of breath and need to sit upright to breathe better",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_008",
+      "cases": [
+        {
+          "text": "my chest feels squeezed when i climb stairs and the feeling settles with rest",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_009",
+      "cases": [
+        {
+          "text": "i become breathless much faster than usual and feel a pressing sensation in my chest",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_010",
+      "cases": [
+        {
+          "text": "i keep noticing a fast fluttering heartbeat even when i am sitting quietly",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_011",
+      "cases": [
+        {
+          "text": "i get chest pressure during brisk walking and it is not triggered by moving my arm",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_012",
+      "cases": [
+        {
+          "text": "my heartbeat feels uneven and i get tired and short of breath during simple activity",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_013",
+      "cases": [
+        {
+          "text": "i feel chest heaviness with nausea when i hurry to catch up with someone walking",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_014",
+      "cases": [
+        {
+          "text": "i have pounding palpitations with mild chest discomfort and dizziness",
+          "goldLabel": "cardiology",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 0.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_015",
+      "cases": [
+        {
+          "text": "there is pressure across my chest whenever i walk against the wind and it stops after rest",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_016",
+      "cases": [
+        {
+          "text": "i get breathless on stairs and feel a weight on my chest that fades after a few minutes of rest",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gold_v8_017",
+      "cases": [
+        {
+          "text": "my heart feels like it skips beats and then races for a minute or two",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "cardio_gp_borderline_001",
       "cases": [
         {
@@ -503,7 +1003,7 @@
           "predictedTop1": "cardiology",
           "predictedTop2": [
             "cardiology",
-            "general_practice"
+            "orthopedics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -514,7 +1014,7 @@
           "predictedTop1": "cardiology",
           "predictedTop2": [
             "cardiology",
-            "general_practice"
+            "orthopedics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -565,7 +1065,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -576,7 +1076,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "ent"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -608,6 +1108,46 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "cardio_gp_hn_v11_001",
+      "cases": [
+        {
+          "text": "i feel generally tired and shaky today but the main issue is a sudden racing heartbeat that feels irregular",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_gp_hn_v11_002",
+      "cases": [
+        {
+          "text": "i almost feel faint but that happens only after my heart starts pounding and skipping beats",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "cardio_gp_hn_v3_001",
       "cases": [
         {
@@ -616,7 +1156,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -656,7 +1196,7 @@
           "predictedTop1": "cardiology",
           "predictedTop2": [
             "cardiology",
-            "general_practice"
+            "orthopedics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -672,6 +1212,46 @@
       "cases": [
         {
           "text": "i have chest heaviness when climbing stairs and it improves when i rest",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_ortho_hn_v6_001",
+      "cases": [
+        {
+          "text": "i get chest pressure when walking uphill with shortness of breath and it is not worse with arm movement",
+          "goldLabel": "cardiology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "cardio_ortho_hn_v6_002",
+      "cases": [
+        {
+          "text": "there is heaviness in my chest when i carry groceries relieved by rest and not tender to touch",
           "goldLabel": "cardiology",
           "predictedTop1": "cardiology",
           "predictedTop2": [
@@ -747,7 +1327,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "ophthalmology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -758,7 +1338,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -775,9 +1355,9 @@
         {
           "text": "dry red patches on my neck and they get worse at night",
           "goldLabel": "dermatology",
-          "predictedTop1": "ent",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "ent",
+            "dermatology",
             "ophthalmology"
           ],
           "needsClarification": true,
@@ -786,9 +1366,9 @@
         {
           "text": "i have dry red patches on my neck and they get worse at night",
           "goldLabel": "dermatology",
-          "predictedTop1": "orthopedics",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "orthopedics",
+            "dermatology",
             "ophthalmology"
           ],
           "needsClarification": true,
@@ -796,8 +1376,8 @@
         }
       ],
       "totalCases": 2,
-      "top1Accuracy": 0.0,
-      "top2Coverage": 0.0,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
     {
@@ -809,7 +1389,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "neurology"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -820,7 +1400,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "neurology"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -828,6 +1408,86 @@
       ],
       "totalCases": 2,
       "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v12_001",
+      "cases": [
+        {
+          "text": "the skin on my eyelids is itchy and flaky but my eyes are not red and my vision is normal",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v12_002",
+      "cases": [
+        {
+          "text": "i have a burning rash at the outer corner of one eye socket but the eyeball itself feels fine",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v12_003",
+      "cases": [
+        {
+          "text": "the skin above my lashes is peeling and irritated with no blurred vision or light sensitivity",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v12_004",
+      "cases": [
+        {
+          "text": "red cracked skin around my eye itches badly after using a new cream but the eye itself looks normal",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -840,7 +1500,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "gastroenterology"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -860,7 +1520,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "gastroenterology"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -900,7 +1560,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "neurology"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -920,7 +1580,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "neurology"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -977,17 +1637,17 @@
         {
           "text": "i have small itchy bumps on my forearms and they keep spreading",
           "goldLabel": "dermatology",
-          "predictedTop1": "orthopedics",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "orthopedics",
-            "dermatology"
+            "dermatology",
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 0.0,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -1000,7 +1660,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "orthopedics"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1017,9 +1677,9 @@
         {
           "text": "the skin on my hands is red itchy and peeling",
           "goldLabel": "dermatology",
-          "predictedTop1": "ent",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "ent",
+            "dermatology",
             "ophthalmology"
           ],
           "needsClarification": true,
@@ -1027,8 +1687,8 @@
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 0.0,
-      "top2Coverage": 0.0,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
     {
@@ -1037,9 +1697,9 @@
         {
           "text": "i have itchy red patches around my ankles after wearing new socks",
           "goldLabel": "dermatology",
-          "predictedTop1": "orthopedics",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "orthopedics",
+            "dermatology",
             "ophthalmology"
           ],
           "needsClarification": true,
@@ -1047,8 +1707,8 @@
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 0.0,
-      "top2Coverage": 0.0,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
     {
@@ -1057,17 +1717,17 @@
         {
           "text": "the skin around my nose is flaky red and irritated",
           "goldLabel": "dermatology",
-          "predictedTop1": "ophthalmology",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "ophthalmology",
-            "dermatology"
+            "dermatology",
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 0.0,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -1080,7 +1740,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "orthopedics"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1097,9 +1757,9 @@
         {
           "text": "my forearms get dry and itchy after hot showers",
           "goldLabel": "dermatology",
-          "predictedTop1": "gastroenterology",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "gastroenterology",
+            "dermatology",
             "orthopedics"
           ],
           "needsClarification": true,
@@ -1107,8 +1767,8 @@
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 0.0,
-      "top2Coverage": 0.0,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
     {
@@ -1140,7 +1800,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "ent"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1157,9 +1817,9 @@
         {
           "text": "i have itchy bumps on my legs after spending time in the garden",
           "goldLabel": "dermatology",
-          "predictedTop1": "gastroenterology",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "gastroenterology",
+            "dermatology",
             "orthopedics"
           ],
           "needsClarification": true,
@@ -1167,8 +1827,428 @@
         }
       ],
       "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_001",
+      "cases": [
+        {
+          "text": "i have itchy flaky skin on my eyelids and around my eyes but my vision is normal",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_002",
+      "cases": [
+        {
+          "text": "the skin near the corners of my eyes is red and burning but the eyeball itself is not painful",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
       "top1Accuracy": 0.0,
-      "top2Coverage": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_003",
+      "cases": [
+        {
+          "text": "i have dry cracking skin behind my ears and along my hairline that keeps itching",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_004",
+      "cases": [
+        {
+          "text": "small itchy blisters appeared on my fingers after i used cleaning chemicals",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_005",
+      "cases": [
+        {
+          "text": "i have round scaly patches on my forearm that are slowly getting bigger",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_006",
+      "cases": [
+        {
+          "text": "i broke out in raised itchy welts after trying a new body wash",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_007",
+      "cases": [
+        {
+          "text": "there is a painful boil in my armpit with red swollen skin around it",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_008",
+      "cases": [
+        {
+          "text": "my scalp is greasy flaky and shedding onto my shoulders",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_009",
+      "cases": [
+        {
+          "text": "i have very itchy red patches inside my elbows that come back often",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_010",
+      "cases": [
+        {
+          "text": "i developed a burning rash under my breast fold where the skin stays moist",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_011",
+      "cases": [
+        {
+          "text": "painful acne-like bumps keep appearing along my jawline and chin",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_012",
+      "cases": [
+        {
+          "text": "i have thick silvery patches on my elbows and knees that keep flaking",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_013",
+      "cases": [
+        {
+          "text": "the skin between my toes is peeling itchy and a little cracked",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_014",
+      "cases": [
+        {
+          "text": "i have several swollen itchy bite-like bumps on my legs that are very red",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_015",
+      "cases": [
+        {
+          "text": "my hands are red dry and cracked after washing them again and again",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_016",
+      "cases": [
+        {
+          "text": "i got an itchy rash on my neck after spraying perfume there",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_017",
+      "cases": [
+        {
+          "text": "the skin around my mouth is irritated and peeling after using a new cream",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "gastroenterology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_018",
+      "cases": [
+        {
+          "text": "i have tender red bumps on the back of my neck after shaving",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_019",
+      "cases": [
+        {
+          "text": "my lower legs have itchy dry patches that become darker after scratching",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_020",
+      "cases": [
+        {
+          "text": "there is a red itchy rash where my watch touches my wrist",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_gold_v8_021",
+      "cases": [
+        {
+          "text": "i have flaky itchy eyebrows and redness around the nose folds",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
     {
@@ -1180,7 +2260,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "ent"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1188,18 +2268,18 @@
         {
           "text": "itchy red skin patches",
           "goldLabel": "dermatology",
-          "predictedTop1": "ophthalmology",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "ophthalmology",
-            "ent"
+            "dermatology",
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 2,
-      "top1Accuracy": 0.5,
-      "top2Coverage": 0.5,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
     {
@@ -1234,6 +2314,66 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "derm_oph_hn_v12_001",
+      "cases": [
+        {
+          "text": "it looks like an eye problem because the rash is on the eyelid but the eyeball is not red and i can see clearly",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_oph_hn_v12_002",
+      "cases": [
+        {
+          "text": "my eyelid skin burns and peels after makeup yet there is no eye pain or blurred vision",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_oph_hn_v12_003",
+      "cases": [
+        {
+          "text": "the area around my eye is itchy and scaly but light does not bother me and the eye itself feels fine",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "derm_oph_hn_v3_001",
       "cases": [
         {
@@ -1262,7 +2402,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "ent"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1282,7 +2422,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "general_practice"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1290,7 +2430,67 @@
       ],
       "totalCases": 1,
       "top1Accuracy": 0.0,
-      "top2Coverage": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_oph_hn_v6_001",
+      "cases": [
+        {
+          "text": "the skin on my eyelids is itchy and flaky but my vision is normal and the eyeball is not red",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_oph_hn_v6_002",
+      "cases": [
+        {
+          "text": "i have a rash on the skin around my eye that burns and peels but i can see normally",
+          "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "derm_oph_hn_v6_003",
+      "cases": [
+        {
+          "text": "red dry patches on my eyelids and brow itch a lot with no eye pain or blurred vision",
+          "goldLabel": "dermatology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
     {
@@ -1302,7 +2502,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "gastroenterology"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1313,7 +2513,7 @@
           "predictedTop1": "dermatology",
           "predictedTop2": [
             "dermatology",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1333,7 +2533,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1344,13 +2544,53 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 2,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v12_001",
+      "cases": [
+        {
+          "text": "my sore throat and painful swallowing are clearly worse than the mild fever i have",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v12_002",
+      "cases": [
+        {
+          "text": "my ear hurts and sounds muffled with popping and that bothers me more than the mild body aches",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
       "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
@@ -1364,7 +2604,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1404,7 +2644,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "ophthalmology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1424,7 +2664,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1464,7 +2704,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "ophthalmology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1564,7 +2804,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "ophthalmology"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1584,7 +2824,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1621,17 +2861,17 @@
         {
           "text": "my voice became hoarse after a cold and it has not improved",
           "goldLabel": "ent",
-          "predictedTop1": "pediatrics",
+          "predictedTop1": "ent",
           "predictedTop2": [
-            "pediatrics",
-            "ent"
+            "ent",
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 0.0,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -1641,17 +2881,17 @@
         {
           "text": "my nose is stuffed up and i feel pain around my forehead and eyes",
           "goldLabel": "ent",
-          "predictedTop1": "ent",
+          "predictedTop1": "ophthalmology",
           "predictedTop2": [
-            "ent",
-            "orthopedics"
+            "ophthalmology",
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 1.0,
+      "top1Accuracy": 0.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -1684,7 +2924,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "orthopedics"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1704,7 +2944,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1784,7 +3024,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "ophthalmology"
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1804,7 +3044,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "orthopedics"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1824,7 +3064,267 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "pediatrics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_001",
+      "cases": [
+        {
+          "text": "i have strong pressure in my cheeks with thick nasal mucus and blocked sinuses",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_002",
+      "cases": [
+        {
+          "text": "my ear is painful blocked and my hearing sounds muffled on that side",
+          "goldLabel": "ent",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_003",
+      "cases": [
+        {
+          "text": "my throat is very sore with white spots and it hurts sharply to swallow",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "pediatrics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_004",
+      "cases": [
+        {
+          "text": "my voice has been hoarse for days and my throat feels irritated",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "pediatrics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_005",
+      "cases": [
+        {
+          "text": "my nose is blocked on one side with facial pain and a bad smell",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_006",
+      "cases": [
+        {
+          "text": "i have ear pain with fluid coming out after swimming",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_007",
+      "cases": [
+        {
+          "text": "i keep getting nosebleeds from one nostril and the inside feels crusted",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_008",
+      "cases": [
+        {
+          "text": "my throat hurts and the glands in my neck are swollen and tender",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "pediatrics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_009",
+      "cases": [
+        {
+          "text": "i have sinus congestion with pressure around my forehead and under my eyes",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_010",
+      "cases": [
+        {
+          "text": "it hurts to swallow and the pain seems to go toward my ear",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_011",
+      "cases": [
+        {
+          "text": "my hearing became muffled with popping in my ears during a flight",
+          "goldLabel": "ent",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_012",
+      "cases": [
+        {
+          "text": "my tonsils feel very swollen and swallowing saliva is painful",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "pediatrics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gold_v8_013",
+      "cases": [
+        {
+          "text": "i have sharp pain deep in my ear whenever i chew or yawn",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1916,10 +3416,10 @@
         {
           "text": "i have a sore throat with fever and body aches",
           "goldLabel": "ent",
-          "predictedTop1": "general_practice",
+          "predictedTop1": "ent",
           "predictedTop2": [
-            "general_practice",
-            "ent"
+            "ent",
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1960,10 +3460,10 @@
         {
           "text": "i have sorethroat with fever and body aches",
           "goldLabel": "ent",
-          "predictedTop1": "general_practice",
+          "predictedTop1": "ent",
           "predictedTop2": [
-            "general_practice",
-            "ent"
+            "ent",
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -1981,7 +3481,7 @@
         }
       ],
       "totalCases": 6,
-      "top1Accuracy": 0.6667,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -1991,10 +3491,10 @@
         {
           "text": "fever fatigue and a scratchy throat",
           "goldLabel": "general_practice",
-          "predictedTop1": "general_practice",
+          "predictedTop1": "ent",
           "predictedTop2": [
-            "general_practice",
-            "ent"
+            "ent",
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2002,10 +3502,10 @@
         {
           "text": "i have a fever fatigue and a scratchy throat",
           "goldLabel": "general_practice",
-          "predictedTop1": "general_practice",
+          "predictedTop1": "ent",
           "predictedTop2": [
-            "general_practice",
-            "gastroenterology"
+            "ent",
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2013,10 +3513,10 @@
         {
           "text": "i have fever fatigue and a scratchy thorat",
           "goldLabel": "general_practice",
-          "predictedTop1": "general_practice",
+          "predictedTop1": "ent",
           "predictedTop2": [
-            "general_practice",
-            "gastroenterology"
+            "ent",
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2024,17 +3524,17 @@
         {
           "text": "i have fever fatigue and a scratchy throat",
           "goldLabel": "general_practice",
-          "predictedTop1": "general_practice",
+          "predictedTop1": "ent",
           "predictedTop2": [
-            "general_practice",
-            "gastroenterology"
+            "ent",
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 4,
-      "top1Accuracy": 1.0,
+      "top1Accuracy": 0.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -2047,7 +3547,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2058,13 +3558,33 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 2,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gp_hn_v12_001",
+      "cases": [
+        {
+          "text": "my face feels heavy with thick nasal mucus and pain when i bend forward which feels more local than general illness",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
       "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
@@ -2098,7 +3618,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2118,7 +3638,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2150,6 +3670,66 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "ent_gp_hn_v6_001",
+      "cases": [
+        {
+          "text": "my sore throat is the main problem and swallowing is sharply painful",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "pediatrics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gp_hn_v6_002",
+      "cases": [
+        {
+          "text": "ear pain and muffled hearing are much worse than the mild fever i have",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ent_gp_hn_v6_003",
+      "cases": [
+        {
+          "text": "sinus pressure with thick nasal discharge is the main complaint not the body aches",
+          "goldLabel": "ent",
+          "predictedTop1": "ent",
+          "predictedTop2": [
+            "ent",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "ent_sore_throat_001",
       "cases": [
         {
@@ -2158,7 +3738,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2169,7 +3749,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2180,7 +3760,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2191,7 +3771,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2202,7 +3782,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "pediatrics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2222,7 +3802,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2233,7 +3813,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2244,7 +3824,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2266,7 +3846,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2286,7 +3866,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "neurology"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2297,7 +3877,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "neurology"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2308,7 +3888,7 @@
           "predictedTop1": "ent",
           "predictedTop2": [
             "ent",
-            "neurology"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2325,10 +3905,10 @@
         {
           "text": "abdominal pain for three days and loose stool",
           "goldLabel": "gastroenterology",
-          "predictedTop1": "ent",
+          "predictedTop1": "gastroenterology",
           "predictedTop2": [
-            "ent",
-            "gastroenterology"
+            "gastroenterology",
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2339,14 +3919,14 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 2,
-      "top1Accuracy": 0.5,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -2399,7 +3979,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2419,7 +3999,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2459,7 +4039,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2539,7 +4119,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2559,7 +4139,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2579,7 +4159,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2639,7 +4219,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2699,7 +4279,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2719,7 +4299,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2739,7 +4319,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "cardiology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2799,7 +4379,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2819,7 +4399,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "cardiology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2840,6 +4420,186 @@
           "predictedTop2": [
             "gastroenterology",
             "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_001",
+      "cases": [
+        {
+          "text": "i get cramping lower abdominal pain that feels better after i move my bowels",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_002",
+      "cases": [
+        {
+          "text": "i have nausea and vomiting with upper stomach pain after eating greasy food",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_003",
+      "cases": [
+        {
+          "text": "acid keeps coming up into my throat after meals and when i lie down",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_004",
+      "cases": [
+        {
+          "text": "i feel bloated and get diarrhea after eating spicy food",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_005",
+      "cases": [
+        {
+          "text": "i have stomach cramps and loose stool since eating at a restaurant yesterday",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_006",
+      "cases": [
+        {
+          "text": "my upper abdomen hurts with nausea and i keep burping after meals",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_007",
+      "cases": [
+        {
+          "text": "i have urgent diarrhea with stomach rumbling and cramps all day",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_008",
+      "cases": [
+        {
+          "text": "my stomach burns and i feel sour fluid in my throat after dinner",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gold_v8_009",
+      "cases": [
+        {
+          "text": "i feel sick to my stomach and have repeated vomiting with belly pain",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2965,7 +4725,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -2976,7 +4736,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3020,7 +4780,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3082,7 +4842,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "ent"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3244,7 +5004,67 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "neurology"
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gp_hn_v6_001",
+      "cases": [
+        {
+          "text": "stomach cramps diarrhea and nausea are the main problem not the general fatigue",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gp_hn_v6_002",
+      "cases": [
+        {
+          "text": "acid reflux after meals is the main issue even though i also feel tired",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gastro_gp_hn_v6_003",
+      "cases": [
+        {
+          "text": "vomiting and upper stomach pain after food are much stronger than the body aches",
+          "goldLabel": "gastroenterology",
+          "predictedTop1": "gastroenterology",
+          "predictedTop2": [
+            "gastroenterology",
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3297,7 +5117,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "ent"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3328,7 +5148,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "ent"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3339,7 +5159,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "ent"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3350,7 +5170,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "ent"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3381,7 +5201,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3392,7 +5212,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3403,7 +5223,7 @@
           "predictedTop1": "gastroenterology",
           "predictedTop2": [
             "gastroenterology",
-            "general_practice"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3434,7 +5254,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3445,13 +5265,53 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 3,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gp_cardio_hn_v11_001",
+      "cases": [
+        {
+          "text": "i feel unwell and weak all over with poor sleep and sometimes i am just more aware of my heartbeat than usual",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gp_cardio_hn_v11_002",
+      "cases": [
+        {
+          "text": "i am mostly fatigued and stressed with body heaviness and there is only mild occasional heartbeat awareness",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
       "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
@@ -3497,6 +5357,26 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "gp_ent_hn_v12_001",
+      "cases": [
+        {
+          "text": "i mostly feel feverish drained and achy all over and the throat irritation is only minor",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "gp_ent_hn_v4_001",
       "cases": [
         {
@@ -3505,7 +5385,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3545,7 +5425,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3565,7 +5445,67 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gp_ent_hn_v6_001",
+      "cases": [
+        {
+          "text": "i feel feverish achy and tired all over with only a mild scratchy throat",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gp_ent_hn_v6_002",
+      "cases": [
+        {
+          "text": "i mainly feel sick and weak with body aches and just a little throat irritation",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gp_ent_hn_v6_003",
+      "cases": [
+        {
+          "text": "i have low fever fatigue and chills all over with minor congestion but nothing local dominates",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3585,7 +5525,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3616,7 +5556,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3668,6 +5608,86 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "gp_gastro_hn_v6_001",
+      "cases": [
+        {
+          "text": "i feel weak feverish and achy with slight nausea but no clear stomach trigger",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gp_gastro_hn_v6_002",
+      "cases": [
+        {
+          "text": "i am mostly tired and unwell all over with only a little stomach discomfort",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gp_gastro_hn_v6_003",
+      "cases": [
+        {
+          "text": "i have low fever headache and mild nausea but the illness feels general rather than stomach-centered",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "gp_gold_v12_001",
+      "cases": [
+        {
+          "text": "i feel feverish tired and achy all over with only a slight scratchy throat and nothing strongly local",
+          "goldLabel": "general_practice",
+          "predictedTop1": "general_practice",
+          "predictedTop2": [
+            "general_practice",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "gp_gold_v3_001",
       "cases": [
         {
@@ -3676,7 +5696,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3756,7 +5776,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3776,7 +5796,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3836,7 +5856,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3856,7 +5876,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3916,7 +5936,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3956,7 +5976,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3976,7 +5996,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -3996,7 +6016,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4056,7 +6076,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4076,7 +6096,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4096,7 +6116,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4216,7 +6236,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4336,7 +6356,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4407,7 +6427,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "ent"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4427,7 +6447,7 @@
           "predictedTop1": "general_practice",
           "predictedTop2": [
             "general_practice",
-            "gastroenterology"
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4481,6 +6501,106 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "neuro_gold_v12_001",
+      "cases": [
+        {
+          "text": "i see flashing zigzag lights and then one side of my head starts throbbing but my eye is not red or painful",
+          "goldLabel": "neurology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v12_002",
+      "cases": [
+        {
+          "text": "i get electric-shock pain across one cheek triggered by brushing my teeth or touching my face",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v12_003",
+      "cases": [
+        {
+          "text": "one arm goes numb and pins-and-needles start before a strong headache begins and moving my neck is not the trigger",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v12_004",
+      "cases": [
+        {
+          "text": "i have tingling on one side of my face followed by a severe headache but my sinuses do not feel blocked",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v12_005",
+      "cases": [
+        {
+          "text": "my balance suddenly feels off and i veer to one side with nausea even though my ears do not feel full",
+          "goldLabel": "neurology",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "neuro_gold_v3_001",
       "cases": [
         {
@@ -4509,7 +6629,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4529,7 +6649,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4589,7 +6709,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4606,17 +6726,17 @@
         {
           "text": "i keep feeling dizzy and unsteady when i stand up",
           "goldLabel": "neurology",
-          "predictedTop1": "neurology",
+          "predictedTop1": "cardiology",
           "predictedTop2": [
-            "neurology",
-            "cardiology"
+            "cardiology",
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 1.0,
+      "top1Accuracy": 0.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -4629,7 +6749,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4646,17 +6766,17 @@
         {
           "text": "my migraine came back and now i feel sick and weak",
           "goldLabel": "neurology",
-          "predictedTop1": "general_practice",
+          "predictedTop1": "neurology",
           "predictedTop2": [
-            "general_practice",
-            "neurology"
+            "neurology",
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 0.0,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -4709,7 +6829,7 @@
           "predictedTop1": "cardiology",
           "predictedTop2": [
             "cardiology",
-            "neurology"
+            "orthopedics"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4717,7 +6837,7 @@
       ],
       "totalCases": 1,
       "top1Accuracy": 0.0,
-      "top2Coverage": 1.0,
+      "top2Coverage": 0.0,
       "ambiguityRate": 1.0
     },
     {
@@ -4746,18 +6866,18 @@
         {
           "text": "my migraine came back and now i feel sick to my stomach",
           "goldLabel": "neurology",
-          "predictedTop1": "gastroenterology",
+          "predictedTop1": "neurology",
           "predictedTop2": [
-            "gastroenterology",
-            "general_practice"
+            "neurology",
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 1,
-      "top1Accuracy": 0.0,
-      "top2Coverage": 0.0,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
     {
@@ -4789,7 +6909,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "general_practice"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4809,7 +6929,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "general_practice"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4829,7 +6949,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4849,7 +6969,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4869,7 +6989,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4909,7 +7029,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "ophthalmology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4929,7 +7049,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -4989,7 +7109,247 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v8_001",
+      "cases": [
+        {
+          "text": "i get a throbbing headache with nausea and bright light makes it worse",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v8_002",
+      "cases": [
+        {
+          "text": "before my headache starts my hand tingles and then i get pain on one side of my head",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v8_003",
+      "cases": [
+        {
+          "text": "i have brief episodes of facial numbness followed by a severe headache",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v8_004",
+      "cases": [
+        {
+          "text": "i see zigzag lights and then develop a pounding headache even though my eyes are not red or painful",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v9_001",
+      "cases": [
+        {
+          "text": "i get a throbbing headache on one side with nausea and bright light makes it worse but my eye is not red or painful",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v9_002",
+      "cases": [
+        {
+          "text": "before the headache starts i see shimmering zigzag lines and then the pain builds on one side of my head",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v9_003",
+      "cases": [
+        {
+          "text": "i have repeated brief spells of spinning dizziness when i turn my head followed by imbalance and nausea",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v9_004",
+      "cases": [
+        {
+          "text": "my hand tingles and feels weak for a short time and then i develop a strong headache",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v9_005",
+      "cases": [
+        {
+          "text": "i get sudden electric-shock pain across one side of my face triggered by brushing my teeth",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gold_v9_006",
+      "cases": [
+        {
+          "text": "i keep having numbness and pins-and-needles in one arm with neck pain not being the main issue",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gp_hn_v12_001",
+      "cases": [
+        {
+          "text": "i get electric facial pain triggered by touch not cheek pressure or blocked sinuses",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_gp_hn_v12_002",
+      "cases": [
+        {
+          "text": "one arm feels numb and weak briefly before a headache and pressing my neck does not reproduce it",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5009,7 +7369,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5029,7 +7389,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5049,7 +7409,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5060,7 +7420,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "general_practice"
+            "gastroenterology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5114,6 +7474,26 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "neuro_oph_hn_v12_001",
+      "cases": [
+        {
+          "text": "i see shimmering lights and then get a strong headache but my eye is not red or painful",
+          "goldLabel": "neurology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "neuro_oph_hn_v4_001",
       "cases": [
         {
@@ -5122,7 +7502,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5154,6 +7534,66 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "neuro_oph_hn_v6_001",
+      "cases": [
+        {
+          "text": "i see zigzag lights and then get a pounding headache but my eyes are not red or painful",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_oph_hn_v6_002",
+      "cases": [
+        {
+          "text": "i get one-sided headache with nausea and flashing shapes with no eye redness or discharge",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "general_practice"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "neuro_oph_hn_v6_003",
+      "cases": [
+        {
+          "text": "my face feels numb and then i develop a strong headache with visual aura not eye pain",
+          "goldLabel": "neurology",
+          "predictedTop1": "neurology",
+          "predictedTop2": [
+            "neurology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "neuro_recurring_dizziness_lie_down_003",
       "cases": [
         {
@@ -5162,7 +7602,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5173,7 +7613,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5204,7 +7644,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5215,7 +7655,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5226,7 +7666,7 @@
           "predictedTop1": "neurology",
           "predictedTop2": [
             "neurology",
-            "gastroenterology"
+            "general_practice"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5246,7 +7686,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5257,7 +7697,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5277,7 +7717,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5288,7 +7728,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5308,7 +7748,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "ent"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5319,7 +7759,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "ent"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5339,7 +7779,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "ent"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5350,7 +7790,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5367,10 +7807,10 @@
         {
           "text": "an itchy red rash around my eyelid",
           "goldLabel": "dermatology",
-          "predictedTop1": "ophthalmology",
+          "predictedTop1": "dermatology",
           "predictedTop2": [
-            "ophthalmology",
-            "dermatology"
+            "dermatology",
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5378,6 +7818,26 @@
         {
           "text": "i have an itchy red rash around my eyelid",
           "goldLabel": "dermatology",
+          "predictedTop1": "dermatology",
+          "predictedTop2": [
+            "dermatology",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 2,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_derm_hn_v12_001",
+      "cases": [
+        {
+          "text": "it started like eyelid irritation but now the eye itself is red tearing and painful to light",
+          "goldLabel": "ophthalmology",
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
@@ -5387,8 +7847,48 @@
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
-      "totalCases": 2,
-      "top1Accuracy": 0.0,
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_derm_hn_v12_002",
+      "cases": [
+        {
+          "text": "the lid is swollen yet the main issue is blurred vision with soreness inside the eye",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_derm_hn_v12_003",
+      "cases": [
+        {
+          "text": "i thought it was skin irritation near the eye but the eye is watery red and hurts when i move it",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -5401,7 +7901,147 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_derm_hn_v6_001",
+      "cases": [
+        {
+          "text": "the skin around my eyelids looks puffy but the eye itself is red watery and sensitive to light",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_derm_hn_v6_002",
+      "cases": [
+        {
+          "text": "i thought it was an eyelid rash but the eye hurts inside and my vision is blurry",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_derm_hn_v6_003",
+      "cases": [
+        {
+          "text": "my eyelid is swollen yet the main problem is a painful red eye that is hard to keep open",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v12_001",
+      "cases": [
+        {
+          "text": "my eyelid looks puffy but the real problem is deep eye pain with blurry vision",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v12_002",
+      "cases": [
+        {
+          "text": "one eye is red watery and painful and bright light makes it hard to keep open",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v12_003",
+      "cases": [
+        {
+          "text": "i feel grit inside my eye and my vision turns hazy even though the eyelid only looks mildly irritated",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v12_004",
+      "cases": [
+        {
+          "text": "i see halos around lights and the eye aches from inside not just on the skin around it",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5421,7 +8061,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5441,7 +8081,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5461,7 +8101,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5481,7 +8121,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5501,7 +8141,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5521,7 +8161,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5541,7 +8181,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "ent"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5561,7 +8201,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5581,7 +8221,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5601,7 +8241,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5641,7 +8281,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5661,7 +8301,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5681,7 +8321,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5701,7 +8341,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5721,7 +8361,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5741,7 +8381,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "ent"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5761,7 +8401,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5801,7 +8441,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5821,7 +8461,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5841,7 +8481,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5861,7 +8501,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "ent"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5881,7 +8521,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5901,7 +8541,207 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_001",
+      "cases": [
+        {
+          "text": "one eye is red painful and very sensitive to light with constant tearing",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_002",
+      "cases": [
+        {
+          "text": "i suddenly noticed blurry vision in one eye with floating spots and flashes",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_003",
+      "cases": [
+        {
+          "text": "my eye hurts inside and looks red with sticky discharge",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_004",
+      "cases": [
+        {
+          "text": "i keep seeing floating specks and brief flashes in my vision",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
             "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_005",
+      "cases": [
+        {
+          "text": "my eyes burn and feel dry on the computer and my vision blurs until i blink a lot",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_006",
+      "cases": [
+        {
+          "text": "my eyelid is puffy but the eye itself is painful and watery and light bothers me",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_007",
+      "cases": [
+        {
+          "text": "one eye is red and my vision looks hazy and bright light makes it worse",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_008",
+      "cases": [
+        {
+          "text": "i have scratchy eye pain after dust got in it and the eye keeps watering",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_009",
+      "cases": [
+        {
+          "text": "i see halos around lights and my eye aches at the same time",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_gold_v8_010",
+      "cases": [
+        {
+          "text": "my eye feels sore and gritty and the vision is blurrier in that eye than the other",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5921,7 +8761,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -5949,17 +8789,17 @@
         {
           "text": "i have blurry vision and headache",
           "goldLabel": "ophthalmology",
-          "predictedTop1": "ophthalmology",
+          "predictedTop1": "neurology",
           "predictedTop2": [
-            "ophthalmology",
-            "neurology"
+            "neurology",
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 2,
-      "top1Accuracy": 1.0,
+      "top1Accuracy": 0.5,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -6045,7 +8885,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "neurology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6084,10 +8924,10 @@
         {
           "text": "eye pain with headache and i keep the eye closed",
           "goldLabel": "ophthalmology",
-          "predictedTop1": "neurology",
+          "predictedTop1": "ophthalmology",
           "predictedTop2": [
-            "neurology",
-            "ophthalmology"
+            "ophthalmology",
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6095,17 +8935,17 @@
         {
           "text": "i have eye pain with headache and i keep the eye closed",
           "goldLabel": "ophthalmology",
-          "predictedTop1": "neurology",
+          "predictedTop1": "ophthalmology",
           "predictedTop2": [
-            "neurology",
-            "ophthalmology"
+            "ophthalmology",
+            "neurology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 2,
-      "top1Accuracy": 0.0,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -6169,7 +9009,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "ent"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6189,7 +9029,67 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_neuro_hn_v6_001",
+      "cases": [
+        {
+          "text": "the headache seems to come from one eye because that eye is red sore and light hurts it",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_neuro_hn_v6_002",
+      "cases": [
+        {
+          "text": "i feel pressure behind one eye with redness and blurred vision rather than a general headache",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
             "neurology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "oph_neuro_hn_v6_003",
+      "cases": [
+        {
+          "text": "bright light bothers me because one eye is watery painful and blurry",
+          "goldLabel": "ophthalmology",
+          "predictedTop1": "ophthalmology",
+          "predictedTop2": [
+            "ophthalmology",
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6209,7 +9109,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6220,7 +9120,7 @@
           "predictedTop1": "ophthalmology",
           "predictedTop2": [
             "ophthalmology",
-            "orthopedics"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6276,6 +9176,46 @@
       "cases": [
         {
           "text": "my upper back hurts after lifting boxes and gets worse when i twist",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_cardio_hn_v6_001",
+      "cases": [
+        {
+          "text": "i have chest wall pain after lifting and twisting and it gets worse when i press on the muscle or move my arm",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "cardiology",
+          "predictedTop2": [
+            "cardiology",
+            "orthopedics"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 0.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_cardio_hn_v6_002",
+      "cases": [
+        {
+          "text": "my shoulder and upper chest hurt after a hard workout and movement makes it worse rather than walking",
           "goldLabel": "orthopedics",
           "predictedTop1": "orthopedics",
           "predictedTop2": [
@@ -6420,7 +9360,7 @@
           "predictedTop1": "orthopedics",
           "predictedTop2": [
             "orthopedics",
-            "ent"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6480,7 +9420,7 @@
           "predictedTop1": "orthopedics",
           "predictedTop2": [
             "orthopedics",
-            "general_practice"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6520,7 +9460,7 @@
           "predictedTop1": "orthopedics",
           "predictedTop2": [
             "orthopedics",
-            "gastroenterology"
+            "dermatology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6700,7 +9640,7 @@
           "predictedTop1": "orthopedics",
           "predictedTop2": [
             "orthopedics",
-            "ent"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6716,6 +9656,306 @@
       "cases": [
         {
           "text": "i have hip pain when i stand up and climb stairs",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_001",
+      "cases": [
+        {
+          "text": "my knee swelled up after i twisted it getting out of the car",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_002",
+      "cases": [
+        {
+          "text": "i hurt my lower back lifting a heavy box and it gets worse when i bend forward",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_003",
+      "cases": [
+        {
+          "text": "my shoulder hurts after reaching overhead and now i cannot lift my arm well",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_004",
+      "cases": [
+        {
+          "text": "i rolled my ankle on the stairs and it is swollen and painful to stand on",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_005",
+      "cases": [
+        {
+          "text": "my neck feels stiff after sleeping badly and it hurts more when i turn my head",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_006",
+      "cases": [
+        {
+          "text": "i have wrist pain and swelling after catching myself during a fall",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_007",
+      "cases": [
+        {
+          "text": "my hip hurts when i walk and stand for long periods and it feels mechanical",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_008",
+      "cases": [
+        {
+          "text": "i get pain on the outside of my elbow when i grip tools or lift things",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_009",
+      "cases": [
+        {
+          "text": "my heel hurts badly with the first few steps every morning",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_010",
+      "cases": [
+        {
+          "text": "my knee aches and grinds when i go down stairs or stand up from a chair",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_011",
+      "cases": [
+        {
+          "text": "i strained my upper back carrying boxes and twisting makes it worse",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_012",
+      "cases": [
+        {
+          "text": "my calf muscle started hurting after i sprinted and it is worse when i push off the foot",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_013",
+      "cases": [
+        {
+          "text": "my finger became swollen and painful after i jammed it playing ball",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "ophthalmology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_014",
+      "cases": [
+        {
+          "text": "i have pain over my rib muscles after coughing hard and twisting my body",
+          "goldLabel": "orthopedics",
+          "predictedTop1": "orthopedics",
+          "predictedTop2": [
+            "orthopedics",
+            "cardiology"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "ortho_gold_v8_015",
+      "cases": [
+        {
+          "text": "my lower back pain shoots a little into my buttock when i move but it started after lifting",
           "goldLabel": "orthopedics",
           "predictedTop1": "orthopedics",
           "predictedTop2": [
@@ -6751,7 +9991,7 @@
           "predictedTop1": "orthopedics",
           "predictedTop2": [
             "orthopedics",
-            "ent"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6833,7 +10073,7 @@
           "predictedTop1": "orthopedics",
           "predictedTop2": [
             "orthopedics",
-            "ent"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -6841,17 +10081,17 @@
         {
           "text": "lower back pain with tingling down my leg",
           "goldLabel": "orthopedics",
-          "predictedTop1": "ent",
+          "predictedTop1": "orthopedics",
           "predictedTop2": [
-            "ent",
-            "orthopedics"
+            "orthopedics",
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
         }
       ],
       "totalCases": 2,
-      "top1Accuracy": 0.5,
+      "top1Accuracy": 1.0,
       "top2Coverage": 1.0,
       "ambiguityRate": 1.0
     },
@@ -6957,7 +10197,7 @@
           "predictedTop1": "orthopedics",
           "predictedTop2": [
             "orthopedics",
-            "ophthalmology"
+            "cardiology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7017,7 +10257,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7028,7 +10268,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7068,7 +10308,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "gastroenterology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7079,7 +10319,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "gastroenterology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7090,7 +10330,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "gastroenterology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7130,7 +10370,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7150,7 +10390,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7210,7 +10450,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7230,7 +10470,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7250,7 +10490,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7270,7 +10510,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7310,7 +10550,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7330,7 +10570,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7350,7 +10590,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7390,7 +10630,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "gastroenterology"
+            "ophthalmology"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7410,7 +10650,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7430,7 +10670,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7450,7 +10690,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7490,7 +10730,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7510,7 +10750,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "gastroenterology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7530,7 +10770,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7590,7 +10830,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7630,7 +10870,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7662,6 +10902,266 @@
       "ambiguityRate": 1.0
     },
     {
+      "familyId": "peds_gold_v8_001",
+      "cases": [
+        {
+          "text": "my three-year-old has fever cough and is not feeding well today",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v8_002",
+      "cases": [
+        {
+          "text": "my toddler has diarrhea and vomiting and seems much sleepier than usual",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v8_003",
+      "cases": [
+        {
+          "text": "my child has wheezing with cough and fever and looks tired",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v8_004",
+      "cases": [
+        {
+          "text": "my infant is feverish irritable and not drinking milk like usual",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_001",
+      "cases": [
+        {
+          "text": "my two-year-old has fever cough and is breathing faster than usual today",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_002",
+      "cases": [
+        {
+          "text": "my child has vomiting and diarrhea since last night and now seems tired and less playful",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_003",
+      "cases": [
+        {
+          "text": "my infant has fever and keeps pulling at the ear and crying more than usual",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_004",
+      "cases": [
+        {
+          "text": "my child has a barking cough at night and sounds hoarse when breathing in",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_005",
+      "cases": [
+        {
+          "text": "my baby is feverish irritable and not drinking milk as well as normal today",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_006",
+      "cases": [
+        {
+          "text": "my child has wheezing with cough and mild fever and is less active than usual",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_007",
+      "cases": [
+        {
+          "text": "my toddler has a spreading rash with fever and seems unusually sleepy",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_008",
+      "cases": [
+        {
+          "text": "my child has stomach pain around the belly button with vomiting and will not eat",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
+      "familyId": "peds_gold_v9_009",
+      "cases": [
+        {
+          "text": "my preschooler has high fever and a sore throat and refuses to drink because it hurts",
+          "goldLabel": "pediatrics",
+          "predictedTop1": "pediatrics",
+          "predictedTop2": [
+            "pediatrics",
+            "ent"
+          ],
+          "needsClarification": true,
+          "reasonCode": "NEEDS_CLARIFICATION"
+        }
+      ],
+      "totalCases": 1,
+      "top1Accuracy": 1.0,
+      "top2Coverage": 1.0,
+      "ambiguityRate": 1.0
+    },
+    {
       "familyId": "peds_gp_borderline_001",
       "cases": [
         {
@@ -7670,7 +11170,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "ophthalmology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
@@ -7690,7 +11190,7 @@
           "predictedTop1": "pediatrics",
           "predictedTop2": [
             "pediatrics",
-            "gastroenterology"
+            "ent"
           ],
           "needsClarification": true,
           "reasonCode": "NEEDS_CLARIFICATION"
