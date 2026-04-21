@@ -1,58 +1,114 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ModeAwareComingSoon } from '@/components/shared/ModeAwareComingSoon';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorBanner } from '@/components/shared/ErrorBanner';
+import { StatusBadge } from '@/components/shared/StatusBadge';
+import { useApiCall } from '@/hooks/useApiCall';
+import { safeFormatDate } from '@/lib/safeDate';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
-function NlpMonitoringPreview() {
-  const samples = [
-    { label: 'Cardiology', confidence: 0.91, ambiguous: false },
-    { label: 'Neurology', confidence: 0.64, ambiguous: true },
-    { label: 'Gastroenterology', confidence: 0.88, ambiguous: false },
-  ];
+export default function NlpMonitoringPage() {
+  const {
+    data: stats,
+    loading: statsLoading,
+    error: statsError,
+    refetch: refetchStats,
+  } = useApiCall((api) => api.getNlpStats(), []);
+
+  const {
+    data: recent,
+    loading: recentLoading,
+    error: recentError,
+    refetch: refetchRecent,
+  } = useApiCall((api) => api.getNlpRecent(20), []);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <h2 className="text-2xl font-bold">NLP Monitoring</h2>
-        <Badge variant="outline" className="bg-blue-500/15 text-blue-700 border-blue-300">
-          Mock preview
-        </Badge>
+      <h2 className="text-2xl font-bold">NLP Monitoring</h2>
+
+      <div className="grid gap-4 md:grid-cols-4">
+        {statsLoading && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24" />)}
+        {statsError && <ErrorBanner error={statsError} onRetry={refetchStats} />}
+        {stats && (
+          <>
+            <Card>
+              <CardContent className="pt-4">
+                <p className="text-2xl font-bold">{stats.loadedLabels}</p>
+                <p className="text-xs text-muted-foreground">Loaded Labels</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-4">
+                <p className="text-sm font-medium">{stats.modelName || 'N/A'}</p>
+                <p className="text-xs text-muted-foreground">Model Name</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-4">
+                <p className="text-sm font-medium">{stats.modelVersion || 'N/A'}</p>
+                <p className="text-xs text-muted-foreground">Model Version</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-4">
+                <div className="space-y-1 text-xs">
+                  {Object.entries(stats.thresholds || {}).map(([key, value]) => (
+                    <div key={key}>
+                      {key}: {value}
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Thresholds</p>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Future NLP monitoring preview</CardTitle>
+          <CardTitle className="text-base">Recent NLP classifications</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {samples.map((sample, index) => (
-            <div key={index} className="rounded-md border p-3 space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">{sample.label}</span>
-                <Badge variant={sample.ambiguous ? 'secondary' : 'outline'}>
-                  {sample.ambiguous ? 'Ambiguous' : 'Clear'}
-                </Badge>
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Confidence: {Math.round(sample.confidence * 100)}%
-              </div>
+        <CardContent>
+          {recentLoading && <Skeleton className="h-64" />}
+          {recentError && <ErrorBanner error={recentError} onRetry={refetchRecent} />}
+          {recent && recent.length === 0 && (
+            <p className="text-sm text-muted-foreground">No recent NLP classifications found.</p>
+          )}
+
+          {recent && recent.length > 0 && (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Timestamp</TableHead>
+                  <TableHead>Input Summary</TableHead>
+                  <TableHead>Predicted Label</TableHead>
+                  <TableHead>Confidence</TableHead>
+                  <TableHead>Ambiguous</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recent.map((row, index) => (
+                  <TableRow key={`${row.timestamp}-${row.predictedLabel}-${index}`}>
+                    <TableCell className="text-xs">{safeFormatDate(row.timestamp)}</TableCell>
+                    <TableCell className="text-sm">{row.inputSummary || 'N/A'}</TableCell>
+                    <TableCell className="text-sm font-medium">{row.predictedLabel}</TableCell>
+                    <TableCell className="text-sm">{Math.round(row.confidence * 100)}%</TableCell>
+                    <TableCell>
+                      <StatusBadge status={row.ambiguity ? 'DEGRADED' : 'SUCCESS'} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+
+          {stats?.lastModelLoadTime && (
+            <div className="mt-4 text-xs text-muted-foreground">
+              Last model load: {safeFormatDate(stats.lastModelLoadTime)}
             </div>
-          ))}
+          )}
         </CardContent>
       </Card>
     </div>
-  );
-}
-
-export default function NlpMonitoringPage() {
-  return (
-    <ModeAwareComingSoon
-      title="NLP Monitoring"
-      description="NLP monitoring is deferred for this checkpoint. The current focus is on real booking traceability, session timelines, and portal-backed operational visibility."
-      bullets={[
-        'Model health and threshold monitoring',
-        'Recent classification views',
-        'Confidence and ambiguity trend analysis',
-      ]}
-      preview={<NlpMonitoringPreview />}
-    />
   );
 }
