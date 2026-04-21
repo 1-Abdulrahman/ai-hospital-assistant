@@ -1,13 +1,18 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_portal_user, get_db
 from app.api.schemas.auth import AuthenticatedPortalUser, CurrentUserResponse
 from app.modules.observability.query_service import (
     get_analytics_summary,
+    get_audit_page,
     get_bookings_page,
+    get_nlp_recent,
+    get_nlp_stats,
     get_recent_bookings,
     get_sessions_page,
+    get_tenant_detail,
+    get_tenants,
     get_traces_by_correlation_id,
     get_traces_by_session_id,
 )
@@ -101,6 +106,92 @@ def portal_sessions(
         page_size=page_size,
     )
 
+@router.get("/tenants")
+def portal_tenants(
+    current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
+    db: Session = Depends(get_db),
+) -> list[dict]:
+    return get_tenants(
+        db=db,
+        current_user=current_user,
+    )
+
+
+@router.get("/tenants/{tenant_id}")
+def portal_tenant_detail(
+    tenant_id: str,
+    current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    result = get_tenant_detail(
+        db=db,
+        current_user=current_user,
+        tenant_id=tenant_id,
+    )
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail={
+                "message": "Tenant not found.",
+                "reasonCode": "TENANT_NOT_FOUND",
+            },
+        )
+    return result
+
+
+@router.get("/audit")
+def portal_audit(
+    from_date: str = Query(..., alias="from", pattern=r"^\d{4}-\d{2}-\d{2}$"),
+    to_date: str = Query(..., alias="to", pattern=r"^\d{4}-\d{2}-\d{2}$"),
+    event_type: str | None = Query(default=None, alias="eventType"),
+    outcome: str | None = Query(default=None),
+    reason_code: str | None = Query(default=None, alias="reasonCode"),
+    correlation_id: str | None = Query(default=None, alias="correlationId"),
+    session_id: str | None = Query(default=None, alias="sessionId"),
+    tenant_id: str | None = Query(default=None, alias="tenantId"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, alias="pageSize", ge=1, le=100),
+    current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    return get_audit_page(
+        db=db,
+        current_user=current_user,
+        from_date=from_date,
+        to_date=to_date,
+        event_type=event_type,
+        outcome=outcome,
+        reason_code=reason_code,
+        correlation_id=correlation_id,
+        session_id=session_id,
+        tenant_id=tenant_id,
+        page=page,
+        page_size=page_size,
+    )
+
+
+@router.get("/nlp/stats")
+def portal_nlp_stats(
+    request: Request,
+    current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
+) -> dict:
+    return get_nlp_stats(
+        nlp_service=getattr(request.app.state, "nlp_service", None),
+        nlp_status=getattr(request.app.state, "nlp_status", None),
+    )
+
+
+@router.get("/nlp/recent")
+def portal_nlp_recent(
+    limit: int = Query(20, ge=1, le=100),
+    current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
+    db: Session = Depends(get_db),
+) -> list[dict]:
+    return get_nlp_recent(
+        db=db,
+        current_user=current_user,
+        limit=limit,
+    )
 
 @router.get("/traces/{correlation_id}")
 def portal_traces_by_correlation_id(

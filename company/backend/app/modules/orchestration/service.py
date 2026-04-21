@@ -100,20 +100,6 @@ def _normalize_message_text(value: str | None) -> str:
     return (value or "").strip()
 
 
-def _merge_clarification_text(*, original_complaint: str, clarification_detail: str) -> str:
-    original = _normalize_message_text(original_complaint)
-    detail = _normalize_message_text(clarification_detail)
-
-    if not original:
-        return detail
-    if not detail:
-        return original
-
-    return (
-        f"Original complaint: {original}\n"
-        f"Clarification detail: {detail}"
-    )
-
 
 def _clear_clarification_context(session: AssistantSession) -> None:
     session.clarification_pending = False

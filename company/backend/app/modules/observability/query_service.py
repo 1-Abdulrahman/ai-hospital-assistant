@@ -10,8 +10,8 @@ from sqlalchemy import desc, func
 from sqlalchemy.orm import Session
 
 from app.api.schemas.auth import AuthenticatedPortalUser
-from app.db.models import AssistantSession, Event
-
+from app.core.config import settings
+from app.db.models import AssistantSession, Event, Tenant
 APPOINTMENT_REF_RE = re.compile(r"(Appointment/[A-Za-z0-9._-]+)")
 
 
@@ -152,6 +152,103 @@ def _trace_details(event: Event) -> dict[str, str] | None:
 
     return details or None
 
+def _tenant_created_at(*, db: Session, tenant_id: str) -> str:
+    first_session = (
+        db.query(func.min(AssistantSession.created_at_utc))
+        .filter(AssistantSession.tenant_id == tenant_id)
+        .scalar()
+    )
+    first_event = (
+        db.query(func.min(Event.ts_utc))
+        .filter(Event.tenant_id == tenant_id)
+        .scalar()
+    )
+
+    candidates = [value for value in [first_session, first_event] if value is not None]
+    if not candidates:
+        return ""
+
+    return _utc_iso(min(candidates))
+
+
+def _build_audit_row(event: Event) -> dict[str, Any]:
+    payload = _payload_dict(event.payload_json)
+
+    idempotency_key = payload.get("idempotencyKey")
+    if not isinstance(idempotency_key, str) or not idempotency_key.strip():
+        idempotency_key = None
+
+    return {
+        "timestamp": _utc_iso(event.ts_utc),
+        "eventType": event.event_type,
+        "outcome": event.outcome,
+        "reasonCode": None if event.reason_code in {None, "OK"} else event.reason_code,
+        "idempotencyKey": idempotency_key,
+        "correlationId": event.correlation_id,
+        "safeSummary": _safe_summary(event),
+    }
+
+
+def _find_latest_nlp_preprocessed_payload(*, db: Session, classified_event: Event) -> dict[str, Any]:
+    preprocessed_event = (
+        db.query(Event)
+        .filter(
+            Event.tenant_id == classified_event.tenant_id,
+            Event.session_id == classified_event.session_id,
+            Event.correlation_id == classified_event.correlation_id,
+            Event.event_type == "NLP_PREPROCESSED",
+            Event.ts_utc <= classified_event.ts_utc,
+        )
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    if preprocessed_event is None:
+        return {}
+
+    return _payload_dict(preprocessed_event.payload_json)
+
+
+def _build_nlp_recent_row(*, db: Session, event: Event) -> dict[str, Any]:
+    payload = _payload_dict(event.payload_json)
+    preprocessed_payload = _find_latest_nlp_preprocessed_payload(db=db, classified_event=event)
+
+    top_candidates = payload.get("topCandidates")
+    first_candidate = (
+        top_candidates[0]
+        if isinstance(top_candidates, list) and top_candidates and isinstance(top_candidates[0], dict)
+        else {}
+    )
+
+    predicted_specialty = payload.get("predictedSpecialty")
+    if not isinstance(predicted_specialty, str) or not predicted_specialty.strip():
+        predicted_specialty = first_candidate.get("id") or "unknown"
+
+    confidence = first_candidate.get("confidence")
+    if not isinstance(confidence, (int, float)):
+        confidence = payload.get("topConfidence")
+    if not isinstance(confidence, (int, float)):
+        confidence = 0.0
+
+    ambiguity_decision = payload.get("ambiguityDecision")
+    ambiguity = ambiguity_decision != "accepted"
+
+    input_summary = (
+        preprocessed_payload.get("normalizedInputSummary")
+        or preprocessed_payload.get("classifierInputSummary")
+        or preprocessed_payload.get("originalComplaintSummary")
+    )
+    if not isinstance(input_summary, str) or not input_summary.strip():
+        input_summary = None
+
+    return {
+        "timestamp": _utc_iso(event.ts_utc),
+        "inputSummary": input_summary,
+        "predictedLabel": _humanize_specialty(str(predicted_specialty)),
+        "confidence": round(float(confidence), 4),
+        "ambiguity": ambiguity,
+    }
+
 
 def _tenant_scope(
     current_user: AuthenticatedPortalUser,
@@ -175,6 +272,164 @@ def _apply_session_scope(query, tenant_ids: list[str] | None):
         return query
     return query.filter(AssistantSession.tenant_id.in_(tenant_ids))
 
+
+def get_tenants(
+    *,
+    db: Session,
+    current_user: AuthenticatedPortalUser,
+) -> list[dict[str, Any]]:
+    tenant_ids = _tenant_scope(current_user)
+
+    query = db.query(Tenant)
+    if tenant_ids is not None:
+        query = query.filter(Tenant.id.in_(tenant_ids))
+
+    tenants = query.order_by(Tenant.id.asc()).all()
+
+    return [
+        {
+            "tenantId": tenant.id,
+            "name": tenant.name,
+            "status": "ACTIVE",
+            "createdAt": _tenant_created_at(db=db, tenant_id=tenant.id),
+        }
+        for tenant in tenants
+    ]
+
+
+def get_tenant_detail(
+    *,
+    db: Session,
+    current_user: AuthenticatedPortalUser,
+    tenant_id: str,
+) -> dict[str, Any] | None:
+    scoped_tenant_ids = _tenant_scope(current_user, tenant_id)
+
+    query = db.query(Tenant).filter(Tenant.id == tenant_id.strip())
+    if scoped_tenant_ids is not None:
+        query = query.filter(Tenant.id.in_(scoped_tenant_ids))
+
+    tenant = query.first()
+    if tenant is None:
+        return None
+
+    return {
+        "tenantId": tenant.id,
+        "name": tenant.name,
+        "status": "ACTIVE",
+        "createdAt": _tenant_created_at(db=db, tenant_id=tenant.id),
+        "allowedOrigins": [settings.hospital_origin, settings.portal_origin],
+        "featureFlags": {
+            "nlpEnabled": True,
+            "continuityEnabled": True,
+            "renewalEnabled": True,
+            "otpEmailEnabled": True,
+            "appointmentConfirmationEmailEnabled": True,
+            "renewalConfirmationEmailEnabled": True,
+            "portalTraceabilityEnabled": True,
+        },
+        "fhirStatus": "CONFIGURED" if settings.fhir_base_url else "UNKNOWN",
+        "smtpStatus": "CONFIGURED" if settings.smtp_host else "UNKNOWN",
+    }
+
+
+def get_audit_page(
+    *,
+    db: Session,
+    current_user: AuthenticatedPortalUser,
+    from_date: str,
+    to_date: str,
+    event_type: str | None = None,
+    outcome: str | None = None,
+    reason_code: str | None = None,
+    correlation_id: str | None = None,
+    session_id: str | None = None,
+    tenant_id: str | None = None,
+    page: int = 1,
+    page_size: int = 20,
+) -> dict[str, Any]:
+    start_dt, end_dt = _range_bounds(from_date, to_date)
+    tenant_ids = _tenant_scope(current_user, tenant_id)
+
+    query = _apply_event_scope(db.query(Event), tenant_ids).filter(
+        Event.ts_utc >= start_dt,
+        Event.ts_utc <= end_dt,
+    )
+
+    if event_type:
+        query = query.filter(Event.event_type == event_type.strip().upper())
+
+    if outcome:
+        query = query.filter(Event.outcome == outcome.strip().upper())
+
+    if reason_code:
+        query = query.filter(Event.reason_code == reason_code.strip().upper())
+
+    if correlation_id:
+        query = query.filter(Event.correlation_id == correlation_id.strip())
+
+    if session_id:
+        query = query.filter(Event.session_id == session_id.strip())
+
+    rows = query.order_by(Event.ts_utc.desc()).all()
+    items = [_build_audit_row(event) for event in rows]
+
+    total = len(items)
+    safe_page = max(page, 1)
+    safe_page_size = max(page_size, 1)
+    start_index = (safe_page - 1) * safe_page_size
+    end_index = start_index + safe_page_size
+
+    return {
+        "items": items[start_index:end_index],
+        "total": total,
+        "page": safe_page,
+        "pageSize": safe_page_size,
+    }
+
+
+def get_nlp_stats(
+    *,
+    nlp_service: Any | None,
+    nlp_status: dict[str, Any] | None,
+) -> dict[str, Any]:
+    if nlp_service is not None:
+        status = nlp_service.status()
+        return {
+            "loadedLabels": int(status.get("labelsCount", 0)),
+            "thresholds": status.get("thresholds", {}),
+            "modelName": status.get("modelName"),
+            "modelVersion": status.get("modelVersion"),
+            "lastModelLoadTime": status.get("loadedAt"),
+        }
+
+    status = nlp_status or {}
+    return {
+        "loadedLabels": int(status.get("labelsCount", 0) or 0),
+        "thresholds": status.get("thresholds", {}),
+        "modelName": status.get("modelName"),
+        "modelVersion": status.get("modelVersion"),
+        "lastModelLoadTime": status.get("loadedAt"),
+    }
+
+
+def get_nlp_recent(
+    *,
+    db: Session,
+    current_user: AuthenticatedPortalUser,
+    limit: int = 20,
+) -> list[dict[str, Any]]:
+    tenant_ids = _tenant_scope(current_user)
+
+    events = (
+        _apply_event_scope(db.query(Event), tenant_ids)
+        .filter(Event.event_type == "NLP_CLASSIFIED")
+        .order_by(Event.ts_utc.desc())
+        .limit(limit)
+        .all()
+    )
+
+    return [_build_nlp_recent_row(db=db, event=event) for event in events]
 
 def _split_slot_start(value: str | None) -> tuple[str, str]:
     if not value:
