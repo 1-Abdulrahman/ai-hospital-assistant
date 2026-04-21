@@ -100,6 +100,13 @@ class AssistantSession(Base):
     continuity_preferred_practitioner_display = Column(String, nullable=True)
     continuity_is_returning = Column(Boolean, nullable=False, default=False)
 
+    # NEW clarification context fields
+    clarification_pending = Column(Boolean, nullable=False, default=False)
+    clarification_key = Column(String, nullable=True)
+    original_complaint_text = Column(Text, nullable=True)
+    clarification_detail_text = Column(Text, nullable=True)
+    merged_classification_text = Column(Text, nullable=True)
+
     created_at_utc = Column(DateTime(timezone=True), nullable=False, default=utcnow)
     updated_at_utc = Column(
         DateTime(timezone=True),

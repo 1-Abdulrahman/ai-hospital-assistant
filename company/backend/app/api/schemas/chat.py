@@ -91,6 +91,7 @@ class ChatContinuityIdentifyRequest(_BaseHospitalChatRequest):
 class QuickReply(BaseModel):
     label: str
     value: str
+    action: str | None = None
 
 
 class SelectionListItemMeta(BaseModel):

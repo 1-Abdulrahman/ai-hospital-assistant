@@ -12,6 +12,37 @@ def hospital_headers() -> dict[str, str]:
         "X-Session-Id": "patient-session-001",
         "X-Correlation-Id": "corr-chat-001",
     }
+    
+    
+def make_prediction(
+    *,
+    primary_specialty_id: str | None = "cardiology",
+    top_candidates=None,
+    needs_clarification: bool = False,
+    reason_code: str = "OK",
+    clarifier_question: str | None = None,
+    clarification_key: str | None = None,
+    clarification_quick_replies=(),
+    model_version: str = "test-1.0",
+    input_summary: str = "safe-summary",
+):
+    class _Prediction:
+        pass
+
+    obj = _Prediction()
+    obj.primary_specialty_id = primary_specialty_id
+    obj.top_candidates = top_candidates or [
+        FakeCandidate("cardiology", 0.91),
+        FakeCandidate("neurology", 0.06),
+    ]
+    obj.needs_clarification = needs_clarification
+    obj.reason_code = reason_code
+    obj.clarifier_question = clarifier_question
+    obj.clarification_key = clarification_key
+    obj.clarification_quick_replies = clarification_quick_replies
+    obj.model_version = model_version
+    obj.input_summary = input_summary
+    return obj
 
 
 class FakeCandidate:
@@ -19,6 +50,11 @@ class FakeCandidate:
         self.specialty_id = specialty_id
         self.confidence = confidence
 
+class FakeQuickReply:
+    def __init__(self, label: str, value: str, action: str | None = None) -> None:
+        self.label = label
+        self.value = value
+        self.action = action
 
 class FakePrediction:
     def __init__(self) -> None:
@@ -30,7 +66,40 @@ class FakePrediction:
         self.needs_clarification = False
         self.reason_code = "OK"
         self.clarifier_question = None
+        self.clarification_key = None
+        self.clarification_quick_replies = ()
         self.model_version = "test-1.0"
+        self.input_summary = "safe-summary"
+        
+class FakeAmbiguousPrediction:
+    def __init__(self) -> None:
+        self.primary_specialty_id = None
+        self.top_candidates = [
+            FakeCandidate("gastroenterology", 0.32),
+            FakeCandidate("general_practice", 0.16),
+            FakeCandidate("cardiology", 0.11),
+        ]
+        self.needs_clarification = True
+        self.reason_code = "NEEDS_CLARIFICATION"
+        self.clarifier_question = (
+            "I am not fully confident yet. Add more detail if you want, "
+            "or choose one of the suggested specialties to continue."
+        )
+        self.clarification_key = "free-text-clarification-only"
+        self.clarification_quick_replies = (
+            FakeQuickReply(
+                "I will give more details",
+                "I will give more details.",
+                "PROMPT_FOR_TEXT",
+            ),
+        )
+        self.model_version = "test-1.0"
+        self.input_summary = "safe-summary"
+
+
+class FakeAmbiguousNlpService:
+    def classify(self, message_text: str):
+        return FakeAmbiguousPrediction()
 
 
 class FakeNlpService:
@@ -553,3 +622,119 @@ def test_chat_reset_clears_session_and_logs_drop_event(client, db_session) -> No
     assert "returned to the main menu" in payload["safeSummary"].lower()
     assert payload["previousState"] == "AWAITING_CONTINUITY_IDENTITY"
     assert payload["previousFlowMode"] == "direct"
+    
+    
+    
+class RecordingClarificationNlpService:
+    def __init__(self) -> None:
+        self.inputs: list[str] = []
+        self.call_count = 0
+
+    def classify(self, message_text: str):
+        self.inputs.append(message_text)
+        self.call_count += 1
+
+        # Keep the session in clarification mode for the first two turns:
+        # 1) original ambiguous complaint
+        # 2) first clarification detail still ambiguous
+        # Then let the third turn resolve.
+        if self.call_count in (1, 2):
+            return FakeAmbiguousPrediction()
+
+        return FakePrediction()
+    
+def test_chat_message_accumulates_multiple_clarification_followups(
+    client,
+    db_session,
+) -> None:
+    fake_service = RecordingClarificationNlpService()
+    client.app.state.nlp_service = fake_service
+
+    first = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "I have a stomach ache",
+        },
+    )
+    assert first.status_code == 200
+    assert first.json()["needsClarification"] is True
+
+    second = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "when i eat my stomach hurts me",
+        },
+    )
+    assert second.status_code == 200
+    assert second.json()["needsClarification"] is True
+
+    third = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "it goes away after 5 hours",
+        },
+    )
+    assert third.status_code == 200
+
+    assert len(fake_service.inputs) == 3
+
+    assert fake_service.inputs[0] == "I have a stomach ache"
+
+    assert "Original complaint:" in fake_service.inputs[1]
+    assert "Clarification details:" in fake_service.inputs[1]
+    assert "I have a stomach ache" in fake_service.inputs[1]
+    assert "when i eat my stomach hurts me" in fake_service.inputs[1]
+
+    assert "Original complaint:" in fake_service.inputs[2]
+    assert "Clarification details:" in fake_service.inputs[2]
+    assert "I have a stomach ache" in fake_service.inputs[2]
+    assert "when i eat my stomach hurts me" in fake_service.inputs[2]
+    assert "it goes away after 5 hours" in fake_service.inputs[2]
+
+    session = (
+        db_session.query(AssistantSession)
+        .filter(AssistantSession.client_session_id == "patient-session-001")
+        .first()
+    )
+    assert session is not None
+    assert session.original_complaint_text == "I have a stomach ache"
+    assert session.clarification_detail_text is not None
+    assert "when i eat my stomach hurts me" in session.clarification_detail_text
+    assert "it goes away after 5 hours" in session.clarification_detail_text
+    assert session.merged_classification_text is not None
+    assert "Clarification details:" in session.merged_classification_text
+    
+def test_chat_message_returns_single_clarification_helper_and_specialty_choices(client) -> None:
+    client.app.state.nlp_service = FakeAmbiguousNlpService()
+
+    response = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "I have a stomach ache",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+
+    assert body["needsClarification"] is True
+    assert body["quickReplies"] is not None
+    assert len(body["quickReplies"]) == 1
+    assert body["quickReplies"][0]["label"] == "I will give more details"
+    assert body["quickReplies"][0]["action"] == "PROMPT_FOR_TEXT"
+
+    assert body["selectionLists"] is not None
+    assert body["selectionLists"][0]["type"] == "specialty"
+    assert len(body["selectionLists"][0]["items"]) >= 1

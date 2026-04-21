@@ -13,6 +13,11 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from app.modules.nlp.normalization import get_default_normalizer
 
+from app.modules.nlp.clarification import (
+    ClarificationQuickReply,
+    build_clarification_prompt,
+)
+
 # ============================================================
 # Paths and constants
 # ============================================================
@@ -58,6 +63,8 @@ class NlpPrediction:
     needs_clarification: bool
     reason_code: str
     clarifier_question: str | None
+    clarification_key: str | None
+    clarification_quick_replies: tuple[ClarificationQuickReply, ...]
     model_name: str
     model_version: str | None
     input_summary: str
@@ -206,12 +213,15 @@ class NlpService:
         input_summary = _safe_input_summary(normalized)
 
         if not normalized:
+            prompt = build_clarification_prompt(top_specialty_ids=[])
             return NlpPrediction(
                 primary_specialty_id=None,
                 top_candidates=[],
                 needs_clarification=True,
                 reason_code="NLP_PROCESSING_FAILED",
-                clarifier_question=DEFAULT_CLARIFIER_QUESTION,
+                clarifier_question=prompt.question,
+                clarification_key=prompt.key,
+                clarification_quick_replies=prompt.quick_replies,
                 model_name=self.model_name,
                 model_version=self.model_version,
                 input_summary=input_summary,
@@ -224,7 +234,6 @@ class NlpService:
             max_length=self.max_length,
             return_tensors="pt",
         )
-
         encoded = {key: value.to(self.device) for key, value in encoded.items()}
 
         with torch.no_grad():
@@ -232,8 +241,6 @@ class NlpService:
             logits = outputs.logits
             probabilities = F.softmax(logits, dim=-1).squeeze(0)
 
-        # Use deterministic Python sorting instead of torch.topk so that
-        # ties can be broken consistently by label id.
         scored_items: list[tuple[int, float]] = [
             (idx, float(probabilities[idx].item()))
             for idx in range(probabilities.shape[0])
@@ -262,22 +269,29 @@ class NlpService:
                 needs_clarification=False,
                 reason_code="OK",
                 clarifier_question=None,
+                clarification_key=None,
+                clarification_quick_replies=(),
                 model_name=self.model_name,
                 model_version=self.model_version,
                 input_summary=input_summary,
             )
+
+        prompt = build_clarification_prompt(
+            top_specialty_ids=[candidate.specialty_id for candidate in top_candidates]
+        )
 
         return NlpPrediction(
             primary_specialty_id=None,
             top_candidates=top_candidates,
             needs_clarification=True,
             reason_code="NEEDS_CLARIFICATION",
-            clarifier_question=DEFAULT_CLARIFIER_QUESTION,
+            clarifier_question=prompt.question,
+            clarification_key=prompt.key,
+            clarification_quick_replies=prompt.quick_replies,
             model_name=self.model_name,
             model_version=self.model_version,
             input_summary=input_summary,
         )
-
 
 # ============================================================
 # Safe wrapper for startup fallback

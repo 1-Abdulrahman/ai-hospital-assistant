@@ -123,3 +123,60 @@ def test_candidate_ordering_is_deterministic_when_scores_tie() -> None:
 
     assert ordered_labels == ["cardiology", "dermatology", "neurology"]
     assert prediction.reason_code == "NEEDS_CLARIFICATION"
+    
+def build_custom_service(
+    logits: list[float],
+    *,
+    label_to_id: dict[str, int],
+    min_confidence: float = 0.70,
+    ambiguity_delta: float = 0.10,
+) -> NlpService:
+    id_to_label = {v: k for k, v in label_to_id.items()}
+
+    return NlpService(
+        tokenizer=FakeTokenizer(),
+        model=FakeModel(logits),
+        label_to_id=label_to_id,
+        id_to_label=id_to_label,
+        min_confidence=min_confidence,
+        ambiguity_delta=ambiguity_delta,
+        model_name="distilbert-specialty",
+        model_version="1.0.0",
+        device=torch.device("cpu"),
+        max_length=96,
+    )
+
+
+def test_ambiguous_prediction_includes_single_prompt_for_text_reply() -> None:
+    service = build_service([1.0, 1.0, 1.0])
+
+    prediction = service.classify("I do not feel well")
+
+    assert prediction.reason_code == "NEEDS_CLARIFICATION"
+    assert prediction.needs_clarification is True
+    assert prediction.clarification_key == "free-text-clarification-only"
+    assert prediction.clarifier_question is not None
+    assert len(prediction.clarification_quick_replies) == 1
+    assert prediction.clarification_quick_replies[0].label == "I will give more details"
+    assert prediction.clarification_quick_replies[0].action == "PROMPT_FOR_TEXT"
+
+
+def test_pair_specific_template_is_not_used_in_simplified_mode() -> None:
+    service = build_custom_service(
+        [5.0, 4.95, 0.10],
+        label_to_id={
+            "dermatology": 0,
+            "ophthalmology": 1,
+            "general_practice": 2,
+        },
+        min_confidence=0.50,
+        ambiguity_delta=0.10,
+    )
+
+    prediction = service.classify("my eyelid skin is itchy and the eye feels irritated")
+
+    assert prediction.needs_clarification is True
+    assert prediction.clarification_key == "free-text-clarification-only"
+    assert len(prediction.clarification_quick_replies) == 1
+    assert prediction.clarification_quick_replies[0].label == "I will give more details"
+    assert prediction.clarification_quick_replies[0].action == "PROMPT_FOR_TEXT"

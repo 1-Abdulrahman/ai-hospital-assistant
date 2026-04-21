@@ -90,7 +90,80 @@ def _find_latest_matching_appointment(appointments: list[Any], specialty_id: str
         reverse=True,
     )[0]
 
+def _normalize_message_text(value: str | None) -> str:
+    return (value or "").strip()
 
+
+def _merge_clarification_text(*, original_complaint: str, clarification_detail: str) -> str:
+    original = _normalize_message_text(original_complaint)
+    detail = _normalize_message_text(clarification_detail)
+
+    if not original:
+        return detail
+    if not detail:
+        return original
+
+    return (
+        f"Original complaint: {original}\n"
+        f"Clarification detail: {detail}"
+    )
+
+
+def _clear_clarification_context(session: AssistantSession) -> None:
+    session.clarification_pending = False
+    session.clarification_key = None
+    session.original_complaint_text = None
+    session.clarification_detail_text = None
+    session.merged_classification_text = None
+
+def _append_clarification_detail(
+    *,
+    existing_detail_text: str | None,
+    new_detail_text: str,
+) -> str:
+    new_detail = _normalize_message_text(new_detail_text)
+
+    existing_lines = [
+        line.lstrip("-").strip()
+        for line in (existing_detail_text or "").splitlines()
+        if line.strip()
+    ]
+
+    if new_detail:
+        existing_lines.append(new_detail)
+
+    return "\n".join(f"- {line}" for line in existing_lines)
+
+
+def _build_clarification_details_block(detail_text: str | None) -> str:
+    lines = [
+        line.lstrip("-").strip()
+        for line in (detail_text or "").splitlines()
+        if line.strip()
+    ]
+
+    return "\n".join(f"- {line}" for line in lines)
+
+
+def _merge_clarification_text(
+    *,
+    original_complaint: str,
+    clarification_detail: str,
+) -> str:
+    original = _normalize_message_text(original_complaint)
+    detail_block = _build_clarification_details_block(clarification_detail)
+
+    if not original:
+        return detail_block
+    if not detail_block:
+        return original
+
+    return (
+        f"Original complaint: {original}\n"
+        f"Clarification details:\n{detail_block}"
+    )
+    
+    
 def _sort_slots_for_preferred_practitioner(
     items: list[Any],
     preferred_practitioner_ref: str | None,
@@ -441,6 +514,7 @@ def _clear_session_flow_state(session: AssistantSession) -> None:
     session.renewal_patient_ref = None
 
     _reset_continuity_context(session)
+    _clear_clarification_context(session)
 
 
 def _session_has_active_flow(session: AssistantSession) -> bool:
@@ -506,6 +580,7 @@ async def _load_slots_for_session(
 def _response(
     *,
     user_message: str,
+    quick_replies: list[dict] | None = None,
     selection_lists: list[dict] | None = None,
     needs_clarification: bool | None = None,
     is_chronic_continuity: bool | None = None,
@@ -521,6 +596,8 @@ def _response(
         "userMessage": user_message,
         "correlationId": get_correlation_id(),
     }
+    if quick_replies is not None:
+        payload["quickReplies"] = quick_replies
     if selection_lists is not None:
         payload["selectionLists"] = selection_lists
     if needs_clarification is not None:
@@ -627,29 +704,81 @@ async def process_chat_message(
         client_session_id=client_session_id,
     )
 
+    clean_message_text = _normalize_message_text(message_text)
+
     session, _ = _get_or_create_session(
         db=db,
         tenant_id=body_tenant_id,
         client_session_id=client_session_id,
     )
+
+    is_clarification_followup = bool(
+        session.clarification_pending and session.original_complaint_text
+    )
+
     session.flow_mode = "complaint"
-    session.last_input_summary = _safe_input_summary(message_text)
     session.selected_slot_id = None
     _reset_continuity_context(session)
 
-    emit_event(
-        db=db,
-        tenant_id=body_tenant_id,
-        session_id=client_session_id,
-        actor_type="patient",
-        event_type="COMPLAINT_RECEIVED",
-        outcome="INFO",
-        reason_code=OK,
-        payload={
-            "component": "assistant-api",
-            "safeSummary": session.last_input_summary,
-        },
-    )
+    if is_clarification_followup:
+        session.clarification_detail_text = _append_clarification_detail(
+            existing_detail_text=session.clarification_detail_text,
+            new_detail_text=clean_message_text,
+        )
+
+        session.merged_classification_text = _merge_clarification_text(
+            original_complaint=session.original_complaint_text or "",
+            clarification_detail=session.clarification_detail_text or "",
+        )
+
+        classification_input = session.merged_classification_text
+        session.last_input_summary = _safe_input_summary(classification_input)
+
+        emit_event(
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            actor_type="patient",
+            event_type="CLARIFICATION_PROVIDED",
+            outcome="INFO",
+            reason_code=OK,
+            payload={
+                "component": "assistant-api",
+                "safeSummary": _safe_input_summary(clean_message_text),
+                "clarificationKey": session.clarification_key,
+                "mergedInputSummary": session.last_input_summary,
+                "clarificationTurns": len(
+                    [
+                        line
+                        for line in (session.clarification_detail_text or "").splitlines()
+                        if line.strip()
+                    ]
+                ),
+            },
+        )
+    else:
+        session.original_complaint_text = clean_message_text
+        session.clarification_detail_text = None
+        session.merged_classification_text = clean_message_text
+        session.last_input_summary = _safe_input_summary(clean_message_text)
+        _clear_clarification_context(session)
+        session.original_complaint_text = clean_message_text
+        session.merged_classification_text = clean_message_text
+        classification_input = clean_message_text
+
+        emit_event(
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            actor_type="patient",
+            event_type="COMPLAINT_RECEIVED",
+            outcome="INFO",
+            reason_code=OK,
+            payload={
+                "component": "assistant-api",
+                "safeSummary": session.last_input_summary,
+            },
+        )
 
     if nlp_service is None:
         _transition_session(session, AWAITING_SPECIALTY_SELECTION)
@@ -666,7 +795,8 @@ async def process_chat_message(
             ],
         )
 
-    prediction = nlp_service.classify(message_text)
+    prediction = nlp_service.classify(classification_input)
+
     emit_event(
         db=db,
         tenant_id=body_tenant_id,
@@ -679,6 +809,9 @@ async def process_chat_message(
             "component": "nlp",
             "safeSummary": f"Predicted {prediction.primary_specialty_id or 'manual selection'}.",
             "modelVersion": prediction.model_version,
+            "inputSummary": prediction.input_summary,
+            "clarificationKey": session.clarification_key if is_clarification_followup else None,
+            "usedMergedClarificationInput": is_clarification_followup,
         },
     )
 
@@ -691,16 +824,54 @@ async def process_chat_message(
         session.selected_specialty_id = prediction.primary_specialty_id
 
     _transition_session(session, AWAITING_SPECIALTY_SELECTION)
-    _save_session(db, session)
 
     if prediction.needs_clarification:
+        if not session.original_complaint_text:
+            session.original_complaint_text = clean_message_text
+
+        session.clarification_pending = True
+        session.clarification_key = prediction.clarification_key
+
+        emit_event(
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            actor_type="system",
+            event_type="CLARIFICATION_REQUESTED",
+            outcome="INFO",
+            reason_code=prediction.reason_code,
+            payload={
+                "component": "assistant-api",
+                "safeSummary": "Clarification requested before specialty confirmation.",
+                "clarificationKey": prediction.clarification_key,
+                "topCandidates": candidates[:2],
+            },
+        )
+
+        _save_session(db, session)
+
+        quick_replies = [
+            {
+                "label": reply.label,
+                "value": reply.value,
+                "action": reply.action,
+            }
+            for reply in prediction.clarification_quick_replies
+        ]
+
         return _response(
             user_message=prediction.clarifier_question
-            or "Please choose the specialty that best matches your concern.",
+            or "I am not fully confident yet. Add more detail if you want, or choose one of the suggested specialties to continue.",
+            quick_replies=quick_replies or None,
             selection_lists=_specialty_selection_list(candidates=candidates or None),
             needs_clarification=True,
             show_consent_notice=True,
         )
+
+    session.clarification_pending = False
+    session.clarification_key = None
+
+    _save_session(db, session)
 
     specialty_label = _humanize_specialty(prediction.primary_specialty_id or "general_practice")
     return _response(
@@ -1149,6 +1320,8 @@ async def process_selection(
             _reset_continuity_context(session)
 
         session.selected_specialty_id = new_specialty_id
+        session.clarification_pending = False
+        session.clarification_key = None
 
         if session.flow_mode in {"complaint", "direct"} and not session.continuity_checked:
             _transition_session(session, AWAITING_CONTINUITY_IDENTITY)
