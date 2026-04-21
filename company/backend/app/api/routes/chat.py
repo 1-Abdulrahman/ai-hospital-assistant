@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app.api.deps import HospitalRequestContext, get_db, get_hospital_request_context
@@ -167,6 +167,7 @@ async def chat_continuity_identify(
 @router.post("/confirm", response_model=ChatResponse)
 async def chat_confirm(
     body: ChatConfirmRequest,
+    background_tasks: BackgroundTasks,
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
     db: Session = Depends(get_db),
@@ -174,6 +175,7 @@ async def chat_confirm(
     try:
         result = await process_confirm(
             db=db,
+            background_tasks=background_tasks,
             header_tenant_id=context.tenant_id,
             header_session_id=context.session_id,
             body_tenant_id=body.tenantId,

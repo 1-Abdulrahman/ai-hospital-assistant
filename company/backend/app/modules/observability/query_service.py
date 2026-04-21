@@ -126,6 +126,11 @@ def _trace_details(event: Event) -> dict[str, str] | None:
         ("Predicted specialty", "predictedSpecialty"),
         ("Selected specialty", "selectedSpecialty"),
         ("Selection source", "selectionSource"),
+        ("Notification type", "notificationType"),
+        ("Channel", "channel"),
+        ("Recipient email", "recipientEmailMasked"),
+        ("Booking reference", "bookingReferenceId"),
+        ("Renewal item label", "renewalItemLabel"),
     ]
 
     for label, key in scalar_fields:

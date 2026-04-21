@@ -4,7 +4,11 @@ from dataclasses import dataclass
 
 import json
 
-from app.db.models import AssistantSession, Event
+from datetime import datetime, timedelta, timezone
+
+from app.db.models import AssistantSession, Event, OtpRecord
+from app.modules.notification.email_sender import EmailDeliveryError
+from app.modules.otp.service import build_patient_key_hash, normalize_email
 
 def hospital_headers() -> dict[str, str]:
     return {
@@ -465,7 +469,22 @@ def test_chat_continuity_identify_returns_prioritized_slots(client, monkeypatch)
     assert second_meta["isPreferredPractitioner"] is False
 
 
-def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypatch) -> None:
+def test_chat_confirm_appointment_returns_confirmation_summary_and_sends_notification(
+    client,
+    db_session,
+    monkeypatch,
+) -> None:
+    sent_messages: list[dict] = []
+
+    def fake_send_plain_text_email(*, to_email: str, subject: str, body: str) -> None:
+        sent_messages.append(
+            {
+                "to_email": to_email,
+                "subject": subject,
+                "body": body,
+            }
+        )
+
     async def fake_book_appointment(
         *,
         db,
@@ -502,6 +521,10 @@ def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypat
         "app.modules.orchestration.service.book_appointment",
         fake_book_appointment,
     )
+    monkeypatch.setattr(
+        "app.modules.notification.service.send_plain_text_email",
+        fake_send_plain_text_email,
+    )
 
     response = client.post(
         "/chat/confirm",
@@ -522,6 +545,207 @@ def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypat
     assert body["confirmationType"] == "appointment"
     assert body["bookingReferenceId"] == "Appointment/appt-1"
     assert body["confirmationSummary"]["doctorLabel"] == "Dr. Lina Alharbi"
+
+    assert len(sent_messages) == 1
+    assert sent_messages[0]["to_email"] == "patient@example.com"
+    assert "Appointment Confirmation" in sent_messages[0]["subject"]
+    assert "Appointment/appt-1" in sent_messages[0]["body"]
+
+    requested_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_REQUESTED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+    sent_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_SENT")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert requested_event is not None
+    assert sent_event is not None
+
+    requested_payload = json.loads(requested_event.payload_json)
+    sent_payload = json.loads(sent_event.payload_json)
+
+    assert requested_payload["notificationType"] == "appointment_confirmation"
+    assert requested_payload["channel"] == "email"
+    assert requested_payload["bookingReferenceId"] == "Appointment/appt-1"
+
+    assert sent_payload["notificationType"] == "appointment_confirmation"
+    assert sent_payload["channel"] == "email"
+
+def test_chat_confirm_appointment_retries_notification_once_then_succeeds(
+    client,
+    db_session,
+    monkeypatch,
+) -> None:
+    attempts = {"count": 0}
+
+    def flaky_send_plain_text_email(*, to_email: str, subject: str, body: str) -> None:
+        attempts["count"] += 1
+        if attempts["count"] == 1:
+            raise EmailDeliveryError("first attempt failed")
+
+    async def fake_book_appointment(
+        *,
+        db,
+        header_tenant_id,
+        session_id,
+        body_tenant_id,
+        national_id,
+        email,
+        specialty,
+        slot_id,
+        idempotency_key,
+    ):
+        return {
+            "ok": True,
+            "reasonCode": "OK",
+            "appointmentId": "appt-2",
+            "appointmentRef": "Appointment/appt-2",
+            "specialty": specialty,
+            "slot": {
+                "slotId": slot_id,
+                "slotRef": f"Slot/{slot_id}",
+                "scheduleRef": "Schedule/schedule-1",
+                "practitionerRef": "Practitioner/prac-1",
+                "practitionerDisplay": "Dr. Lina Alharbi",
+                "specialty": specialty,
+                "startUtc": "2026-04-12T09:00:00Z",
+                "endUtc": "2026-04-12T09:30:00Z",
+                "status": "busy",
+            },
+            "message": "Appointment booked successfully.",
+        }
+
+    monkeypatch.setattr(
+        "app.modules.orchestration.service.book_appointment",
+        fake_book_appointment,
+    )
+    monkeypatch.setattr(
+        "app.modules.notification.service.send_plain_text_email",
+        flaky_send_plain_text_email,
+    )
+
+    response = client.post(
+        "/chat/confirm",
+        headers={**hospital_headers(), "Idempotency-Key": "idem-chat-retry"},
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "CONFIRM_APPOINTMENT",
+            "specialtyId": "cardiology",
+            "slotId": "slot-1",
+            "nationalId": "2123456788",
+            "email": "patient@example.com",
+        },
+    )
+
+    assert response.status_code == 200
+    assert attempts["count"] == 2
+
+    retried_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_RETRIED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+    sent_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_SENT")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert retried_event is not None
+    assert sent_event is not None
+    
+def test_chat_confirm_renewal_sends_confirmation_notification(
+    client,
+    db_session,
+    monkeypatch,
+) -> None:
+    sent_messages: list[dict] = []
+
+    def fake_send_plain_text_email(*, to_email: str, subject: str, body: str) -> None:
+        sent_messages.append(
+            {
+                "to_email": to_email,
+                "subject": subject,
+                "body": body,
+            }
+        )
+
+    normalized_email_value = normalize_email("patient@example.com")
+    patient_key_hash = build_patient_key_hash(
+        tenant_id="demo",
+        identity_type="iqama",
+        normalized_identity_number="2123456788",
+    )
+
+    db_session.add(
+        OtpRecord(
+            id="otp-renew-1",
+            tenant_id="demo",
+            session_id="patient-session-001",
+            patient_key_hash=patient_key_hash,
+            email=normalized_email_value,
+            otp_hash="verified-hash",
+            expires_at=datetime.now(timezone.utc) + timedelta(minutes=5),
+            attempts=1,
+            verified=True,
+        )
+    )
+    db_session.commit()
+
+    monkeypatch.setattr(
+        "app.modules.notification.service.send_plain_text_email",
+        fake_send_plain_text_email,
+    )
+
+    response = client.post(
+        "/chat/confirm",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "CONFIRM_RENEWAL",
+            "renewalItemId": "MedicationRequest/1",
+            "nationalId": "2123456788",
+            "email": "patient@example.com",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["confirmationType"] == "renewal"
+
+    assert len(sent_messages) == 1
+    assert sent_messages[0]["to_email"] == "patient@example.com"
+    assert "Medication Renewal Request Confirmation" in sent_messages[0]["subject"]
+
+    requested_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_REQUESTED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+    sent_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_SENT")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert requested_event is not None
+    assert sent_event is not None
+
+    requested_payload = json.loads(requested_event.payload_json)
+    assert requested_payload["notificationType"] == "renewal_confirmation"
+
 
 
 def test_chat_renewal_identify_returns_fhir_driven_medications(client, monkeypatch) -> None:

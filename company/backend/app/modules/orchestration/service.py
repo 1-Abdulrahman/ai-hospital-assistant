@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
 
+from fastapi import BackgroundTasks
+
 from sqlalchemy.orm import Session
 
 from app.api.schemas.chat import ConfirmationSummary
@@ -14,6 +16,10 @@ from app.core.correlation import get_correlation_id
 from app.db.models import AssistantSession
 from app.modules.fhir_gateway.client import FhirClient
 from app.modules.nlp.inference import NlpService, _safe_input_summary, _safe_text_summary
+from app.modules.notification.service import (
+    queue_appointment_confirmation_email,
+    queue_renewal_confirmation_email,
+)
 from app.modules.observability.emitter import emit_event
 from app.modules.otp.service import (
     build_patient_key_hash,
@@ -1681,6 +1687,7 @@ async def process_selection(
 async def process_confirm(
     *,
     db: Session,
+    background_tasks: BackgroundTasks | None,
     header_tenant_id: str,
     header_session_id: str,
     body_tenant_id: str,
@@ -1796,11 +1803,25 @@ async def process_confirm(
             reason_code=OK,
             payload={
                 "component": "assistant-api",
-                "safeSummary": "Complaint or direct scheduling flow completed.",
+                "safeSummary": "Complaint-based scheduling flow completed successfully.",
             },
         )
 
         _save_session(db, session)
+
+        queue_appointment_confirmation_email(
+            background_tasks=background_tasks,
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            correlation_id=get_correlation_id(),
+            to_email=normalize_email(email),
+            booking_reference_id=booking_result["appointmentRef"],
+            doctor_label=slot.get("practitionerDisplay"),
+            specialty_label=_humanize_specialty(booking_result["specialty"]),
+            date_utc=slot.get("startUtc"),
+            slot_label=slot.get("slotRef"),
+        )
 
         return _response(
             user_message=booking_result["message"],
@@ -1877,7 +1898,7 @@ async def process_confirm(
             reason_code=OK,
             payload={
                 "component": "assistant-api",
-                "safeSummary": "Medication renewal flow completed.",
+                "safeSummary": "Medication renewal flow completed successfully.",
             },
         )
 
@@ -1886,6 +1907,16 @@ async def process_confirm(
         summary = ConfirmationSummary(
             correlationId=get_correlation_id(),
             renewalItemLabel=resolved_renewal_item_label,
+        )
+
+        queue_renewal_confirmation_email(
+            background_tasks=background_tasks,
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            correlation_id=get_correlation_id(),
+            to_email=normalize_email(email),
+            renewal_item_label=resolved_renewal_item_label,
         )
 
         return _response(
