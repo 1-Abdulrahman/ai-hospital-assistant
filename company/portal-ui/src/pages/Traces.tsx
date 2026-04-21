@@ -29,6 +29,64 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
+function formatTraceValue(label: string, value: string): React.ReactNode {
+  if (label === "Clarification detail" && value.includes("\n- ")) {
+    const items = value
+      .split("\n")
+      .map((line) => line.replace(/^- /, "").trim())
+      .filter(Boolean);
+
+    return (
+      <ul className="list-disc pl-4 space-y-1">
+        {items.map((item) => (
+          <li key={item} className="text-muted-foreground">
+            {item}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (label === "Preprocessing actions" && value.includes(",")) {
+    const items = value
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    return (
+      <div className="flex flex-wrap gap-1 mt-1">
+        {items.map((item) => (
+          <span
+            key={item}
+            className="rounded border bg-muted px-2 py-0.5 text-[11px] text-muted-foreground"
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+    );
+  }
+
+  if (label === "Top candidates" && value.includes(";")) {
+    const items = value
+      .split(";")
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    return (
+      <ul className="list-disc pl-4 space-y-1">
+        {items.map((item) => (
+          <li key={item} className="text-muted-foreground">
+            {item}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  return <span className="text-muted-foreground whitespace-pre-wrap">{value}</span>;
+}
+
 function TraceDetails({ details }: { details?: Record<string, string> }) {
   if (!details || Object.keys(details).length === 0) {
     return null;
@@ -36,11 +94,11 @@ function TraceDetails({ details }: { details?: Record<string, string> }) {
 
   return (
     <div className="mt-2 rounded-md border bg-muted/40 p-3">
-      <div className="space-y-1">
+      <div className="space-y-2">
         {Object.entries(details).map(([label, value]) => (
           <div key={label} className="text-xs">
-            <span className="font-medium">{label}: </span>
-            <span className="text-muted-foreground whitespace-pre-wrap">{value}</span>
+            <div className="font-medium">{label}</div>
+            <div>{formatTraceValue(label, value)}</div>
           </div>
         ))}
       </div>
