@@ -122,7 +122,10 @@ def _trace_details(event: Event) -> dict[str, str] | None:
         ("Confidence gap", "confidenceGap"),
         ("Threshold min confidence", "thresholdMinConfidence"),
         ("Threshold ambiguity delta", "thresholdAmbiguityDelta"),
+        ("Ambiguity decision", "ambiguityDecision"),
         ("Predicted specialty", "predictedSpecialty"),
+        ("Selected specialty", "selectedSpecialty"),
+        ("Selection source", "selectionSource"),
     ]
 
     for label, key in scalar_fields:

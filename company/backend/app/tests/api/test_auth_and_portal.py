@@ -152,6 +152,9 @@ def test_portal_trace_returns_nlp_preprocessing_details(client, tenant_admin_tok
             self.preprocessing_actions = ("basic_cleanup",)
 
     class FakeAmbiguousNlpService:
+        min_confidence = 0.70
+        ambiguity_delta = 0.10
+
         def classify(self, message_text: str):
             return FakeAmbiguousPrediction()
 
@@ -186,6 +189,7 @@ def test_portal_trace_returns_nlp_preprocessing_details(client, tenant_admin_tok
 
     preprocessed_row = next(item for item in rows if item["eventType"] == "NLP_PREPROCESSED")
     classified_row = next(item for item in rows if item["eventType"] == "NLP_CLASSIFIED")
+    clarification_row = next(item for item in rows if item["eventType"] == "CLARIFICATION_REQUESTED")
 
     assert preprocessed_row["details"]["Classifier input summary"] == "I have a stomach ache"
     assert preprocessed_row["details"]["Cleaned input summary"] == "i have a stomach ache"
@@ -200,3 +204,7 @@ def test_portal_trace_returns_nlp_preprocessing_details(client, tenant_admin_tok
     assert classified_row["details"]["Confidence gap"] == "0.16"
     assert classified_row["details"]["Threshold min confidence"] == "0.7"
     assert classified_row["details"]["Threshold ambiguity delta"] == "0.1"
+    assert classified_row["details"]["Ambiguity decision"] == "below_min_confidence"
+
+    assert clarification_row["details"]["Clarification key"] == "free-text-clarification-only"
+    assert clarification_row["details"]["Ambiguity decision"] == "below_min_confidence"

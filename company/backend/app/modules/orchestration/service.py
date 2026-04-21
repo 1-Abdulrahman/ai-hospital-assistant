@@ -126,7 +126,12 @@ def _candidate_payload_from_prediction(prediction: Any) -> list[dict[str, Any]]:
     ]
 
 
-def _classification_diagnostics(prediction: Any) -> dict[str, Any]:
+def _classification_diagnostics(
+    prediction: Any,
+    *,
+    min_confidence: float,
+    ambiguity_delta: float,
+) -> dict[str, Any]:
     top_candidates = list(prediction.top_candidates or [])
 
     top_confidence = round(top_candidates[0].confidence, 4) if len(top_candidates) >= 1 else None
@@ -137,10 +142,32 @@ def _classification_diagnostics(prediction: Any) -> dict[str, Any]:
         else None
     )
 
+    below_min_confidence = (
+        top_confidence is not None and top_confidence < min_confidence
+    )
+    gap_too_small = (
+        confidence_gap is not None and confidence_gap < ambiguity_delta
+    )
+
+    if prediction.needs_clarification:
+        if below_min_confidence and gap_too_small:
+            ambiguity_decision = "both"
+        elif below_min_confidence:
+            ambiguity_decision = "below_min_confidence"
+        elif gap_too_small:
+            ambiguity_decision = "gap_too_small"
+        else:
+            ambiguity_decision = "manual_fallback"
+    else:
+        ambiguity_decision = "accepted"
+
     return {
         "topConfidence": top_confidence,
         "secondConfidence": second_confidence,
         "confidenceGap": confidence_gap,
+        "thresholdMinConfidence": round(min_confidence, 4),
+        "thresholdAmbiguityDelta": round(ambiguity_delta, 4),
+        "ambiguityDecision": ambiguity_decision,
     }
 
 
@@ -184,14 +211,18 @@ def _build_nlp_classified_payload(
     *,
     prediction: Any,
     candidates: list[dict[str, Any]],
+    min_confidence: float,
+    ambiguity_delta: float,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "component": "nlp",
         "modelVersion": prediction.model_version,
         "topCandidates": candidates[:3],
-        "thresholdMinConfidence": 0.70,
-        "thresholdAmbiguityDelta": 0.10,
-        **_classification_diagnostics(prediction),
+        **_classification_diagnostics(
+            prediction,
+            min_confidence=min_confidence,
+            ambiguity_delta=ambiguity_delta,
+        ),
     }
 
     winning_label = prediction.primary_specialty_id
@@ -910,6 +941,15 @@ async def process_chat_message(
         },
     )
 
+    nlp_classified_payload = _build_nlp_classified_payload(
+        prediction=prediction,
+        candidates=candidates,
+        min_confidence=nlp_service.min_confidence,
+        ambiguity_delta=nlp_service.ambiguity_delta,
+    )
+
+    ambiguity_decision = nlp_classified_payload["ambiguityDecision"]
+
     if prediction.needs_clarification:
         top_labels = [item["id"] for item in candidates[:2]]
         if len(top_labels) == 2:
@@ -923,11 +963,6 @@ async def process_chat_message(
         safe_summary = (
             f"Predicted specialty {_humanize_specialty(prediction.primary_specialty_id or 'general_practice')}."
         )
-
-    nlp_classified_payload = _build_nlp_classified_payload(
-        prediction=prediction,
-        candidates=candidates,
-    )
 
     emit_event(
         db=db,
@@ -956,6 +991,23 @@ async def process_chat_message(
         session.clarification_pending = True
         session.clarification_key = prediction.clarification_key
 
+        if ambiguity_decision == "below_min_confidence":
+            clarification_summary = (
+                "Clarification requested because specialty confidence remained below threshold."
+            )
+        elif ambiguity_decision == "gap_too_small":
+            clarification_summary = (
+                "Clarification requested because the top two specialties were too close."
+            )
+        elif ambiguity_decision == "both":
+            clarification_summary = (
+                "Clarification requested because confidence remained below threshold and the top two specialties were too close."
+            )
+        else:
+            clarification_summary = (
+                "Clarification requested before specialty confirmation."
+            )
+
         emit_event(
             db=db,
             tenant_id=body_tenant_id,
@@ -966,9 +1018,10 @@ async def process_chat_message(
             reason_code=prediction.reason_code,
             payload={
                 "component": "assistant-api",
-                "safeSummary": "Clarification requested before specialty confirmation.",
+                "safeSummary": clarification_summary,
                 "clarificationKey": prediction.clarification_key,
-                "topCandidates": candidates[:2],
+                "ambiguityDecision": ambiguity_decision,
+                "topCandidates": candidates[:3],
             },
         )
 
@@ -1444,6 +1497,32 @@ async def process_selection(
             _reset_continuity_context(session)
 
         session.selected_specialty_id = new_specialty_id
+
+        if session.flow_mode == "direct":
+            selection_source = "direct_specialty_selection"
+        elif session.clarification_pending:
+            selection_source = "post_clarification_suggestion_list"
+        else:
+            selection_source = "specialty_suggestion_list"
+
+        emit_event(
+            db=db,
+            tenant_id=body_tenant_id,
+            session_id=client_session_id,
+            actor_type="patient",
+            event_type="SPECIALTY_SELECTED",
+            outcome="INFO",
+            reason_code=OK,
+            payload={
+                "component": "assistant-api",
+                "safeSummary": (
+                    f"User selected {_humanize_specialty(new_specialty_id)} from the specialty list."
+                ),
+                "selectedSpecialty": new_specialty_id,
+                "selectionSource": selection_source,
+            },
+        )
+
         session.clarification_pending = False
         session.clarification_key = None
 

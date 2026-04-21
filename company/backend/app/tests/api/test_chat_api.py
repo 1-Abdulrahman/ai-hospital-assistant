@@ -106,11 +106,17 @@ class FakeAmbiguousPrediction:
 
 
 class FakeAmbiguousNlpService:
+    min_confidence = 0.70
+    ambiguity_delta = 0.10
+
     def classify(self, message_text: str):
         return FakeAmbiguousPrediction()
 
 
 class FakeNlpService:
+    min_confidence = 0.70
+    ambiguity_delta = 0.10
+
     def classify(self, message_text: str):
         return FakePrediction()
 
@@ -164,6 +170,43 @@ def test_chat_direct_start_returns_supported_specialties(client) -> None:
     assert body["selectionLists"][0]["type"] == "specialty"
     assert len(body["selectionLists"][0]["items"]) >= 3
 
+def test_chat_selection_persists_specialty_selected_event(client, db_session) -> None:
+    client.post(
+        "/chat/direct/start",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "START_DIRECT_SCHEDULING",
+        },
+    )
+
+    response = client.post(
+        "/chat/selection",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "selectionType": "specialty",
+            "selectionId": "gastroenterology",
+            "action": "SELECT_SPECIALTY",
+        },
+    )
+
+    assert response.status_code == 200
+
+    event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "SPECIALTY_SELECTED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert event is not None
+
+    payload = json.loads(event.payload_json)
+    assert payload["selectedSpecialty"] == "gastroenterology"
+    assert payload["selectionSource"] == "direct_specialty_selection"
 
 def test_chat_selection_for_specialty_requests_continuity_identity(client) -> None:
     client.post(
@@ -634,6 +677,9 @@ def test_chat_reset_clears_session_and_logs_drop_event(client, db_session) -> No
     
     
 class RecordingClarificationNlpService:
+    min_confidence = 0.70
+    ambiguity_delta = 0.10
+
     def __init__(self) -> None:
         self.inputs: list[str] = []
         self.call_count = 0
@@ -718,12 +764,13 @@ def test_chat_message_persists_nlp_classified_event_with_confidence_diagnostics(
     payload = json.loads(event.payload_json)
     assert payload["component"] == "nlp"
     assert "topCandidates" in payload
-    assert "topConfidence" in payload
-    assert "secondConfidence" in payload
-    assert "confidenceGap" in payload
-    assert payload["thresholdMinConfidence"] == 0.70
-    assert payload["thresholdAmbiguityDelta"] == 0.10
-    assert "safeSummary" in payload
+    assert payload["topConfidence"] == 0.32
+    assert payload["secondConfidence"] == 0.16
+    assert payload["confidenceGap"] == 0.16
+    assert payload["thresholdMinConfidence"] == 0.7
+    assert payload["thresholdAmbiguityDelta"] == 0.1
+    assert payload["ambiguityDecision"] == "below_min_confidence"
+    assert payload["safeSummary"].startswith("Ambiguous specialty prediction")
 
 def test_chat_message_accumulates_multiple_clarification_followups(
     client,
