@@ -180,3 +180,14 @@ def test_pair_specific_template_is_not_used_in_simplified_mode() -> None:
     assert len(prediction.clarification_quick_replies) == 1
     assert prediction.clarification_quick_replies[0].label == "I will give more details"
     assert prediction.clarification_quick_replies[0].action == "PROMPT_FOR_TEXT"
+    
+def test_prediction_includes_preprocessing_trace_metadata() -> None:
+    service = build_service([6.0, 1.0, -1.0])
+
+    prediction = service.classify("Chest   pain!!! when walking")
+
+    assert prediction.original_input_summary != ""
+    assert prediction.cleaned_input_summary != ""
+    assert prediction.normalized_input_summary != ""
+    assert isinstance(prediction.preprocessing_actions, tuple)
+    assert prediction.input_summary == prediction.normalized_input_summary

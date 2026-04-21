@@ -69,7 +69,11 @@ class FakePrediction:
         self.clarification_key = None
         self.clarification_quick_replies = ()
         self.model_version = "test-1.0"
-        self.input_summary = "safe-summary"
+        self.input_summary = "chest pain when walking"
+        self.original_input_summary = "I have chest pain when walking."
+        self.cleaned_input_summary = "i have chest pain when walking"
+        self.normalized_input_summary = "i have chest pain when walking"
+        self.preprocessing_actions = ("basic_cleanup",)
         
 class FakeAmbiguousPrediction:
     def __init__(self) -> None:
@@ -94,7 +98,11 @@ class FakeAmbiguousPrediction:
             ),
         )
         self.model_version = "test-1.0"
-        self.input_summary = "safe-summary"
+        self.input_summary = "i have a stomach ache"
+        self.original_input_summary = "I have a stomach ache"
+        self.cleaned_input_summary = "i have a stomach ache"
+        self.normalized_input_summary = "i have a stomach ache"
+        self.preprocessing_actions = ("basic_cleanup",)
 
 
 class FakeAmbiguousNlpService:
@@ -643,6 +651,42 @@ class RecordingClarificationNlpService:
 
         return FakePrediction()
     
+
+def test_chat_message_persists_nlp_preprocessed_event_with_safe_trace_fields(
+    client,
+    db_session,
+) -> None:
+    client.app.state.nlp_service = FakeAmbiguousNlpService()
+
+    response = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "I have a stomach ache",
+        },
+    )
+
+    assert response.status_code == 200
+
+    event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NLP_PREPROCESSED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert event is not None
+
+    payload = json.loads(event.payload_json)
+    assert payload["component"] == "nlp"
+    assert payload["classifierInputSummary"] == "I have a stomach ache"
+    assert payload["cleanedInputSummary"] == "i have a stomach ache"
+    assert payload["normalizedInputSummary"] == "i have a stomach ache"
+    assert payload["usedMergedClarificationInput"] is False
+    assert "preprocessingActions" in payload
+
 def test_chat_message_accumulates_multiple_clarification_followups(
     client,
     db_session,

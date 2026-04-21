@@ -67,6 +67,78 @@ def _component_name(event: Event) -> str:
     return event.actor_type
 
 
+def _stringify_trace_value(value: Any) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return "Yes" if value else "No"
+    if isinstance(value, (int, float)):
+        return str(value)
+    if isinstance(value, str):
+        text = value.strip()
+        return text or None
+    return None
+
+
+def _format_top_candidates(value: Any) -> str | None:
+    if not isinstance(value, list) or not value:
+        return None
+
+    parts: list[str] = []
+    for item in value:
+        if not isinstance(item, dict):
+            continue
+        specialty_id = str(item.get("id") or "").strip()
+        confidence = item.get("confidence")
+        if not specialty_id:
+            continue
+
+        label = _humanize_specialty(specialty_id)
+        if confidence is None:
+            parts.append(label)
+        else:
+            parts.append(f"{label} ({confidence})")
+
+    return "; ".join(parts) if parts else None
+
+
+def _trace_details(event: Event) -> dict[str, str] | None:
+    payload = _payload_dict(event.payload_json)
+    details: dict[str, str] = {}
+
+    scalar_fields = [
+        ("Original complaint", "originalComplaintSummary"),
+        ("Classifier input", "classifierInputSummary"),
+        ("Cleaned input", "cleanedInputSummary"),
+        ("Normalized input", "normalizedInputSummary"),
+        ("Clarification detail", "clarificationDetailSummary"),
+        ("Merged input", "mergedInputSummary"),
+        ("Clarification key", "clarificationKey"),
+        ("Used merged clarification input", "usedMergedClarificationInput"),
+        ("Clarification turns", "clarificationTurns"),
+        ("Model version", "modelVersion"),
+    ]
+
+    for label, key in scalar_fields:
+        rendered = _stringify_trace_value(payload.get(key))
+        if rendered:
+            details[label] = rendered
+
+    preprocessing_actions = payload.get("preprocessingActions")
+    if isinstance(preprocessing_actions, list) and preprocessing_actions:
+        rendered_actions = ", ".join(
+            str(item).strip() for item in preprocessing_actions if str(item).strip()
+        )
+        if rendered_actions:
+            details["Preprocessing actions"] = rendered_actions
+
+    top_candidates = _format_top_candidates(payload.get("topCandidates"))
+    if top_candidates:
+        details["Top candidates"] = top_candidates
+
+    return details or None
+
+
 def _tenant_scope(
     current_user: AuthenticatedPortalUser,
     requested_tenant_id: str | None = None,
@@ -423,6 +495,7 @@ def _build_trace_row(event: Event) -> dict[str, Any]:
         "outcome": event.outcome,
         "reasonCode": None if event.reason_code in {None, "OK"} else event.reason_code,
         "safeSummary": _safe_summary(event),
+        "details": _trace_details(event),
     }
 
 

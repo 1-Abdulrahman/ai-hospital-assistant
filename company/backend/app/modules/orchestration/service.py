@@ -13,7 +13,7 @@ from app.api.schemas.chat import ConfirmationSummary
 from app.core.correlation import get_correlation_id
 from app.db.models import AssistantSession
 from app.modules.fhir_gateway.client import FhirClient
-from app.modules.nlp.inference import NlpService, _safe_input_summary
+from app.modules.nlp.inference import NlpService, _safe_input_summary, _safe_text_summary
 from app.modules.observability.emitter import emit_event
 from app.modules.otp.service import (
     build_patient_key_hash,
@@ -115,6 +115,45 @@ def _clear_clarification_context(session: AssistantSession) -> None:
     session.original_complaint_text = None
     session.clarification_detail_text = None
     session.merged_classification_text = None
+
+def _build_nlp_trace_payload(
+    *,
+    prediction: Any,
+    session: AssistantSession,
+    classification_input: str,
+    used_merged_clarification_input: bool,
+    candidates: list[dict] | None = None,
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {
+        "component": "nlp",
+        "modelVersion": prediction.model_version,
+        "classifierInputSummary": prediction.original_input_summary,
+        "cleanedInputSummary": prediction.cleaned_input_summary,
+        "normalizedInputSummary": prediction.normalized_input_summary,
+        "preprocessingActions": list(prediction.preprocessing_actions),
+        "usedMergedClarificationInput": used_merged_clarification_input,
+    }
+
+    if session.original_complaint_text:
+        payload["originalComplaintSummary"] = _safe_text_summary(
+            session.original_complaint_text
+        )
+
+    if session.clarification_detail_text:
+        payload["clarificationDetailSummary"] = _safe_text_summary(
+            session.clarification_detail_text
+        )
+
+    if used_merged_clarification_input:
+        payload["mergedInputSummary"] = _safe_text_summary(classification_input)
+
+    if session.clarification_key:
+        payload["clarificationKey"] = session.clarification_key
+
+    if candidates:
+        payload["topCandidates"] = candidates[:3]
+
+    return payload
 
 def _append_clarification_detail(
     *,
@@ -744,9 +783,15 @@ async def process_chat_message(
             reason_code=OK,
             payload={
                 "component": "assistant-api",
-                "safeSummary": _safe_input_summary(clean_message_text),
+                "safeSummary": _safe_text_summary(clean_message_text),
                 "clarificationKey": session.clarification_key,
-                "mergedInputSummary": session.last_input_summary,
+                "originalComplaintSummary": _safe_text_summary(
+                    session.original_complaint_text or ""
+                ),
+                "clarificationDetailSummary": _safe_text_summary(
+                    session.clarification_detail_text or ""
+                ),
+                "mergedInputSummary": _safe_text_summary(classification_input),
                 "clarificationTurns": len(
                     [
                         line
@@ -797,6 +842,33 @@ async def process_chat_message(
 
     prediction = nlp_service.classify(classification_input)
 
+    candidates = [
+        {"id": candidate.specialty_id, "confidence": round(candidate.confidence, 4)}
+        for candidate in prediction.top_candidates
+    ]
+
+    nlp_trace_payload = _build_nlp_trace_payload(
+        prediction=prediction,
+        session=session,
+        classification_input=classification_input,
+        used_merged_clarification_input=is_clarification_followup,
+        candidates=candidates,
+    )
+
+    emit_event(
+        db=db,
+        tenant_id=body_tenant_id,
+        session_id=client_session_id,
+        actor_type="system",
+        event_type="NLP_PREPROCESSED",
+        outcome="INFO",
+        reason_code=OK,
+        payload={
+            **nlp_trace_payload,
+            "safeSummary": "Prepared complaint text for specialty classification.",
+        },
+    )
+    
     emit_event(
         db=db,
         tenant_id=body_tenant_id,
@@ -806,19 +878,12 @@ async def process_chat_message(
         outcome="SUCCESS",
         reason_code=prediction.reason_code,
         payload={
-            "component": "nlp",
+            **nlp_trace_payload,
             "safeSummary": f"Predicted {prediction.primary_specialty_id or 'manual selection'}.",
-            "modelVersion": prediction.model_version,
-            "inputSummary": prediction.input_summary,
-            "clarificationKey": session.clarification_key if is_clarification_followup else None,
-            "usedMergedClarificationInput": is_clarification_followup,
         },
     )
 
-    candidates = [
-        {"id": candidate.specialty_id, "confidence": round(candidate.confidence, 4)}
-        for candidate in prediction.top_candidates
-    ]
+
 
     if prediction.primary_specialty_id:
         session.selected_specialty_id = prediction.primary_specialty_id

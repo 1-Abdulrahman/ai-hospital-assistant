@@ -64,10 +64,14 @@ class NlpPrediction:
     reason_code: str
     clarifier_question: str | None
     clarification_key: str | None
-    clarification_quick_replies: tuple[ClarificationQuickReply, ...]
+    clarification_quick_replies: tuple
     model_name: str
     model_version: str | None
     input_summary: str
+    original_input_summary: str
+    cleaned_input_summary: str
+    normalized_input_summary: str
+    preprocessing_actions: tuple[str, ...]
 
 
 # ============================================================
@@ -85,20 +89,36 @@ def _safe_read_text(path: Path) -> str | None:
     value = path.read_text(encoding="utf-8").strip()
     return value or None
 
+def _safe_text_summary(text: str, max_len: int = 80) -> str:
+    compact = " ".join((text or "").split())
+    if len(compact) <= max_len:
+        return compact
+    return compact[: max_len - 3].rstrip() + "..."
+
+
+def _prepare_input_trace(text: str) -> tuple[str, str, str, str, tuple[str, ...]]:
+    normalized_case = get_default_normalizer().normalize(text)
+
+    original_input_summary = _safe_text_summary(text)
+    cleaned_input_summary = _safe_text_summary(normalized_case.cleaned_text)
+    normalized_input_summary = _safe_text_summary(normalized_case.corrected_text)
+    preprocessing_actions = tuple(normalized_case.applied_rules)
+
+    return (
+        normalized_case.corrected_text,
+        original_input_summary,
+        cleaned_input_summary,
+        normalized_input_summary,
+        preprocessing_actions,
+    )
+
 
 def _normalize_text(text: str) -> str:
     return get_default_normalizer().normalize(text).corrected_text
 
 
 def _safe_input_summary(text: str, max_len: int = 80) -> str:
-    """
-    Safe summary for observability and portal analytics.
-    Never store or expose the raw complaint text in full.
-    """
-    normalized = _normalize_text(text)
-    if len(normalized) <= max_len:
-        return normalized
-    return normalized[: max_len - 3].rstrip() + "..."
+    return _safe_text_summary(_normalize_text(text), max_len=max_len)
 
 
 class NlpServiceError(Exception):
@@ -209,11 +229,19 @@ class NlpService:
         }
 
     def classify(self, complaint_text: str) -> NlpPrediction:
-        normalized = _normalize_text(complaint_text)
-        input_summary = _safe_input_summary(normalized)
+        (
+            normalized,
+            original_input_summary,
+            cleaned_input_summary,
+            normalized_input_summary,
+            preprocessing_actions,
+        ) = _prepare_input_trace(complaint_text)
+
+        input_summary = normalized_input_summary
 
         if not normalized:
             prompt = build_clarification_prompt(top_specialty_ids=[])
+
             return NlpPrediction(
                 primary_specialty_id=None,
                 top_candidates=[],
@@ -225,6 +253,10 @@ class NlpService:
                 model_name=self.model_name,
                 model_version=self.model_version,
                 input_summary=input_summary,
+                original_input_summary=original_input_summary,
+                cleaned_input_summary=cleaned_input_summary,
+                normalized_input_summary=normalized_input_summary,
+                preprocessing_actions=preprocessing_actions,
             )
 
         encoded = self.tokenizer(
@@ -234,6 +266,7 @@ class NlpService:
             max_length=self.max_length,
             return_tensors="pt",
         )
+
         encoded = {key: value.to(self.device) for key, value in encoded.items()}
 
         with torch.no_grad():
@@ -274,8 +307,12 @@ class NlpService:
                 model_name=self.model_name,
                 model_version=self.model_version,
                 input_summary=input_summary,
+                original_input_summary=original_input_summary,
+                cleaned_input_summary=cleaned_input_summary,
+                normalized_input_summary=normalized_input_summary,
+                preprocessing_actions=preprocessing_actions,
             )
-
+            
         prompt = build_clarification_prompt(
             top_specialty_ids=[candidate.specialty_id for candidate in top_candidates]
         )
@@ -291,6 +328,10 @@ class NlpService:
             model_name=self.model_name,
             model_version=self.model_version,
             input_summary=input_summary,
+            original_input_summary=original_input_summary,
+            cleaned_input_summary=cleaned_input_summary,
+            normalized_input_summary=normalized_input_summary,
+            preprocessing_actions=preprocessing_actions,
         )
 
 # ============================================================
