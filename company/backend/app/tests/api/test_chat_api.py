@@ -686,6 +686,44 @@ def test_chat_message_persists_nlp_preprocessed_event_with_safe_trace_fields(
     assert payload["normalizedInputSummary"] == "i have a stomach ache"
     assert payload["usedMergedClarificationInput"] is False
     assert "preprocessingActions" in payload
+    
+    
+def test_chat_message_persists_nlp_classified_event_with_confidence_diagnostics(
+    client,
+    db_session,
+) -> None:
+    client.app.state.nlp_service = FakeAmbiguousNlpService()
+
+    response = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "I have a stomach ache",
+        },
+    )
+
+    assert response.status_code == 200
+
+    event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NLP_CLASSIFIED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert event is not None
+
+    payload = json.loads(event.payload_json)
+    assert payload["component"] == "nlp"
+    assert "topCandidates" in payload
+    assert "topConfidence" in payload
+    assert "secondConfidence" in payload
+    assert "confidenceGap" in payload
+    assert payload["thresholdMinConfidence"] == 0.70
+    assert payload["thresholdAmbiguityDelta"] == 0.10
+    assert "safeSummary" in payload
 
 def test_chat_message_accumulates_multiple_clarification_followups(
     client,

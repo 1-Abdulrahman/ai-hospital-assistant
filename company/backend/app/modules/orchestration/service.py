@@ -116,13 +116,40 @@ def _clear_clarification_context(session: AssistantSession) -> None:
     session.clarification_detail_text = None
     session.merged_classification_text = None
 
-def _build_nlp_trace_payload(
+def _candidate_payload_from_prediction(prediction: Any) -> list[dict[str, Any]]:
+    return [
+        {
+            "id": candidate.specialty_id,
+            "confidence": round(candidate.confidence, 4),
+        }
+        for candidate in prediction.top_candidates
+    ]
+
+
+def _classification_diagnostics(prediction: Any) -> dict[str, Any]:
+    top_candidates = list(prediction.top_candidates or [])
+
+    top_confidence = round(top_candidates[0].confidence, 4) if len(top_candidates) >= 1 else None
+    second_confidence = round(top_candidates[1].confidence, 4) if len(top_candidates) >= 2 else None
+    confidence_gap = (
+        round(top_confidence - second_confidence, 4)
+        if top_confidence is not None and second_confidence is not None
+        else None
+    )
+
+    return {
+        "topConfidence": top_confidence,
+        "secondConfidence": second_confidence,
+        "confidenceGap": confidence_gap,
+    }
+
+
+def _build_nlp_preprocessed_payload(
     *,
     prediction: Any,
     session: AssistantSession,
     classification_input: str,
     used_merged_clarification_input: bool,
-    candidates: list[dict] | None = None,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "component": "nlp",
@@ -150,8 +177,26 @@ def _build_nlp_trace_payload(
     if session.clarification_key:
         payload["clarificationKey"] = session.clarification_key
 
-    if candidates:
-        payload["topCandidates"] = candidates[:3]
+    return payload
+
+
+def _build_nlp_classified_payload(
+    *,
+    prediction: Any,
+    candidates: list[dict[str, Any]],
+) -> dict[str, Any]:
+    payload: dict[str, Any] = {
+        "component": "nlp",
+        "modelVersion": prediction.model_version,
+        "topCandidates": candidates[:3],
+        "thresholdMinConfidence": 0.70,
+        "thresholdAmbiguityDelta": 0.10,
+        **_classification_diagnostics(prediction),
+    }
+
+    winning_label = prediction.primary_specialty_id
+    if winning_label:
+        payload["predictedSpecialty"] = winning_label
 
     return payload
 
@@ -842,17 +887,13 @@ async def process_chat_message(
 
     prediction = nlp_service.classify(classification_input)
 
-    candidates = [
-        {"id": candidate.specialty_id, "confidence": round(candidate.confidence, 4)}
-        for candidate in prediction.top_candidates
-    ]
+    candidates = _candidate_payload_from_prediction(prediction)
 
-    nlp_trace_payload = _build_nlp_trace_payload(
+    nlp_preprocessed_payload = _build_nlp_preprocessed_payload(
         prediction=prediction,
         session=session,
         classification_input=classification_input,
         used_merged_clarification_input=is_clarification_followup,
-        candidates=candidates,
     )
 
     emit_event(
@@ -864,11 +905,30 @@ async def process_chat_message(
         outcome="INFO",
         reason_code=OK,
         payload={
-            **nlp_trace_payload,
+            **nlp_preprocessed_payload,
             "safeSummary": "Prepared complaint text for specialty classification.",
         },
     )
-    
+
+    if prediction.needs_clarification:
+        top_labels = [item["id"] for item in candidates[:2]]
+        if len(top_labels) == 2:
+            safe_summary = (
+                f"Ambiguous specialty prediction between "
+                f"{_humanize_specialty(top_labels[0])} and {_humanize_specialty(top_labels[1])}."
+            )
+        else:
+            safe_summary = "Ambiguous specialty prediction."
+    else:
+        safe_summary = (
+            f"Predicted specialty {_humanize_specialty(prediction.primary_specialty_id or 'general_practice')}."
+        )
+
+    nlp_classified_payload = _build_nlp_classified_payload(
+        prediction=prediction,
+        candidates=candidates,
+    )
+
     emit_event(
         db=db,
         tenant_id=body_tenant_id,
@@ -878,11 +938,10 @@ async def process_chat_message(
         outcome="SUCCESS",
         reason_code=prediction.reason_code,
         payload={
-            **nlp_trace_payload,
-            "safeSummary": f"Predicted {prediction.primary_specialty_id or 'manual selection'}.",
+            **nlp_classified_payload,
+            "safeSummary": safe_summary,
         },
     )
-
 
 
     if prediction.primary_specialty_id:

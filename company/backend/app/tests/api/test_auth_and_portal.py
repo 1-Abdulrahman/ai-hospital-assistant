@@ -183,9 +183,20 @@ def test_portal_trace_returns_nlp_preprocessing_details(client, tenant_admin_tok
     assert trace_response.status_code == 200
 
     rows = trace_response.json()
-    preprocessed_row = next(item for item in rows if item["eventType"] == "NLP_PREPROCESSED")
 
-    assert preprocessed_row["details"]["Classifier input"] == "I have a stomach ache"
-    assert preprocessed_row["details"]["Cleaned input"] == "i have a stomach ache"
-    assert preprocessed_row["details"]["Normalized input"] == "i have a stomach ache"
+    preprocessed_row = next(item for item in rows if item["eventType"] == "NLP_PREPROCESSED")
+    classified_row = next(item for item in rows if item["eventType"] == "NLP_CLASSIFIED")
+
+    assert preprocessed_row["details"]["Classifier input summary"] == "I have a stomach ache"
+    assert preprocessed_row["details"]["Cleaned input summary"] == "i have a stomach ache"
+    assert preprocessed_row["details"]["Normalized input summary"] == "i have a stomach ache"
     assert preprocessed_row["details"]["Used merged clarification input"] == "No"
+    assert preprocessed_row["details"]["Model version"] == "test-1.0"
+    assert preprocessed_row["details"]["Preprocessing actions"] == "basic_cleanup"
+
+    assert classified_row["safeSummary"].startswith("Ambiguous specialty prediction")
+    assert classified_row["details"]["Top confidence"] == "0.32"
+    assert classified_row["details"]["Second confidence"] == "0.16"
+    assert classified_row["details"]["Confidence gap"] == "0.16"
+    assert classified_row["details"]["Threshold min confidence"] == "0.7"
+    assert classified_row["details"]["Threshold ambiguity delta"] == "0.1"

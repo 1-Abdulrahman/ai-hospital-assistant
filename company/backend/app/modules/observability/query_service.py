@@ -107,16 +107,22 @@ def _trace_details(event: Event) -> dict[str, str] | None:
     details: dict[str, str] = {}
 
     scalar_fields = [
-        ("Original complaint", "originalComplaintSummary"),
-        ("Classifier input", "classifierInputSummary"),
-        ("Cleaned input", "cleanedInputSummary"),
-        ("Normalized input", "normalizedInputSummary"),
+        ("Initial complaint summary", "originalComplaintSummary"),
+        ("Classifier input summary", "classifierInputSummary"),
+        ("Cleaned input summary", "cleanedInputSummary"),
+        ("Normalized input summary", "normalizedInputSummary"),
         ("Clarification detail", "clarificationDetailSummary"),
-        ("Merged input", "mergedInputSummary"),
+        ("Merged input summary", "mergedInputSummary"),
         ("Clarification key", "clarificationKey"),
         ("Used merged clarification input", "usedMergedClarificationInput"),
         ("Clarification turns", "clarificationTurns"),
         ("Model version", "modelVersion"),
+        ("Top confidence", "topConfidence"),
+        ("Second confidence", "secondConfidence"),
+        ("Confidence gap", "confidenceGap"),
+        ("Threshold min confidence", "thresholdMinConfidence"),
+        ("Threshold ambiguity delta", "thresholdAmbiguityDelta"),
+        ("Predicted specialty", "predictedSpecialty"),
     ]
 
     for label, key in scalar_fields:
