@@ -99,6 +99,7 @@ export interface TraceEvent {
   message?: string;
   summary?: string;
   safeSummary?: string;
+  details?: Record<string, string>;
 }
 
 export interface Session {

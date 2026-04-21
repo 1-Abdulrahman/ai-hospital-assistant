@@ -29,6 +29,25 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
+function TraceDetails({ details }: { details?: Record<string, string> }) {
+  if (!details || Object.keys(details).length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mt-2 rounded-md border bg-muted/40 p-3">
+      <div className="space-y-1">
+        {Object.entries(details).map(([label, value]) => (
+          <div key={label} className="text-xs">
+            <span className="font-medium">{label}: </span>
+            <span className="text-muted-foreground whitespace-pre-wrap">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Timeline({ events }: { events: TraceEvent[] }) {
   return (
     <div className="relative space-y-0">
@@ -56,6 +75,7 @@ function Timeline({ events }: { events: TraceEvent[] }) {
               {e.reasonCode && <p className="text-xs">Reason: {e.reasonCode}</p>}
 
               <p className="text-sm">{e.safeSummary || e.summary || e.message || 'N/A'}</p>
+              <TraceDetails details={e.details} />
             </CardContent>
           </Card>
         </div>
