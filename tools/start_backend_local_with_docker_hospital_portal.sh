@@ -11,6 +11,7 @@ RUNTIME_DIR="$REPO_ROOT/.runtime"
 PORTAL_MODE_FILE="$RUNTIME_DIR/portal-ui.mode"
 
 REBUILD_HOSPITAL_UI=0
+SEED_DB=0
 SEED_FHIR=0
 CLEAN_START=0
 
@@ -31,6 +32,7 @@ Usage:
 
 Options:
   --rebuild-hospital-ui      Rebuild Hospital UI container before starting it
+  --seed-db                  Run backend DB seed after Alembic migrations
   --seed-fhir                Run FHIR seed after backend env is loaded
   --clean-start              Stop/remove existing company-fhir, company-mailhog, hospital-ui, and company-portal-ui containers first
 
@@ -50,6 +52,10 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --rebuild-hospital-ui)
       REBUILD_HOSPITAL_UI=1
+      shift
+      ;;
+    --seed-db)
+      SEED_DB=1
       shift
       ;;
     --seed-fhir)
@@ -317,6 +323,11 @@ source "$BACKEND_DIR/.venv/bin/activate"
 
 echo "==> Running Alembic migrations"
 alembic upgrade head
+
+if [[ "$SEED_DB" -eq 1 ]]; then
+  echo "==> Running backend DB seed"
+  python -m app.db.seed
+fi
 
 if [[ "$SEED_FHIR" -eq 1 ]]; then
   echo "==> Running FHIR scheduling seed"
