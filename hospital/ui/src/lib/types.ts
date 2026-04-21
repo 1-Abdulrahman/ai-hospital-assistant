@@ -1,6 +1,7 @@
 export interface QuickReply {
   label: string;
   value: string;
+  action?: "SEND_MESSAGE" | "PROMPT_FOR_TEXT" | null;
 }
 
 export interface SelectionListItemMeta {

@@ -12,7 +12,12 @@ import {
 } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import type { ChatResponse, SelectionListItem } from "@/lib/types";
+import type {
+  ChatResponse,
+  ChatMessage,
+  QuickReply,
+  SelectionListItem,
+} from "@/lib/types";
 import SelectionList from "./chat/SelectionList";
 import ConsentBanner from "./chat/ConsentBanner";
 import ContinuityBanner from "./chat/ContinuityBanner";
@@ -43,6 +48,7 @@ export default function ChatWidgetContent() {
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [awaitingClarificationDetail, setAwaitingClarificationDetail] = useState(false);
 
   const {
     step,
@@ -98,6 +104,7 @@ export default function ChatWidgetContent() {
       const res = await sendChatMessage(text);
       addMessage(responseToMessage(res));
       handleResponseErrors(res);
+      setAwaitingClarificationDetail(Boolean(res.needsClarification));
     } catch (err: any) {
       addMessage({
         role: "assistant",
@@ -217,14 +224,26 @@ export default function ChatWidgetContent() {
     }
   };
 
-  const handleQuickReply = async (value: string) => {
-    addMessage({ role: "user", text: value });
+  const handleQuickReply = async (qr: QuickReply) => {
+    if (qr.action === "PROMPT_FOR_TEXT") {
+      addMessage({ role: "user", text: qr.label });
+      addMessage({
+        role: "assistant",
+        text: "Please type a little more detail. I will combine it with your earlier complaint before checking the specialty again.",
+      });
+      setAwaitingClarificationDetail(true);
+      inputRef.current?.focus();
+      return;
+    }
+
+    addMessage({ role: "user", text: qr.value });
     setLoading(true);
 
     try {
-      const res = await sendChatMessage(value);
+      const res = await sendChatMessage(qr.value);
       addMessage(responseToMessage(res));
       handleResponseErrors(res);
+      setAwaitingClarificationDetail(Boolean(res.needsClarification));
     } catch (err: any) {
       addMessage({
         role: "assistant",
@@ -371,13 +390,19 @@ export default function ChatWidgetContent() {
 
                 {msg.quickReplies && msg.quickReplies.length > 0 && (
                   <div className="mt-2 flex flex-col gap-1 max-w-[85%]">
+                    {msg.needsClarification && (
+                      <p className="text-[11px] text-muted-foreground">
+                        Tap below to add more detail, or choose one of the suggested specialties.
+                      </p>
+                    )}
+
                     {msg.quickReplies.map((qr) => (
                       <Button
-                        key={qr.value}
+                        key={`${qr.label}-${qr.value}`}
                         size="sm"
                         variant="outline"
                         className="h-7 text-xs"
-                        onClick={() => handleQuickReply(qr.value)}
+                        onClick={() => handleQuickReply(qr)}
                         disabled={isLoading}
                       >
                         {qr.label}
@@ -424,7 +449,11 @@ export default function ChatWidgetContent() {
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Describe symptoms..."
+            placeholder={
+              awaitingClarificationDetail
+                ? "Type a little more detail for clarification..."
+                : "Type your message..."
+            }
             disabled={isLoading}
             className="h-8 text-xs"
           />

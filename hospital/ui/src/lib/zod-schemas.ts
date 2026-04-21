@@ -3,6 +3,7 @@ import { z } from "zod";
 export const quickReplySchema = z.object({
   label: z.string(),
   value: z.string(),
+  action: z.enum(["SEND_MESSAGE", "PROMPT_FOR_TEXT"]).optional().nullable(),
 });
 
 export const selectionListItemMetaSchema = z
