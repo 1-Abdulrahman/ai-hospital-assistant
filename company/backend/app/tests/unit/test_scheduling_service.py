@@ -596,10 +596,24 @@ async def test_book_success_creates_appointment(db_session) -> None:
             "specialty": "cardiology",
         }
     ]
+    assert client.updated_slot_calls == [
+        (
+            slot.slotId,
+            "busy",
+            "Booked via Appointment/appt-new",
+        )
+    ]
+
+    assert result["slot"]["status"] == "busy"
+    assert result["slotStatusSync"] == {
+        "attempted": True,
+        "synced": True,
+        "reasonCode": None,
+}
 
 
 @pytest.mark.asyncio
-async def test_book_success_creates_appointment_without_slot_status_sync_step(db_session) -> None:
+async def test_book_success_continues_when_slot_status_sync_fails(db_session) -> None:
     add_verified_otp(
         db_session,
         session_id="patient-session-1",
@@ -641,7 +655,22 @@ async def test_book_success_creates_appointment_without_slot_status_sync_step(db
 
     assert result["reasonCode"] == OK
     assert result["appointmentId"] == "appt-new"
-    assert client.updated_slot_calls == []
+    assert result["appointmentRef"] == "Appointment/appt-new"
+
+    assert client.updated_slot_calls == [
+        (
+            slot.slotId,
+            "busy",
+            "Booked via Appointment/appt-new",
+        )
+    ]
+
+    assert result["slot"]["status"] == "busy"
+    assert result["slotStatusSync"] == {
+        "attempted": True,
+        "synced": False,
+        "reasonCode": FHIR_UNAVAILABLE,
+    }
 
     event = (
         db_session.query(Event)
@@ -649,6 +678,8 @@ async def test_book_success_creates_appointment_without_slot_status_sync_step(db
         .first()
     )
     assert event is not None
+    assert event.reason_code == OK
+    assert "slotStatusSync" in (event.payload_json or "")
 
 
 def test_overlap_detection_matches_frozen_rule() -> None:

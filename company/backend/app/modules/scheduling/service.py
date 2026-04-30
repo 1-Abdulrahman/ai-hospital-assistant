@@ -535,6 +535,25 @@ async def book_appointment(
             specialty=specialty_normalized,
         )
 
+        slot_status_sync: dict[str, object] = {
+            "attempted": True,
+            "synced": False,
+            "reasonCode": None,
+        }
+
+        booked_slot_payload = {**slot.model_dump(), "status": "busy"}
+
+        try:
+            synced_slot = await client.update_slot_status(
+                slot_id=slot.slotId,
+                new_status="busy",
+                comment=f"Booked via {appointment.appointmentRef}",
+            )
+            booked_slot_payload = synced_slot.model_dump()
+            slot_status_sync["synced"] = True
+        except FhirGatewayError as slot_sync_exc:
+            slot_status_sync["reasonCode"] = slot_sync_exc.reason_code
+
     except FhirGatewayError as exc:
         mapped = map_fhir_error(exc)
 
@@ -583,7 +602,8 @@ async def book_appointment(
             "appointmentId": appointment.appointmentId,
             "appointmentRef": appointment.appointmentRef,
             "specialty": specialty_normalized,
-            "slot": slot.model_dump(),
+            "slot": booked_slot_payload,
+            "slotStatusSync": slot_status_sync,
             "message": "Appointment booked successfully.",
         }
     )
@@ -608,6 +628,8 @@ async def book_appointment(
         payload={
             "component": "scheduling",
             "safeSummary": f"Appointment confirmed as {appointment.appointmentRef}.",
+            "slotRef": slot.slotRef,
+            "slotStatusSync": slot_status_sync,
         },
     )
     db.commit()
