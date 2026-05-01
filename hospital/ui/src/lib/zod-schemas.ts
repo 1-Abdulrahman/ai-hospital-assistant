@@ -65,6 +65,7 @@ export const confirmationSummarySchema = z
     date: z.string().optional().nullable(),
     slotLabel: z.string().optional().nullable(),
     renewalItemLabel: z.string().optional().nullable(),
+    refillTaskRef: z.string().optional().nullable(),
   })
   .nullable()
   .optional();

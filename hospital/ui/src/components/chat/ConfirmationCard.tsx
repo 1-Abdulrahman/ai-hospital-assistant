@@ -74,6 +74,14 @@ export default function ConfirmationCard({ confirmationType, confirmationSummary
             <span className="font-medium">{confirmationSummary.renewalItemLabel}</span>
           </div>
         )}
+        {confirmationSummary.refillTaskRef && (
+          <div className="flex justify-between gap-3">
+            <span className="text-muted-foreground">FHIR Task</span>
+            <span className="font-mono font-medium text-[10px] break-all text-right">
+              {confirmationSummary.refillTaskRef}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

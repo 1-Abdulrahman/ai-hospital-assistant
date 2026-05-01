@@ -56,6 +56,7 @@ export interface ConfirmationSummary {
   date?: string | null;
   slotLabel?: string | null;
   renewalItemLabel?: string | null;
+  refillTaskRef?: string | null;
 }
 
 export interface ChatResponse {
