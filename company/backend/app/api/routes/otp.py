@@ -9,7 +9,7 @@ router = APIRouter(prefix="/otp", tags=["otp"])
 
 
 @router.post("/request", response_model=OtpRequestOut)
-def request_otp(
+async def request_otp(
     body: OtpRequestIn,
     request: Request,
     context: HospitalRequestContext = Depends(get_hospital_request_context),
@@ -17,7 +17,7 @@ def request_otp(
 ) -> OtpRequestOut:
     client_ip = request.client.host if request.client else "unknown"
 
-    result = request_otp_code(
+    result = await request_otp_code(
         db=db,
         header_tenant_id=context.tenant_id,
         session_id=context.session_id,
@@ -30,7 +30,7 @@ def request_otp(
 
 
 @router.post("/verify", response_model=OtpVerifyOut)
-def verify_otp(
+async def verify_otp(
     body: OtpVerifyIn,
     request: Request,
     context: HospitalRequestContext = Depends(get_hospital_request_context),
@@ -38,7 +38,7 @@ def verify_otp(
 ) -> OtpVerifyOut:
     client_ip = request.client.host if request.client else "unknown"
 
-    result = verify_otp_code(
+    result = await verify_otp_code(
         db=db,
         header_tenant_id=context.tenant_id,
         session_id=context.session_id,

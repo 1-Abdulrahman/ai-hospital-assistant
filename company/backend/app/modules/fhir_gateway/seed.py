@@ -38,6 +38,7 @@ DEMO_RENEWAL_PATIENTS = [
         "national_id": "5000000001",
         "identity_type": "border_id",
         "display": "Demo Renewal Patient 1",
+        "email": "renewal.patient1@example.com",
         "medications": [
             {
                 "code": "860975",
@@ -55,6 +56,7 @@ DEMO_RENEWAL_PATIENTS = [
         "national_id": "5000000002",
         "identity_type": "border_id",
         "display": "Demo Renewal Patient 2",
+        "email": "renewal.patient2@example.com",
         "medications": [
             {
                 "code": "29046",
@@ -70,6 +72,7 @@ DEMO_CONTINUITY_PATIENTS = [
         "national_id": "5000000010",
         "identity_type": "border_id",
         "display": "Demo Continuity Patient GP",
+        "email": "continuity.gp@example.com",
         "specialty": "general_practice",
         "practitioner_ref": "Practitioner/prac-gp-1",
         "practitioner_display": "Dr. Mona Alqahtani",
@@ -81,6 +84,7 @@ DEMO_CONTINUITY_PATIENTS = [
         "national_id": "5000000011",
         "identity_type": "border_id",
         "display": "Demo Continuity Patient Cardiology",
+        "email": "continuity.cardiology@example.com",
         "specialty": "cardiology",
         "practitioner_ref": "Practitioner/prac-card-1",
         "practitioner_display": "Dr. Lina Alharbi",
@@ -356,8 +360,9 @@ def _build_demo_patient_resource(
     patient_id: str,
     patient_key_hash: str,
     display: str,
+    email: str | None = None,
 ) -> dict[str, Any]:
-    return {
+    resource: dict[str, Any] = {
         "resourceType": "Patient",
         "id": patient_id,
         "identifier": [
@@ -381,6 +386,17 @@ def _build_demo_patient_resource(
         ],
         "active": True,
     }
+
+    if email and email.strip():
+        resource["telecom"] = [
+            {
+                "system": "email",
+                "value": email.strip().lower(),
+                "use": "home",
+            }
+        ]
+
+    return resource
 
 
 def _build_demo_medication_request_resource(
@@ -569,6 +585,7 @@ async def run_async() -> None:
                 patient_id=patient_id,
                 patient_key_hash=patient_key_hash,
                 display=patient_def["display"],
+                email=patient_def.get("email"),
             )
             patient_outcome = await _put_resource(
                 client,
@@ -715,6 +732,7 @@ async def run_async() -> None:
                 patient_id=patient_id,
                 patient_key_hash=patient_key_hash,
                 display=patient_def["display"],
+                email=patient_def.get("email"),
             )
             patient_outcome = await _put_resource(
                 client,

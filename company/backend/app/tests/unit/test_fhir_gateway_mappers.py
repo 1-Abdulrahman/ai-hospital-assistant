@@ -23,6 +23,13 @@ def test_map_patient_resource_to_dto_returns_safe_summary() -> None:
                 "value": "hashed-value",
             }
         ],
+        "telecom": [
+            {
+                "system": "email",
+                "value": "Demo.Patient@Example.com",
+                "use": "home",
+            }
+        ],
     }
 
     dto = map_patient_resource_to_dto(
@@ -36,7 +43,8 @@ def test_map_patient_resource_to_dto_returns_safe_summary() -> None:
     assert dto.tenantId == "demo"
     assert dto.patientKeyHash == "hashed-value"
     assert dto.displayName == "Demo Patient"
-
+    assert dto.emails == ["demo.patient@example.com"]
+    assert dto.primaryEmail == "demo.patient@example.com"
 
 def test_map_schedule_resource_to_dto_extracts_safe_fields() -> None:
     resource = {

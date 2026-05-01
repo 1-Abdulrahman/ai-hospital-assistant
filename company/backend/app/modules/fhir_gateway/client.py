@@ -19,6 +19,7 @@ from app.modules.fhir_gateway.mappers import (
     map_schedule_resource_to_dto,
     map_slot_bundle_to_dtos,
     map_slot_resource_to_dto,
+    extract_patient_emails,
 )
 from app.modules.fhir_gateway.reason_codes import (
     APPOINTMENT_CONFLICT,
@@ -56,6 +57,19 @@ def build_patient_identifier_system(tenant_id: str) -> str:
         )
     return f"urn:ai-hospital-assistant:patient-key:{cleaned}"
 
+def _normalize_email_value(email: str | None) -> str | None:
+    if email is None:
+        return None
+    cleaned = email.strip().lower()
+    return cleaned or None
+
+
+def _email_contact_point(email: str) -> dict[str, Any]:
+    return {
+        "system": "email",
+        "value": email,
+        "use": "home",
+    }
 
 def _ensure_reference(resource_type: str, value: str) -> str:
     cleaned = value.strip()
@@ -233,12 +247,23 @@ class FhirClient:
         tenant_id: str,
         patient_key_hash: str,
         display_name: str | None = None,
+        email: str | None = None,
     ) -> PatientSummaryDTO:
         existing = await self.find_patient_by_identifier(
             patient_key_hash=patient_key_hash,
             tenant_id=tenant_id,
         )
+        
         if isinstance(existing, PatientSummaryDTO):
+            normalized_email = _normalize_email_value(email)
+            if normalized_email and not existing.emails:
+                updated = await self.save_patient_email_if_missing(
+                    tenant_id=tenant_id,
+                    patient_key_hash=patient_key_hash,
+                    email=normalized_email,
+                )
+                if isinstance(updated, PatientSummaryDTO):
+                    return updated
             return existing
 
         resource: dict[str, Any] = {
@@ -253,6 +278,10 @@ class FhirClient:
 
         if display_name and display_name.strip():
             resource["name"] = [{"text": display_name.strip()}]
+            
+        normalized_email = _normalize_email_value(email)
+        if normalized_email:
+            resource["telecom"] = [_email_contact_point(normalized_email)]
 
         response = await self._request(
             "POST",
@@ -296,6 +325,97 @@ class FhirClient:
         raise FhirGatewayError(
             reason_code=FHIR_UNAVAILABLE,
             user_message="FHIR patient creation failed.",
+            status_code=503,
+            details=self._operation_outcome_text(response),
+        )
+
+    async def save_patient_email_if_missing(
+        self,
+        *,
+        tenant_id: str,
+        patient_key_hash: str,
+        email: str,
+    ) -> PatientSummaryDTO | None:
+        normalized_email = _normalize_email_value(email)
+        if not normalized_email:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Email is required for patient contact update.",
+                status_code=400,
+            )
+
+        existing = await self.find_patient_by_identifier(
+            patient_key_hash=patient_key_hash,
+            tenant_id=tenant_id,
+        )
+
+        if not isinstance(existing, PatientSummaryDTO):
+            return None
+
+        resource = await self._read_resource_or_raise(
+            resource_type="Patient",
+            resource_id_or_ref=existing.patientRef,
+            not_found_reason_code=PATIENT_NOT_FOUND,
+            not_found_message="Patient was not found in FHIR.",
+        )
+
+        existing_emails = extract_patient_emails(resource)
+
+        if normalized_email in existing_emails:
+            return map_patient_resource_to_dto(
+                resource,
+                tenant_id=tenant_id,
+                patient_key_hash=patient_key_hash,
+            )
+
+        if existing_emails:
+            return map_patient_resource_to_dto(
+                resource,
+                tenant_id=tenant_id,
+                patient_key_hash=patient_key_hash,
+            )
+
+        telecom = resource.get("telecom")
+        if not isinstance(telecom, list):
+            telecom = []
+
+        telecom.append(_email_contact_point(normalized_email))
+        resource["telecom"] = telecom
+
+        response = await self._request(
+            "PUT",
+            f"/Patient/{_reference_search_value(existing.patientRef)}",
+            json=resource,
+            headers={"Content-Type": "application/fhir+json"},
+            retry_on_read=False,
+        )
+
+        if response.status_code in {200, 201}:
+            return map_patient_resource_to_dto(
+                self._json_or_empty(response),
+                tenant_id=tenant_id,
+                patient_key_hash=patient_key_hash,
+            )
+
+        if response.status_code == 503:
+            raise FhirGatewayError(
+                reason_code=FHIR_UNAVAILABLE,
+                user_message="FHIR service is unavailable while updating patient contact email.",
+                status_code=503,
+                details=self._operation_outcome_text(response),
+            )
+
+        if 400 <= response.status_code < 500:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Patient contact update was rejected by FHIR.",
+                status_code=response.status_code,
+                details=self._operation_outcome_text(response),
+            )
+
+        raise FhirGatewayError(
+            reason_code=FHIR_UNAVAILABLE,
+            user_message="Patient contact email could not be updated.",
             status_code=503,
             details=self._operation_outcome_text(response),
         )

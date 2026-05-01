@@ -427,6 +427,7 @@ async def book_appointment(
         patient = await client.ensure_patient(
             tenant_id=body_tenant_id,
             patient_key_hash=patient_key_hash,
+            email=normalized_email,
         )
 
         existing_for_patient = await client.search_appointments(

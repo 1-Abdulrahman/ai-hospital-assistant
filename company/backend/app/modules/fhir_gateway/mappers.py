@@ -56,6 +56,33 @@ def _first_human_name(resource: dict[str, Any]) -> str | None:
     full_name = " ".join(parts).strip()
     return full_name or None
 
+def extract_patient_emails(resource: dict[str, Any]) -> list[str]:
+    telecom = resource.get("telecom")
+    if not isinstance(telecom, list):
+        return []
+
+    emails: list[str] = []
+    seen: set[str] = set()
+
+    for item in telecom:
+        if not isinstance(item, dict):
+            continue
+
+        if item.get("system") != "email":
+            continue
+
+        value = item.get("value")
+        if not isinstance(value, str):
+            continue
+
+        normalized = value.strip().lower()
+        if not normalized or normalized in seen:
+            continue
+
+        seen.add(normalized)
+        emails.append(normalized)
+
+    return emails
 
 def _extract_reference(
     participants: list[dict[str, Any]],
@@ -249,12 +276,16 @@ def map_patient_resource_to_dto(
     patient_id = str(resource.get("id") or "").strip()
     patient_ref = f"Patient/{patient_id}" if patient_id else "Patient/unknown"
 
+    emails = extract_patient_emails(resource)
+
     return PatientSummaryDTO(
         patientId=patient_id or "unknown",
         patientRef=patient_ref,
         tenantId=tenant_id,
         patientKeyHash=patient_key_hash,
         displayName=_first_human_name(resource),
+        emails=emails,
+        primaryEmail=emails[0] if emails else None,
     )
 
 

@@ -12,6 +12,14 @@ class PatientSummaryDTO(BaseModel):
         default=None,
         description="Safe display label only. No raw identity numbers.",
     )
+    emails: list[str] = Field(
+        default_factory=list,
+        description="Registered FHIR Patient telecom emails, normalized to lowercase.",
+    )
+    primaryEmail: str | None = Field(
+        default=None,
+        description="First registered email if available.",
+    )
 
 
 class ScheduleDTO(BaseModel):

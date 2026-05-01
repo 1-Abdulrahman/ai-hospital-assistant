@@ -3,6 +3,24 @@ from __future__ import annotations
 from app.modules.otp import service
 
 
+class FakeFhirClient:
+    async def find_patient_by_identifier(
+        self,
+        *,
+        patient_key_hash: str,
+        tenant_id: str | None = None,
+    ):
+        return None
+
+    async def save_patient_email_if_missing(
+        self,
+        *,
+        tenant_id: str,
+        patient_key_hash: str,
+        email: str,
+    ):
+        return None
+
 def otp_headers() -> dict[str, str]:
     return {
         "X-Tenant-Id": "demo",
@@ -31,6 +49,11 @@ def test_otp_request_success(client, monkeypatch) -> None:
         "send_otp_email",
         lambda **kwargs: None,
     )
+    monkeypatch.setattr(
+        service,
+        "FhirClient",
+        lambda: FakeFhirClient(),
+    )
 
     response = client.post(
         "/otp/request",
@@ -55,6 +78,11 @@ def test_otp_verify_success(client, monkeypatch) -> None:
         captured["otp"] = otp
 
     monkeypatch.setattr(service, "send_otp_email", fake_send_otp_email)
+    monkeypatch.setattr(
+        service,
+        "FhirClient",
+        lambda: FakeFhirClient(),
+    )
 
     request_response = client.post(
         "/otp/request",
