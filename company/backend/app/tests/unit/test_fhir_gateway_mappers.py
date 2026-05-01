@@ -9,6 +9,7 @@ from app.modules.fhir_gateway.mappers import (
     map_schedule_resource_to_dto,
     map_slot_bundle_to_dtos,
     map_slot_resource_to_dto,
+    map_medication_request_bundle_to_signals,
 )
 
 
@@ -276,3 +277,60 @@ def test_continuity_signals_uses_latest_appointment() -> None:
     assert signals.totalAppointments == 2
     assert signals.lastAppointmentStartUtc == "2026-04-05T09:00:00Z"
     assert signals.lastPractitionerRef == "Practitioner/prac-2"
+    
+def test_map_medication_request_bundle_includes_refill_metadata() -> None:
+    bundle = {
+        "resourceType": "Bundle",
+        "entry": [
+            {
+                "resource": {
+                    "resourceType": "MedicationRequest",
+                    "id": "medreq-1",
+                    "status": "active",
+                    "intent": "order",
+                    "medicationCodeableConcept": {
+                        "text": "Metformin 500 mg tablet",
+                    },
+                    "authoredOn": "2026-04-01",
+                    "dosageInstruction": [
+                        {
+                            "text": "Take one tablet twice daily.",
+                        }
+                    ],
+                    "dispenseRequest": {
+                        "numberOfRepeatsAllowed": 2,
+                        "validityPeriod": {
+                            "start": "2026-04-01",
+                            "end": "2026-12-31T23:59:00Z",
+                        },
+                        "quantity": {
+                            "value": 30,
+                            "unit": "tablets",
+                        },
+                        "expectedSupplyDuration": {
+                            "value": 30,
+                            "unit": "days",
+                        },
+                    },
+                }
+            }
+        ],
+    }
+
+    result = map_medication_request_bundle_to_signals(
+        patient_ref="Patient/patient-1",
+        bundle=bundle,
+    )
+
+    assert result.patientFound is True
+    assert result.eligible is True
+    assert len(result.items) == 1
+
+    item = result.items[0]
+    assert item.medicationRequestRef == "MedicationRequest/medreq-1"
+    assert item.medicationDisplay == "Metformin 500 mg tablet"
+    assert item.numberOfRepeatsAllowed == 2
+    assert item.validityPeriodEnd == "2026-12-31T23:59:00Z"
+    assert item.quantityText == "30 tablets"
+    assert item.expectedSupplyDurationText == "30 days"
+    assert item.refillStatus == "READY_FOR_REFILL_REQUEST"

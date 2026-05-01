@@ -62,13 +62,18 @@ def render_renewal_confirmation_email(
     *,
     renewal_item_label: str | None,
     correlation_id: str | None,
+    refill_task_ref: str | None = None,
 ) -> tuple[str, str]:
-    subject = "Medication Renewal Request Confirmation"
+    subject = "Medication Renewal Refill Request Confirmation"
 
     body = (
-        "Your medication renewal request has been recorded successfully.\n\n"
+        "Your medication refill request has been submitted successfully and is pending "
+        "clinical/pharmacy fulfillment.\n\n"
         f"Medication: {renewal_item_label or 'Selected medication'}\n"
+        f"FHIR Task Reference: {refill_task_ref or 'N/A'}\n"
         f"Correlation ID: {correlation_id or 'N/A'}\n\n"
+        "The assistant did not approve, prescribe, or dispense medication. "
+        "Clinical/pharmacy fulfillment will continue outside the assistant.\n\n"
         "For demo, open MailHog at http://localhost:8025 to read the message."
     )
 

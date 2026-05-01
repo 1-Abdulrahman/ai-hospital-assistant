@@ -227,10 +227,12 @@ def queue_renewal_confirmation_email(
     correlation_id: str | None,
     to_email: str,
     renewal_item_label: str | None,
+    refill_task_ref: str | None = None,
 ) -> None:
     subject, body = render_renewal_confirmation_email(
         renewal_item_label=renewal_item_label,
         correlation_id=correlation_id,
+        refill_task_ref=refill_task_ref,
     )
 
     _queue_email_notification(
@@ -245,5 +247,8 @@ def queue_renewal_confirmation_email(
         notification_type="renewal_confirmation",
         queued_summary="Renewal confirmation email queued for delivery.",
         success_summary="Renewal confirmation email sent successfully.",
-        extra_payload={"renewalItemLabel": renewal_item_label},
+        extra_payload={
+            "renewalItemLabel": renewal_item_label,
+            "refillTaskRef": refill_task_ref,
+        },
     )

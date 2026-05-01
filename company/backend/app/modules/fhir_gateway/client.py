@@ -20,6 +20,7 @@ from app.modules.fhir_gateway.mappers import (
     map_slot_bundle_to_dtos,
     map_slot_resource_to_dto,
     extract_patient_emails,
+    map_task_resource_to_refill_task_dto,
 )
 from app.modules.fhir_gateway.reason_codes import (
     APPOINTMENT_CONFLICT,
@@ -30,6 +31,7 @@ from app.modules.fhir_gateway.reason_codes import (
     PATIENT_NOT_FOUND,
     SLOT_NO_LONGER_AVAILABLE,
     FhirGatewayError,
+    TASK_CREATE_FAILED,
 )
 from app.modules.fhir_gateway.schemas import (
     AppointmentDTO,
@@ -38,6 +40,7 @@ from app.modules.fhir_gateway.schemas import (
     PatientSummaryDTO,
     ScheduleDTO,
     SlotDTO,
+    MedicationRefillTaskDTO,
 )
 
 SPECIALTY_SYSTEM = "urn:ai-hospital-assistant:specialty"
@@ -469,6 +472,135 @@ class FhirClient:
         return map_medication_request_bundle_to_signals(
             patient_ref=patient_ref,
             bundle=med_bundle,
+        )
+        
+        
+    async def create_medication_refill_task(
+        self,
+        *,
+        patient_ref: str,
+        medication_request_ref: str,
+        medication_label: str | None = None,
+        refill_status: str | None = None,
+        refill_status_message: str | None = None,
+        correlation_id: str | None = None,
+    ) -> MedicationRefillTaskDTO:
+        patient_reference = _ensure_reference("Patient", patient_ref)
+        medication_request_reference = _ensure_reference(
+            "MedicationRequest",
+            medication_request_ref,
+        )
+
+        input_items: list[dict[str, Any]] = [
+            {
+                "type": {"text": "Selected medication request"},
+                "valueReference": {"reference": medication_request_reference},
+            }
+        ]
+
+        if medication_label:
+            input_items.append(
+                {
+                    "type": {"text": "Medication display"},
+                    "valueString": medication_label,
+                }
+            )
+
+        if refill_status:
+            input_items.append(
+                {
+                    "type": {"text": "Assistant refill status"},
+                    "valueString": refill_status,
+                }
+            )
+
+        if refill_status_message:
+            input_items.append(
+                {
+                    "type": {"text": "Assistant refill status message"},
+                    "valueString": refill_status_message,
+                }
+            )
+
+        if correlation_id:
+            input_items.append(
+                {
+                    "type": {"text": "Assistant correlation id"},
+                    "valueString": correlation_id,
+                }
+            )
+
+        resource: dict[str, Any] = {
+            "resourceType": "Task",
+            "status": "requested",
+            "intent": "proposal",
+            "priority": "routine",
+            "code": {
+                "text": "Medication refill request",
+            },
+            "description": (
+                "Patient requested refill processing for an existing active medication request. "
+                "Pending clinical/pharmacy fulfillment."
+            ),
+            "for": {
+                "reference": patient_reference,
+            },
+            "focus": {
+                "reference": medication_request_reference,
+            },
+            "authoredOn": _utc_now_iso(),
+            "requester": {
+                "display": "Patient via AI Hospital Assistant MVP",
+            },
+            "owner": {
+                "display": "Clinical medication refill queue",
+            },
+            "businessStatus": {
+                "text": "Pending clinical/pharmacy fulfillment",
+            },
+            "note": [
+                {
+                    "text": (
+                        "Created after OTP verification. "
+                        "The assistant did not approve, prescribe, or dispense medication."
+                    )
+                }
+            ],
+            "input": input_items,
+        }
+
+        response = await self._request(
+            "POST",
+            "/Task",
+            json=resource,
+            headers={"Content-Type": "application/fhir+json"},
+            retry_on_read=False,
+        )
+
+        if response.status_code in {200, 201}:
+            return map_task_resource_to_refill_task_dto(self._json_or_empty(response))
+
+        if response.status_code == 503:
+            raise FhirGatewayError(
+                reason_code=FHIR_UNAVAILABLE,
+                user_message="FHIR service is unavailable while creating refill request.",
+                status_code=503,
+                details=self._operation_outcome_text(response),
+            )
+
+        if 400 <= response.status_code < 500:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Refill request was rejected by FHIR.",
+                status_code=response.status_code,
+                details=self._operation_outcome_text(response),
+            )
+
+        raise FhirGatewayError(
+            reason_code=TASK_CREATE_FAILED,
+            user_message="Medication refill request could not be submitted to FHIR.",
+            status_code=503,
+            details=self._operation_outcome_text(response),
         )
 
     async def search_schedules(

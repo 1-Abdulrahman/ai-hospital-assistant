@@ -670,6 +670,51 @@ def test_chat_confirm_renewal_sends_confirmation_notification(
 ) -> None:
     sent_messages: list[dict] = []
 
+    class FakeRenewalItem:
+        medicationRequestRef = "MedicationRequest/1"
+        medicationDisplay = "Metformin"
+        dosageText = "500 mg twice daily"
+        refillStatus = "READY_FOR_REFILL_REQUEST"
+        refillStatusMessage = (
+            "This medication can be submitted as a refill request pending "
+            "clinical/pharmacy fulfillment."
+        )
+
+    class FakeRenewalSignals:
+        patientRef = "Patient/patient-1"
+        patientFound = True
+        eligible = True
+        items = [FakeRenewalItem()]
+
+    class FakeRefillTask:
+        taskId = "task-refill-1"
+        taskRef = "Task/task-refill-1"
+        status = "requested"
+        intent = "proposal"
+        businessStatus = "Pending clinical/pharmacy fulfillment"
+        patientRef = "Patient/patient-1"
+        medicationRequestRef = "MedicationRequest/1"
+
+    class FakeFhirClient:
+        async def get_medication_renewal_signals(self, *, patient_key_hash: str):
+            return FakeRenewalSignals()
+
+        async def create_medication_refill_task(
+            self,
+            *,
+            patient_ref: str,
+            medication_request_ref: str,
+            medication_label: str | None = None,
+            refill_status: str | None = None,
+            refill_status_message: str | None = None,
+            correlation_id: str | None = None,
+        ):
+            assert patient_ref == "Patient/patient-1"
+            assert medication_request_ref == "MedicationRequest/1"
+            assert medication_label in {"MedicationRequest/1", "Metformin"}
+            assert refill_status == "READY_FOR_REFILL_REQUEST"
+            return FakeRefillTask()
+
     def fake_send_plain_text_email(*, to_email: str, subject: str, body: str) -> None:
         sent_messages.append(
             {
@@ -699,7 +744,27 @@ def test_chat_confirm_renewal_sends_confirmation_notification(
             verified=True,
         )
     )
+
+    db_session.add(
+        AssistantSession(
+            id="assistant-session-renewal-1",
+            tenant_id="demo",
+            client_session_id="patient-session-001",
+            current_state="AWAITING_CONFIRMATION",
+            flow_mode="renewal",
+            renewal_item_id="MedicationRequest/1",
+            renewal_item_label="Metformin",
+            renewal_patient_key_hash=patient_key_hash,
+            renewal_patient_ref="Patient/patient-1",
+        )
+    )
+
     db_session.commit()
+
+    monkeypatch.setattr(
+        "app.modules.orchestration.service.FhirClient",
+        lambda: FakeFhirClient(),
+    )
 
     monkeypatch.setattr(
         "app.modules.notification.service.send_plain_text_email",
@@ -719,32 +784,20 @@ def test_chat_confirm_renewal_sends_confirmation_notification(
         },
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 200, response.json()
+
     body = response.json()
     assert body["confirmationType"] == "renewal"
+    assert body["confirmationSummary"]["renewalItemLabel"] == "Metformin"
+    assert body["confirmationSummary"]["refillTaskRef"] == "Task/task-refill-1"
+    assert "pending clinical/pharmacy fulfillment" in body["userMessage"]
 
     assert len(sent_messages) == 1
     assert sent_messages[0]["to_email"] == "patient@example.com"
-    assert "Medication Renewal Request Confirmation" in sent_messages[0]["subject"]
-
-    requested_event = (
-        db_session.query(Event)
-        .filter(Event.event_type == "NOTIFICATION_REQUESTED")
-        .order_by(Event.ts_utc.desc())
-        .first()
-    )
-    sent_event = (
-        db_session.query(Event)
-        .filter(Event.event_type == "NOTIFICATION_SENT")
-        .order_by(Event.ts_utc.desc())
-        .first()
-    )
-
-    assert requested_event is not None
-    assert sent_event is not None
-
-    requested_payload = json.loads(requested_event.payload_json)
-    assert requested_payload["notificationType"] == "renewal_confirmation"
+    assert "Medication Renewal Refill Request Confirmation" in sent_messages[0]["subject"]
+    assert "Metformin" in sent_messages[0]["body"]
+    assert "Task/task-refill-1" in sent_messages[0]["body"]
+    assert "pending clinical/pharmacy fulfillment" in sent_messages[0]["body"]
 
 
 

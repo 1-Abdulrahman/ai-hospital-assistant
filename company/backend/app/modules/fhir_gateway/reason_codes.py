@@ -9,6 +9,7 @@ SLOT_NO_LONGER_AVAILABLE = "SLOT_NO_LONGER_AVAILABLE"
 APPOINTMENT_CONFLICT = "APPOINTMENT_CONFLICT"
 APPOINTMENT_CREATE_FAILED = "APPOINTMENT_CREATE_FAILED"
 INVALID_REQUEST = "INVALID_REQUEST"
+TASK_CREATE_FAILED = "TASK_CREATE_FAILED"
 
 
 DEFAULT_MESSAGES: dict[str, str] = {
@@ -20,6 +21,7 @@ DEFAULT_MESSAGES: dict[str, str] = {
     APPOINTMENT_CONFLICT: "Appointment conflicts with an existing booking.",
     APPOINTMENT_CREATE_FAILED: "Appointment could not be created.",
     INVALID_REQUEST: "FHIR request is invalid.",
+    TASK_CREATE_FAILED: "FHIR Task could not be created.",
 }
 
 
@@ -28,7 +30,7 @@ def message_for(reason_code: str) -> str:
 
 
 def default_status_code_for(reason_code: str) -> int:
-    if reason_code in {FHIR_UNAVAILABLE, FHIR_TIMEOUT, APPOINTMENT_CREATE_FAILED}:
+    if reason_code in {FHIR_UNAVAILABLE, FHIR_TIMEOUT, APPOINTMENT_CREATE_FAILED, TASK_CREATE_FAILED}:
         return 503
     if reason_code in {APPOINTMENT_CONFLICT, SLOT_NO_LONGER_AVAILABLE}:
         return 409

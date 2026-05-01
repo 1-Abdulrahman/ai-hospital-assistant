@@ -146,6 +146,7 @@ class ConfirmationSummary(BaseModel):
     date: str | None = None
     slotLabel: str | None = None
     renewalItemLabel: str | None = None
+    refillTaskRef: str | None = None
 
 
 class ChatResponse(BaseModel):

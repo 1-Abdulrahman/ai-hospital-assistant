@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from typing import Any
 
 from app.modules.fhir_gateway.schemas import (
@@ -10,6 +12,7 @@ from app.modules.fhir_gateway.schemas import (
     PatientSummaryDTO,
     ScheduleDTO,
     SlotDTO,
+    MedicationRefillTaskDTO,
 )
 
 TENANT_IDENTIFIER_SYSTEM = "urn:ai-hospital-assistant:tenant-id"
@@ -495,6 +498,16 @@ def map_medication_request_bundle_to_signals(
         if not isinstance(resource_id, str) or not resource_id.strip():
             continue
 
+        dispense_request = resource.get("dispenseRequest")
+        if not isinstance(dispense_request, dict):
+            dispense_request = {}
+
+        validity_period = dispense_request.get("validityPeriod")
+        if not isinstance(validity_period, dict):
+            validity_period = {}
+
+        refill_status, refill_status_message = _refill_status_for_medication_request(resource)
+
         items.append(
             MedicationRenewalItemDTO(
                 medicationRequestRef=f"MedicationRequest/{resource_id.strip()}",
@@ -506,6 +519,21 @@ def map_medication_request_bundle_to_signals(
                 if isinstance(resource.get("authoredOn"), str)
                 else None,
                 dosageText=_safe_dosage_text(resource),
+                validityPeriodStart=validity_period.get("start")
+                if isinstance(validity_period.get("start"), str)
+                else None,
+                validityPeriodEnd=validity_period.get("end")
+                if isinstance(validity_period.get("end"), str)
+                else None,
+                numberOfRepeatsAllowed=_safe_int(
+                    dispense_request.get("numberOfRepeatsAllowed")
+                ),
+                quantityText=_safe_quantity_text(dispense_request.get("quantity")),
+                expectedSupplyDurationText=_safe_duration_text(
+                    dispense_request.get("expectedSupplyDuration")
+                ),
+                refillStatus=refill_status,
+                refillStatusMessage=refill_status_message,
             )
         )
 
@@ -514,4 +542,133 @@ def map_medication_request_bundle_to_signals(
         patientFound=patient_ref is not None,
         eligible=len(items) > 0,
         items=items,
+    )
+    
+    
+def _safe_quantity_text(value: Any) -> str | None:
+    if not isinstance(value, dict):
+        return None
+
+    quantity_value = value.get("value")
+    unit = value.get("unit") or value.get("code")
+
+    if quantity_value is None and not unit:
+        return None
+
+    if quantity_value is None:
+        return str(unit)
+
+    if unit:
+        return f"{quantity_value} {unit}"
+
+    return str(quantity_value)
+
+
+def _safe_duration_text(value: Any) -> str | None:
+    if not isinstance(value, dict):
+        return None
+
+    duration_value = value.get("value")
+    unit = value.get("unit") or value.get("code")
+
+    if duration_value is None and not unit:
+        return None
+
+    if duration_value is None:
+        return str(unit)
+
+    if unit:
+        return f"{duration_value} {unit}"
+
+    return str(duration_value)
+
+
+def _safe_int(value: Any) -> int | None:
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    return None
+
+
+def _refill_status_for_medication_request(resource: dict[str, Any]) -> tuple[str, str]:
+    status = str(resource.get("status") or "").strip().lower()
+    dispense_request = resource.get("dispenseRequest")
+    if not isinstance(dispense_request, dict):
+        dispense_request = {}
+
+    repeats = _safe_int(dispense_request.get("numberOfRepeatsAllowed"))
+    validity = dispense_request.get("validityPeriod")
+    if not isinstance(validity, dict):
+        validity = {}
+
+    validity_end = validity.get("end") if isinstance(validity.get("end"), str) else None
+
+    if status != "active":
+        return (
+            "NOT_ACTIVE",
+            "This medication request is not active and requires clinical review.",
+        )
+
+    if validity_end:
+        try:
+            validity_end_dt = datetime.fromisoformat(validity_end.replace("Z", "+00:00"))
+            if validity_end_dt < datetime.now(timezone.utc):
+                return (
+                    "EXPIRED_REQUEST",
+                    "The source medication request appears expired and requires clinical review.",
+                )
+        except ValueError:
+            return (
+                "REQUIRES_CLINICAL_REVIEW",
+                "The validity period could not be interpreted and requires clinical review.",
+            )
+
+    if repeats is None:
+        return (
+            "REFILL_RULE_UNKNOWN",
+            "Refill repeat rules are not available and clinical review is required.",
+        )
+
+    if repeats <= 0:
+        return (
+            "NO_REPEATS_AUTHORIZED",
+            "No repeats are authorized in the source medication request.",
+        )
+
+    return (
+        "READY_FOR_REFILL_REQUEST",
+        "This medication can be submitted as a refill request pending clinical/pharmacy fulfillment.",
+    )
+    
+    
+def map_task_resource_to_refill_task_dto(resource: dict[str, Any]) -> MedicationRefillTaskDTO:
+    task_id = str(resource.get("id") or "unknown")
+    task_ref = f"Task/{task_id}"
+
+    business_status = None
+    raw_business_status = resource.get("businessStatus")
+    if isinstance(raw_business_status, dict):
+        text = raw_business_status.get("text")
+        if isinstance(text, str):
+            business_status = text
+
+    patient_ref = None
+    raw_for = resource.get("for")
+    if isinstance(raw_for, dict) and isinstance(raw_for.get("reference"), str):
+        patient_ref = raw_for["reference"]
+
+    medication_request_ref = None
+    raw_focus = resource.get("focus")
+    if isinstance(raw_focus, dict) and isinstance(raw_focus.get("reference"), str):
+        medication_request_ref = raw_focus["reference"]
+
+    return MedicationRefillTaskDTO(
+        taskId=task_id,
+        taskRef=task_ref,
+        status=str(resource.get("status") or "unknown"),
+        intent=resource.get("intent") if isinstance(resource.get("intent"), str) else None,
+        businessStatus=business_status,
+        patientRef=patient_ref,
+        medicationRequestRef=medication_request_ref,
     )

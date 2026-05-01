@@ -27,8 +27,12 @@ def test_render_renewal_confirmation_email_contains_expected_fields() -> None:
     subject, body = render_renewal_confirmation_email(
         renewal_item_label="Metformin",
         correlation_id="corr-456",
+        refill_task_ref="Task/task-refill-1",
     )
 
-    assert "Medication Renewal Request Confirmation" in subject
+    assert "Medication Renewal Refill Request Confirmation" in subject
     assert "Metformin" in body
     assert "corr-456" in body
+    assert "Task/task-refill-1" in body
+    assert "pending clinical/pharmacy fulfillment" in body
+    assert "did not approve, prescribe, or dispense" in body

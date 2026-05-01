@@ -744,3 +744,49 @@ async def test_search_slots_sends_start_filter_and_page_size(monkeypatch) -> Non
     assert ("status", "free") in observed_params
     assert ("start", "ge2026-04-13T20:19:18Z") in observed_params
     assert ("_count", "200") in observed_params
+    
+    
+@pytest.mark.asyncio
+async def test_create_medication_refill_task_posts_task_resource(monkeypatch) -> None:
+    captured = {}
+
+    def router(*, method, url, params=None, json_payload=None, headers=None):
+        captured["method"] = method
+        captured["url"] = url
+        captured["json"] = json_payload
+        captured["headers"] = headers
+
+        assert method == "POST"
+        assert url.endswith("/Task")
+        assert headers == {"Content-Type": "application/fhir+json"}
+
+        resource = dict(json_payload)
+        resource["id"] = "task-refill-1"
+        return FakeResponse(201, resource)
+
+    install_router(monkeypatch, router)
+
+    task = await FhirClient().create_medication_refill_task(
+        patient_ref="Patient/patient-1",
+        medication_request_ref="MedicationRequest/medreq-1",
+        medication_label="Metformin",
+        refill_status="READY_FOR_REFILL_REQUEST",
+        refill_status_message="Ready for refill request intake.",
+        correlation_id="corr-123",
+    )
+
+    assert task.taskId == "task-refill-1"
+    assert task.taskRef == "Task/task-refill-1"
+    assert task.status == "requested"
+    assert task.intent == "proposal"
+    assert task.businessStatus == "Pending clinical/pharmacy fulfillment"
+    assert task.patientRef == "Patient/patient-1"
+    assert task.medicationRequestRef == "MedicationRequest/medreq-1"
+
+    payload = captured["json"]
+    assert payload["resourceType"] == "Task"
+    assert payload["status"] == "requested"
+    assert payload["intent"] == "proposal"
+    assert payload["for"]["reference"] == "Patient/patient-1"
+    assert payload["focus"]["reference"] == "MedicationRequest/medreq-1"
+    assert payload["businessStatus"]["text"] == "Pending clinical/pharmacy fulfillment"

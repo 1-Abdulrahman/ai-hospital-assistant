@@ -78,9 +78,26 @@ class MedicationRenewalItemDTO(BaseModel):
     authoredOn: str | None = None
     dosageText: str | None = None
 
+    validityPeriodStart: str | None = None
+    validityPeriodEnd: str | None = None
+    numberOfRepeatsAllowed: int | None = None
+    quantityText: str | None = None
+    expectedSupplyDurationText: str | None = None
+    refillStatus: str = "REQUIRES_CLINICAL_REVIEW"
+    refillStatusMessage: str = "Clinical review is required before fulfillment."
+
 
 class MedicationRenewalSignalsDTO(BaseModel):
     patientRef: str | None = None
     patientFound: bool = False
     eligible: bool = False
     items: list[MedicationRenewalItemDTO] = Field(default_factory=list)
+    
+class MedicationRefillTaskDTO(BaseModel):
+    taskId: str
+    taskRef: str
+    status: str
+    intent: str | None = None
+    businessStatus: str | None = None
+    patientRef: str | None = None
+    medicationRequestRef: str | None = None

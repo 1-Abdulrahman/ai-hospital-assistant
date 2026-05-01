@@ -11,6 +11,7 @@ from fastapi import BackgroundTasks
 
 from sqlalchemy.orm import Session
 
+from app.modules.fhir_gateway.reason_codes import FhirGatewayError
 from app.api.schemas.chat import ConfirmationSummary
 from app.core.correlation import get_correlation_id
 from app.db.models import AssistantSession
@@ -352,20 +353,51 @@ def _specialty_selection_list(*, candidates: list[dict] | None = None) -> list[d
 
 
 def _renewal_items_selection_list(items: list[Any]) -> list[dict]:
-    return [
-        {
-            "type": "medication",
-            "items": [
-                _selection_item(
-                    item_id=item.medicationRequestRef,
-                    label=item.medicationDisplay,
-                    description=item.dosageText or "Eligible for renewal request.",
-                )
-                for item in items
-            ],
-        }
-    ]
+    selection_items: list[dict] = []
 
+    for item in items:
+        description_parts: list[str] = []
+
+        if getattr(item, "dosageText", None):
+            description_parts.append(item.dosageText)
+
+        refill_message = getattr(item, "refillStatusMessage", None)
+        if refill_message:
+            description_parts.append(refill_message)
+
+        repeats = getattr(item, "numberOfRepeatsAllowed", None)
+        if repeats is not None:
+            description_parts.append(f"Repeats allowed in source request: {repeats}")
+
+        validity_end = getattr(item, "validityPeriodEnd", None)
+        if validity_end:
+            description_parts.append(f"Validity end: {validity_end}")
+
+        selection_items.append(
+            _selection_item(
+                item_id=item.medicationRequestRef,
+                label=item.medicationDisplay,
+                description=" | ".join(description_parts)
+                or "Available for refill request intake.",
+            )
+        )
+
+    return [{"type": "medication", "items": selection_items}]
+
+
+def _find_selected_renewal_item(
+    items: list[Any],
+    medication_request_ref: str,
+) -> Any | None:
+    target = (medication_request_ref or "").strip()
+    if not target:
+        return None
+
+    for item in items:
+        if getattr(item, "medicationRequestRef", None) == target:
+            return item
+
+    return None
 
 def _slot_to_mapping(slot: Any) -> dict[str, Any]:
     """
@@ -1872,6 +1904,77 @@ async def process_confirm(
                 details=exc.details,
             ) from exc
 
+        if session.renewal_patient_key_hash and session.renewal_patient_key_hash != patient_key_hash:
+            raise ChatOrchestrationError(
+                reason_code="INVALID_REQUEST",
+                user_message="The verified identity does not match the renewal request identity.",
+                status_code=409,
+            )
+
+        if not session.renewal_patient_ref:
+            raise ChatOrchestrationError(
+                reason_code="PATIENT_NOT_FOUND",
+                user_message="Patient record is required before submitting a refill request.",
+                status_code=409,
+            )
+
+        fhir_client = FhirClient()
+
+        try:
+            renewal_signals = await fhir_client.get_medication_renewal_signals(
+                patient_key_hash=patient_key_hash,
+            )
+        except FhirGatewayError as exc:
+            raise ChatOrchestrationError(
+                reason_code=exc.reason_code,
+                user_message="Medication refill candidates could not be revalidated.",
+                status_code=exc.status_code,
+                details=exc.details,
+            ) from exc
+
+        selected_renewal_item = _find_selected_renewal_item(
+            renewal_signals.items,
+            resolved_renewal_item_id,
+        )
+
+        if selected_renewal_item is None:
+            raise ChatOrchestrationError(
+                reason_code="INVALID_REQUEST",
+                user_message="Selected medication is no longer available for refill request submission.",
+                status_code=409,
+            )
+
+        try:
+            refill_task = await fhir_client.create_medication_refill_task(
+                patient_ref=session.renewal_patient_ref,
+                medication_request_ref=resolved_renewal_item_id,
+                medication_label=resolved_renewal_item_label,
+                refill_status=getattr(selected_renewal_item, "refillStatus", None),
+                refill_status_message=getattr(selected_renewal_item, "refillStatusMessage", None),
+                correlation_id=get_correlation_id(),
+            )
+        except FhirGatewayError as exc:
+            emit_event(
+                db=db,
+                tenant_id=body_tenant_id,
+                session_id=client_session_id,
+                actor_type="system",
+                event_type="SESSION_DROPPED",
+                outcome="FAILURE",
+                reason_code=exc.reason_code,
+                payload={
+                    "component": "assistant-api",
+                    "safeSummary": "Medication refill request could not be submitted to FHIR.",
+                },
+            )
+            db.commit()
+            raise ChatOrchestrationError(
+                reason_code=exc.reason_code,
+                user_message="Medication refill request could not be submitted. Please try again later.",
+                status_code=exc.status_code,
+                details=exc.details,
+            ) from exc
+
         _transition_session(session, COMPLETED)
 
         emit_event(
@@ -1884,7 +1987,10 @@ async def process_confirm(
             reason_code=OK,
             payload={
                 "component": "assistant-api",
-                "safeSummary": "Medication renewal flow completed successfully.",
+                "safeSummary": "Medication refill request submitted for clinical/pharmacy fulfillment.",
+                "renewalItemLabel": resolved_renewal_item_label,
+                "renewalItemId": resolved_renewal_item_id,
+                "refillTaskRef": refill_task.taskRef,
             },
         )
 
@@ -1893,6 +1999,7 @@ async def process_confirm(
         summary = ConfirmationSummary(
             correlationId=get_correlation_id(),
             renewalItemLabel=resolved_renewal_item_label,
+            refillTaskRef=refill_task.taskRef,
         )
 
         queue_renewal_confirmation_email(
@@ -1903,10 +2010,14 @@ async def process_confirm(
             correlation_id=get_correlation_id(),
             to_email=normalize_email(email),
             renewal_item_label=resolved_renewal_item_label,
+            refill_task_ref=refill_task.taskRef,
         )
 
         return _response(
-            user_message="Medication renewal request recorded successfully.",
+            user_message=(
+                "Medication refill request submitted successfully and is pending "
+                "clinical/pharmacy fulfillment."
+            ),
             confirmation_type="renewal",
             confirmation_summary=summary.model_dump(exclude_none=True),
         )
