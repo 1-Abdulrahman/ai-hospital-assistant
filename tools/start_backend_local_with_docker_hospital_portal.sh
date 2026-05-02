@@ -273,13 +273,17 @@ fi
 
 if [[ "$CLEAN_START" -eq 1 ]]; then
   echo "==> Clean starting Docker services"
-  docker stop company-fhir company-mailhog hospital-ui company-portal-ui >/dev/null 2>&1 || true
-  docker rm company-fhir company-mailhog hospital-ui company-portal-ui >/dev/null 2>&1 || true
+  docker stop hospital-fhir company-mailhog hospital-ui company-portal-ui >/dev/null 2>&1 || true
+  docker rm hospital-fhir company-mailhog hospital-ui company-portal-ui >/dev/null 2>&1 || true
 fi
 
-echo "==> Starting FHIR and MailHog in Docker"
+echo "==> Starting hospital FHIR in Docker"
+cd "$HOSPITAL_DIR"
+docker compose up -d fhir
+
+echo "==> Starting MailHog in Docker"
 cd "$COMPANY_DIR"
-docker compose up -d fhir mailhog
+docker compose up -d mailhog
 
 if [[ "$WITH_HOSPITAL_UI" -eq 1 ]]; then
   echo "==> Starting Hospital UI in Docker"
