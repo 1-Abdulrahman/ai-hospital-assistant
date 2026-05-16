@@ -14,6 +14,13 @@ import { Link } from 'react-router-dom';
 import { format, subDays } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+// Sessions
+//
+// Admin page for monitoring patient chat sessions. Shows all active, completed, dropped,
+// and failed sessions with filtering by date range and status. Tenant admins see their
+// scoped sessions only; platform admins can filter by tenant. Links to detailed traces
+// and request history for each session.
+
 export default function SessionsPage() {
   const { isTenantAdmin } = useAuth();
   const today = format(new Date(), 'yyyy-MM-dd');

@@ -6,7 +6,14 @@ import { useApiCall } from '@/hooks/useApiCall';
 import { safeFormatDate } from '@/lib/safeDate';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
+// NlpMonitoring
+//
+// Admin monitoring page for NLP model health and recent classifications.
+// Displays model metadata, thresholds, and a live feed of predictions made
+// by the backend's natural language processing pipeline.
+
 export default function NlpMonitoringPage() {
+  // Fetch NLP model statistics (loaded labels, model name/version, thresholds).
   const {
     data: stats,
     loading: statsLoading,
@@ -14,6 +21,7 @@ export default function NlpMonitoringPage() {
     refetch: refetchStats,
   } = useApiCall((api) => api.getNlpStats(), []);
 
+  // Fetch the 20 most recent NLP classifications for audit and monitoring.
   const {
     data: recent,
     loading: recentLoading,
@@ -25,6 +33,7 @@ export default function NlpMonitoringPage() {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">NLP Monitoring</h2>
 
+      {/* Model stats cards: loaded labels, name, version, and thresholds. */}
       <div className="grid gap-4 md:grid-cols-4">
         {statsLoading && Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24" />)}
         {statsError && <ErrorBanner error={statsError} onRetry={refetchStats} />}
@@ -51,6 +60,7 @@ export default function NlpMonitoringPage() {
             <Card>
               <CardContent className="pt-4">
                 <div className="space-y-1 text-xs">
+                  {/* Display classification thresholds used by the NLP pipeline. */}
                   {Object.entries(stats.thresholds || {}).map(([key, value]) => (
                     <div key={key}>
                       {key}: {value}
@@ -64,6 +74,7 @@ export default function NlpMonitoringPage() {
         )}
       </div>
 
+      {/* Recent classifications table for audit and model behavior inspection. */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Recent NLP classifications</CardTitle>
@@ -87,12 +98,15 @@ export default function NlpMonitoringPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
+                {/* Each row represents a classification decision made by the NLP model. */}
                 {recent.map((row, index) => (
                   <TableRow key={`${row.timestamp}-${row.predictedLabel}-${index}`}>
                     <TableCell className="text-xs">{safeFormatDate(row.timestamp)}</TableCell>
                     <TableCell className="text-sm">{row.inputSummary || 'N/A'}</TableCell>
                     <TableCell className="text-sm font-medium">{row.predictedLabel}</TableCell>
+                    {/* Confidence shown as a percentage (0–100). */}
                     <TableCell className="text-sm">{Math.round(row.confidence * 100)}%</TableCell>
+                    {/* Ambiguity flag: DEGRADED if ambiguous (low confidence or conflicting signals). */}
                     <TableCell>
                       <StatusBadge status={row.ambiguity ? 'DEGRADED' : 'SUCCESS'} />
                     </TableCell>
@@ -102,6 +116,7 @@ export default function NlpMonitoringPage() {
             </Table>
           )}
 
+          {/* Display the last time the NLP model was loaded/redeployed. */}
           {stats?.lastModelLoadTime && (
             <div className="mt-4 text-xs text-muted-foreground">
               Last model load: {safeFormatDate(stats.lastModelLoadTime)}

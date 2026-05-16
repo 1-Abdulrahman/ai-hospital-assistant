@@ -7,9 +7,18 @@ import { useApiCall } from '@/hooks/useApiCall';
 import { safeFormatDate } from '@/lib/safeDate';
 import { cn } from '@/lib/utils';
 
+// Tenants
+//
+// Admin page for managing and viewing tenant organizations.
+// Left panel shows a searchable catalog of all tenants; right panel displays
+// detailed configuration for the selected tenant including FHIR/SMTP status,
+// allowed origins, and feature flags.
+
 export default function TenantsPage() {
+  // Track which tenant is currently selected for detail view.
   const [selectedTenantId, setSelectedTenantId] = useState('');
 
+  // Fetch all tenants for the catalog list.
   const {
     data: tenants,
     loading: tenantsLoading,
@@ -17,12 +26,15 @@ export default function TenantsPage() {
     refetch: refetchTenants,
   } = useApiCall((api) => api.getTenants(), []);
 
+  // Auto-select first tenant when catalog loads (if no selection yet).
   useEffect(() => {
     if (!selectedTenantId && tenants && tenants.length > 0) {
       setSelectedTenantId(tenants[0].tenantId);
     }
   }, [tenants, selectedTenantId]);
 
+  // Fetch detailed configuration for the selected tenant.
+  // Conditional fetch: only runs when selectedTenantId is non-empty.
   const {
     data: tenantDetail,
     loading: detailLoading,
@@ -40,7 +52,9 @@ export default function TenantsPage() {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Tenants</h2>
 
+      {/* Two-column layout: tenant list (360px fixed) on left, details pane on right. */}
       <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+        {/* Left panel: scrollable tenant list with selection buttons. */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Tenant catalog</CardTitle>
@@ -52,7 +66,9 @@ export default function TenantsPage() {
               <p className="text-sm text-muted-foreground">No tenants found.</p>
             )}
 
+            {/* Each tenant renders as a selectable button with status badge and creation date. */}
             {tenants?.map((tenant) => (
+              {/* Selection highlight (primary border + background) when active. */}
               <button
                 key={tenant.tenantId}
                 type="button"
@@ -79,6 +95,7 @@ export default function TenantsPage() {
           </CardContent>
         </Card>
 
+        {/* Right panel: detailed tenant configuration and settings. */}
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Tenant detail</CardTitle>
@@ -87,6 +104,7 @@ export default function TenantsPage() {
             {detailLoading && <Skeleton className="h-64" />}
             {detailError && <ErrorBanner error={detailError} onRetry={refetchDetail} />}
 
+            {/* Tenant metadata grid: ID, name, status, FHIR/SMTP integration status. */}
             {tenantDetail && (
               <>
                 <div className="grid gap-4 md:grid-cols-2">
@@ -116,6 +134,7 @@ export default function TenantsPage() {
                   </div>
                 </div>
 
+                {/* Allowed origins: CORS whitelist for browser requests from this tenant's domains. */}
                 <div>
                   <div className="text-sm font-medium mb-2">Allowed origins</div>
                   <div className="space-y-2">
@@ -127,9 +146,11 @@ export default function TenantsPage() {
                   </div>
                 </div>
 
+                {/* Feature flags: tenant-specific feature toggles (ACTIVE or DOWN). */}
                 <div>
                   <div className="text-sm font-medium mb-2">Feature flags</div>
                   <div className="grid gap-2 md:grid-cols-2">
+                    {/* Each flag entry shows key name and toggle status. */}
                     {Object.entries(tenantDetail.featureFlags || {}).map(([key, value]) => (
                       <div key={key} className="rounded-md border p-3">
                         <div className="text-xs text-muted-foreground">{key}</div>
