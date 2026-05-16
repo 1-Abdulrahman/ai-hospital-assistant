@@ -67,15 +67,27 @@ class StateTransitionError(Exception):
 
 
 def transition_or_raise(*, current_state: str | None, target_state: str) -> str:
+    """Validate a state change and return the new state.
+
+    ``None`` is treated as ``NEW`` so callers can use this helper before a
+    conversation state has been persisted.
+    """
     current = current_state or NEW
     allowed = ALLOWED_TRANSITIONS.get(current, set())
     if target_state not in allowed:
         raise StateTransitionError(current_state=current, target_state=target_state)
     return target_state
 
+
 def reset_to_new_or_raise(*, current_state: str | None) -> str:
+    """Reset any supported workflow state back to ``NEW``.
+
+    This keeps the reset behavior explicit so unexpected states fail fast
+    instead of silently being normalized.
+    """
     current = current_state or NEW
 
+    # Only states that belong to this orchestration flow can be reset safely.
     resettable_states = {
         NEW,
         AWAITING_SPECIALTY_SELECTION,

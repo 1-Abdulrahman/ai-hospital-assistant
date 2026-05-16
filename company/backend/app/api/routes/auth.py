@@ -11,6 +11,7 @@ router = APIRouter(tags=["auth"])
 
 
 def _raise_http_error(*, status_code: int, message: str, reason_code: str, details: str | None = None) -> None:
+    """Raise a standardized API error payload for auth endpoints."""
     raise HTTPException(
         status_code=status_code,
         detail={
@@ -22,6 +23,7 @@ def _raise_http_error(*, status_code: int, message: str, reason_code: str, detai
 
 
 def _resolve_user_for_login(payload: LoginRequest, db: Session) -> PortalUser | None:
+    """Resolve a user from the login payload using supported identifier combinations."""
     if payload.tenantId and payload.email:
         return (
             db.query(PortalUser)
@@ -34,6 +36,7 @@ def _resolve_user_for_login(payload: LoginRequest, db: Session) -> PortalUser | 
 
     username = (payload.username or "").strip().lower()
 
+    # Keep backward compatibility with legacy/demo usernames used in local demos.
     if username in {"admin", "company_admin", "platform", "platform_admin"}:
         return (
             db.query(PortalUser)
@@ -54,6 +57,7 @@ def _resolve_user_for_login(payload: LoginRequest, db: Session) -> PortalUser | 
             .first()
         )
 
+    # Deterministic ordering avoids ambiguous user selection if email appears in many tenants.
     return (
         db.query(PortalUser)
         .filter(PortalUser.email == username)
@@ -64,6 +68,7 @@ def _resolve_user_for_login(payload: LoginRequest, db: Session) -> PortalUser | 
 
 @router.post("/auth/login", response_model=LoginResponse)
 def login(payload: LoginRequest, db: Session = Depends(get_db)) -> LoginResponse:
+    """Authenticate a portal user and return an access token response."""
     user = _resolve_user_for_login(payload, db)
 
     if user is None:

@@ -7,10 +7,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 COMPANY_DIR = BASE_DIR.parent
+# Load shared environment values from the top-level company/.env file so the
+# backend and sibling services can use a single local-dev configuration source.
 ENV_FILE = COMPANY_DIR / ".env"
 
 
 class Settings(BaseSettings):
+    """Application settings loaded from environment variables and .env files."""
+
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),
         env_file_encoding="utf-8",
@@ -47,6 +51,8 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
+    """Return a cached Settings instance for dependency injection and reuse."""
+
     return Settings()
 
 

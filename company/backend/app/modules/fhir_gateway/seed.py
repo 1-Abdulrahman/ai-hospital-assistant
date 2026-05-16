@@ -104,10 +104,12 @@ class ProviderSeedItem:
 
 
 def _normalize_display(value: str) -> str:
+    """Convert a snake_case or underscored value into title-cased display text."""
     return value.strip().replace("_", " ").title()
 
 
 def _sanitize_fhir_id(value: str) -> str:
+    """Normalize an identifier so it is safe to use as a FHIR resource id."""
     cleaned = value.strip().replace("_", "-").replace(" ", "-")
     cleaned = re.sub(r"[^A-Za-z0-9\-.]", "-", cleaned)
     cleaned = re.sub(r"-{2,}", "-", cleaned)
@@ -115,6 +117,7 @@ def _sanitize_fhir_id(value: str) -> str:
 
 
 def _extract_practitioner_id(practitioner_ref: str) -> str:
+    """Extract and validate the practitioner id from a Practitioner reference."""
     cleaned = practitioner_ref.strip()
     if not cleaned:
         raise ValueError("practitionerRef cannot be empty.")
@@ -130,24 +133,29 @@ def _extract_practitioner_id(practitioner_ref: str) -> str:
 
 
 def _to_utc_z(value: datetime) -> str:
+    """Render a timezone-aware datetime as an RFC 3339 UTC timestamp."""
     return value.astimezone(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def _schedule_id_for(item: ProviderSeedItem) -> str:
+    """Derive a stable schedule id for the provider seed item."""
     return _sanitize_fhir_id(f"sched-{item.specialty}-{item.practitioner_id}")
 
 
 def _slot_id_for(schedule_id: str, start_dt: datetime) -> str:
+    """Derive a stable slot id from the schedule and slot start time."""
     return _sanitize_fhir_id(
         f"slot-{schedule_id}-{start_dt.strftime('%Y%m%dT%H%M')}"
     )
 
 
 def _patient_id_for(patient_key_hash: str) -> str:
+    """Derive a stable patient id from the hashed patient key."""
     return _sanitize_fhir_id(f"patient-{patient_key_hash[:20]}")
 
 
 def _medication_request_id_for(patient_ref: str, medication_code: str) -> str:
+    """Derive a stable medication request id for a patient and medication."""
     patient_id = patient_ref.split("/", 1)[1]
     return _sanitize_fhir_id(f"medreq-{patient_id}-{medication_code}")
 
@@ -159,6 +167,7 @@ def _appointment_id_for(
     specialty: str,
     start_dt: datetime,
 ) -> str:
+    """Derive a stable appointment id for a patient, provider, and start time."""
     patient_id = patient_ref.split("/", 1)[1]
     practitioner_id = practitioner_ref.split("/", 1)[1]
     return _sanitize_fhir_id(
@@ -167,6 +176,7 @@ def _appointment_id_for(
 
 
 def _build_headers() -> dict[str, str]:
+    """Build the shared request headers for FHIR JSON resources."""
     return {
         "Content-Type": "application/fhir+json",
         "Accept": "application/fhir+json",
@@ -174,6 +184,7 @@ def _build_headers() -> dict[str, str]:
 
 
 def _load_provider_seed_items() -> list[ProviderSeedItem]:
+    """Load provider definitions from the static scheduling seed file."""
     if not PROVIDERS_PATH.exists():
         raise FileNotFoundError(f"Provider seed file not found: {PROVIDERS_PATH}")
 
@@ -220,6 +231,7 @@ def _load_provider_seed_items() -> list[ProviderSeedItem]:
 
 
 def _build_practitioner_resource(item: ProviderSeedItem) -> dict[str, Any]:
+    """Build a minimal Practitioner resource for the seeded provider."""
     return {
         "resourceType": "Practitioner",
         "id": item.practitioner_id,
@@ -246,6 +258,7 @@ def _build_schedule_resource(
     horizon_start_utc: str,
     horizon_end_utc: str,
 ) -> dict[str, Any]:
+    """Build a Schedule resource covering the seeded clinic horizon."""
     specialty_display = _normalize_display(item.specialty)
 
     return {
@@ -306,6 +319,7 @@ def _build_slot_resource(
     status: str = "free",
     comment: str | None = None,
 ) -> dict[str, Any]:
+    """Build a Slot resource while preserving status and optional notes."""
     specialty_display = _normalize_display(item.specialty)
 
     resource: dict[str, Any] = {
@@ -362,6 +376,7 @@ def _build_demo_patient_resource(
     display: str,
     email: str | None = None,
 ) -> dict[str, Any]:
+    """Build a seeded Patient resource with tenant and key identifiers."""
     resource: dict[str, Any] = {
         "resourceType": "Patient",
         "id": patient_id,
@@ -407,6 +422,7 @@ def _build_demo_medication_request_resource(
     display: str,
     dosage_text: str,
 ) -> dict[str, Any]:
+    """Build a MedicationRequest resource for a renewal demo patient."""
     return {
         "resourceType": "MedicationRequest",
         "id": med_request_id,
@@ -445,6 +461,7 @@ def _build_demo_appointment_resource(
     slot_ref: str,
     description: str,
 ) -> dict[str, Any]:
+    """Build a historical Appointment resource for continuity-of-care demos."""
     specialty_display = _normalize_display(specialty)
 
     return {
@@ -503,6 +520,7 @@ def _build_demo_appointment_resource(
 
 
 async def _check_fhir_ready(client: httpx.AsyncClient) -> None:
+    """Fail fast if the FHIR endpoint does not expose metadata."""
     response = await client.get("/metadata", headers={"Accept": "application/fhir+json"})
     if response.status_code != 200:
         raise RuntimeError(
@@ -515,6 +533,7 @@ async def _get_if_exists(
     resource_type: str,
     resource_id: str,
 ) -> dict[str, Any] | None:
+    """Read a FHIR resource if it exists, otherwise return None."""
     response = await client.get(f"/{resource_type}/{resource_id}", headers=_build_headers())
     if response.status_code == 404:
         return None
@@ -536,6 +555,7 @@ async def _put_resource(
     resource_id: str,
     resource: dict[str, Any],
 ) -> str:
+    """Upsert a FHIR resource and report whether it was created or updated."""
     response = await client.put(
         f"/{resource_type}/{resource_id}",
         headers=_build_headers(),
@@ -550,6 +570,7 @@ async def _put_resource(
 
 
 async def run_async() -> None:
+    """Seed the FHIR backend with demo patients, providers, schedules, and slots."""
     provider_items = _load_provider_seed_items()
     provider_by_ref = {item.practitioner_ref: item for item in provider_items}
 
@@ -600,6 +621,7 @@ async def run_async() -> None:
             created += 1 if patient_outcome == "created" else 0
             updated += 1 if patient_outcome == "updated" else 0
 
+            # Each renewal patient gets active medications so renewal flows have data to act on.
             for med in patient_def["medications"]:
                 med_request_id = _medication_request_id_for(
                     patient_ref,
@@ -669,6 +691,7 @@ async def run_async() -> None:
             created += 1 if schedule_outcome == "created" else 0
             updated += 1 if schedule_outcome == "updated" else 0
 
+            # Create the working slot grid for each provider across the seeded horizon.
             for day_offset in range(SEED_DAYS_AHEAD):
                 current_date = first_day + timedelta(days=day_offset)
 
@@ -688,6 +711,7 @@ async def run_async() -> None:
                         comment = None
 
                         if existing_slot is not None:
+                            # Preserve any slot state already present in the backend.
                             existing_status = existing_slot.get("status")
                             if isinstance(existing_status, str) and existing_status.strip():
                                 status = existing_status.strip()
@@ -758,6 +782,7 @@ async def run_async() -> None:
 
             schedule_id = _schedule_id_for(provider_item)
 
+            # Backdate one booked slot and matching appointment to simulate prior care.
             start_dt = datetime.combine(
                 datetime.now(UTC).date() - timedelta(days=patient_def["days_ago"]),
                 time(hour=patient_def["hour"], minute=patient_def["minute"]),
@@ -831,6 +856,7 @@ async def run_async() -> None:
 
 
 def run() -> None:
+    """Entrypoint for invoking the seed routine from the command line."""
     asyncio.run(run_async())
 
 

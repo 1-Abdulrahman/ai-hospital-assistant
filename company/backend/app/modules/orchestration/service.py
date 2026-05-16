@@ -60,8 +60,24 @@ from app.modules.scheduling.service import (
 PROVIDERS_PATH = Path(__file__).resolve().parents[1] / "scheduling" / "providers_static.json"
 
 
+# ==============================================================================
+# ERROR HANDLING
+# ==============================================================================
+
 @dataclass(frozen=True)
 class ChatOrchestrationError(Exception):
+    """Structured error response for orchestration service failures.
+    
+    This exception is used to communicate API-level errors with appropriate
+    HTTP status codes and user-friendly messages while preserving technical
+    reason codes for debugging and logging.
+    
+    Attributes:
+        reason_code: Technical code identifying the error type (e.g., 'INVALID_REQUEST')
+        user_message: User-friendly message explaining the error
+        status_code: HTTP status code to return (default: 400)
+        details: Optional technical details for logging and debugging
+    """
     reason_code: str
     user_message: str
     status_code: int = 400
@@ -69,20 +85,67 @@ class ChatOrchestrationError(Exception):
 
 
 def _utcnow() -> datetime:
+    """Return the current UTC timestamp.
+    
+    Provides a consistent way to get the current time in UTC, ensuring all
+    timestamps in the system are in the same timezone.
+    
+    Returns:
+        Current datetime in UTC timezone
+    """
     return datetime.now(timezone.utc)
 
 
+# ==============================================================================
+# TEXT NORMALIZATION & FORMATTING
+# ==============================================================================
+
 def _humanize_specialty(value: str) -> str:
+    """Convert a specialty token into a UI-friendly label.
+    
+    Transforms internal specialty identifiers (e.g., 'general_practice') into
+    human-readable labels (e.g., 'General Practice') for display in the UI.
+    
+    Args:
+        value: Specialty token (typically snake_case)
+        
+    Returns:
+        Title-cased display label
+    """
     return value.replace("_", " ").strip().title()
 
 
 def _normalize_specialty_token(value: str | None) -> str:
+    """Normalize specialty text for matching and comparisons.
+    
+    Converts specialty identifiers to lowercase with underscores replaced by spaces,
+    enabling case-insensitive and format-flexible comparison of specialty values.
+    
+    Args:
+        value: Specialty token to normalize
+        
+    Returns:
+        Lowercase normalized specialty text
+    """
     if not value:
         return ""
     return value.strip().replace("_", " ").lower()
 
 
 def _find_latest_matching_appointment(appointments: list[Any], specialty_id: str | None) -> Any | None:
+    """Find the newest appointment that matches the requested specialty.
+    
+    Searches appointment history to locate the most recent appointment
+    for a given specialty. Used in continuity-of-care flows to find the
+    patient's last provider when checking for continuity eligibility.
+    
+    Args:
+        appointments: List of past appointment records
+        specialty_id: Specialty to filter by
+        
+    Returns:
+        Most recent matching appointment, or None if no match found
+    """
     specialty_token = _normalize_specialty_token(specialty_id)
     matching = [
         item
@@ -98,11 +161,35 @@ def _find_latest_matching_appointment(appointments: list[Any], specialty_id: str
     )[0]
 
 def _normalize_message_text(value: str | None) -> str:
+    """Trim free-form user text and coerce missing values to an empty string.
+    
+    Sanitizes user input by removing leading/trailing whitespace and converting
+    None to empty string. Used for normalizing patient complaints and clarifications.
+    
+    Args:
+        value: Raw user input string
+        
+    Returns:
+        Trimmed string or empty string if input was None
+    """
     return (value or "").strip()
 
 
 
+# ==============================================================================
+# CLARIFICATION HANDLING
+# ==============================================================================
+# When the NLP classifier is uncertain about specialty prediction, it can request
+# clarification. These functions manage the back-and-forth dialogue and merge
+# multiple clarification turns back into the original complaint for reclassification.
+
 def _clear_clarification_context(session: AssistantSession) -> None:
+    """Clear any pending clarification state from the session.
+    
+    Resets all clarification-specific fields so that the next complaint or flow
+    starts cleanly without residual state from previous clarification turns.
+    This includes the clarification flag, key, original complaint, and merged text.
+    """
     session.clarification_pending = False
     session.clarification_key = None
     session.original_complaint_text = None
@@ -110,6 +197,17 @@ def _clear_clarification_context(session: AssistantSession) -> None:
     session.merged_classification_text = None
 
 def _candidate_payload_from_prediction(prediction: Any) -> list[dict[str, Any]]:
+    """Convert classifier candidates into response payload items.
+    
+    Extracts the top candidate specialties from an NLP prediction and formats
+    them as simple dictionaries with ID and rounded confidence scores.
+    
+    Args:
+        prediction: NLP classification result object
+        
+    Returns:
+        List of candidate dicts with 'id' and 'confidence' keys
+    """
     return [
         {
             "id": candidate.specialty_id,
@@ -119,12 +217,34 @@ def _candidate_payload_from_prediction(prediction: Any) -> list[dict[str, Any]]:
     ]
 
 
+# ==============================================================================
+# NLP TELEMETRY & DIAGNOSTICS
+# ==============================================================================
+# These functions build structured telemetry payloads for monitoring NLP performance,
+# classifier confidence, and ambiguity decision-making for logging and analysis.
+
 def _classification_diagnostics(
     prediction: Any,
     *,
     min_confidence: float,
     ambiguity_delta: float,
 ) -> dict[str, Any]:
+    """Build confidence and ambiguity diagnostics for classifier telemetry.
+    
+    Computes metrics for monitoring and debugging NLP classifier behavior:
+    - Top candidate confidence scores
+    - Gap between top two predictions
+    - Whether thresholds for ambiguity were crossed
+    - Decision reason (why clarification was requested, if applicable)
+    
+    Args:
+        prediction: NLP classification result
+        min_confidence: Minimum acceptable confidence threshold
+        ambiguity_delta: Minimum gap between top-2 candidates
+        
+    Returns:
+        Dictionary with diagnostic metrics and decision explanation
+    """
     top_candidates = list(prediction.top_candidates or [])
 
     top_confidence = round(top_candidates[0].confidence, 4) if len(top_candidates) >= 1 else None
@@ -171,6 +291,21 @@ def _build_nlp_preprocessed_payload(
     classification_input: str,
     used_merged_clarification_input: bool,
 ) -> dict[str, Any]:
+    """Build telemetry for the NLP preprocessing step.
+    
+    Captures information about how the input text was prepared for classification,
+    including original complaint, clarification details, and any text transformations
+    applied by the NLP preprocessor.
+    
+    Args:
+        prediction: NLP classification result with preprocessing info
+        session: Patient session with complaint/clarification history
+        classification_input: Actual text sent to classifier
+        used_merged_clarification_input: Whether clarification was merged
+        
+    Returns:
+        Telemetry payload for event logging
+    """
     payload: dict[str, Any] = {
         "component": "nlp",
         "modelVersion": prediction.model_version,
@@ -207,6 +342,21 @@ def _build_nlp_classified_payload(
     min_confidence: float,
     ambiguity_delta: float,
 ) -> dict[str, Any]:
+    """Build telemetry for the NLP classification result.
+    
+    Captures the classification outcome including predicted specialty, candidate
+    rankings, confidence metrics, and ambiguity diagnostics for monitoring
+    classifier performance.
+    
+    Args:
+        prediction: NLP classification result
+        candidates: Formatted top candidates with confidence
+        min_confidence: Confidence threshold for validation
+        ambiguity_delta: Gap threshold for ambiguity detection
+        
+    Returns:
+        Telemetry payload for event logging
+    """
     payload: dict[str, Any] = {
         "component": "nlp",
         "modelVersion": prediction.model_version,
@@ -229,6 +379,19 @@ def _append_clarification_detail(
     existing_detail_text: str | None,
     new_detail_text: str,
 ) -> str:
+    """Append a clarification turn while keeping bullet formatting stable.
+    
+    Accumulates multiple clarification responses from the user into a single
+    bullet-point list. Each clarification detail is added as a new bullet,
+    making it easy to reconstruct the full context later.
+    
+    Args:
+        existing_detail_text: Previously accumulated clarification details (if any)
+        new_detail_text: New clarification response from the user
+        
+    Returns:
+        Formatted string with all clarification details as bullet points
+    """
     new_detail = _normalize_message_text(new_detail_text)
 
     existing_lines = [
@@ -244,6 +407,18 @@ def _append_clarification_detail(
 
 
 def _build_clarification_details_block(detail_text: str | None) -> str:
+    """Render clarification text as a bullet block for downstream classification.
+    
+    Takes the accumulated clarification details and formats them as a clean
+    bullet-point list that can be appended to the original complaint text
+    for reclassification by the NLP model.
+    
+    Args:
+        detail_text: Clarification details (potentially with existing bullet formatting)
+        
+    Returns:
+        Formatted string with each line as a bullet point
+    """
     lines = [
         line.lstrip("-").strip()
         for line in (detail_text or "").splitlines()
@@ -258,6 +433,26 @@ def _merge_clarification_text(
     original_complaint: str,
     clarification_detail: str,
 ) -> str:
+    """Combine the complaint and clarification details into one classifier input.
+    
+    Creates a structured text block that preserves the original complaint while
+    appending follow-up clarification details. This merged text is sent to the
+    NLP classifier for re-classification with additional context.
+    
+    The format is:
+        Original complaint: <complaint>
+        Clarification details:
+        - <detail 1>
+        - <detail 2>
+        ...
+        
+    Args:
+        original_complaint: Initial patient complaint text
+        clarification_detail: Accumulated clarification details
+        
+    Returns:
+        Merged text ready for NLP classification
+    """
     original = _normalize_message_text(original_complaint)
     detail_block = _build_clarification_details_block(clarification_detail)
 
@@ -276,6 +471,19 @@ def _sort_slots_for_preferred_practitioner(
     items: list[Any],
     preferred_practitioner_ref: str | None,
 ) -> list[Any]:
+    """Prioritize slots for the preferred practitioner when one is known.
+    
+    Continuity-of-care feature: When a patient has an existing relationship with
+    a specific practitioner, slots with that practitioner are sorted first,
+    followed by other available slots in chronological order.
+    
+    Args:
+        items: List of available slot objects
+        preferred_practitioner_ref: Reference ID of the patient's preferred practitioner
+        
+    Returns:
+        Reordered list with preferred practitioner slots first
+    """
     if not items or not preferred_practitioner_ref:
         return items
 
@@ -290,6 +498,17 @@ def _sort_slots_for_preferred_practitioner(
 
 
 def _load_supported_specialties() -> dict[str, list[dict]]:
+    """Load the static specialty catalog used for manual selection flows.
+    
+    Reads the providers_static.json file containing all available medical specialties.
+    This catalog is used when:
+    - The NLP model is unavailable
+    - The user initiates a direct scheduling flow
+    - Manual specialty selection is needed as a fallback
+    
+    Returns:
+        Dictionary mapping specialty IDs to their metadata
+    """
     with PROVIDERS_PATH.open("r", encoding="utf-8") as handle:
         return json.load(handle)
 
@@ -297,7 +516,26 @@ def _load_supported_specialties() -> dict[str, list[dict]]:
 SUPPORTED_SPECIALTIES = _load_supported_specialties()
 
 
+# ==============================================================================
+# OBJECT CONVERSION & FIELD EXTRACTION
+# ==============================================================================
+# Utilities to normalize heterogeneous objects (dicts, Pydantic models, dataclasses)
+# into consistent formats, and to flexibly extract values from objects with
+# multiple naming conventions (camelCase vs snake_case).
+
 def _ensure_client_session_matches_header(*, header_session_id: str, client_session_id: str) -> None:
+    """Reject requests where the header session and body session differ.
+    
+    Security check: Ensures that the session ID in the HTTP headers matches
+    the session ID in the request body. Prevents session fixation attacks.
+    
+    Args:
+        header_session_id: Session ID from request headers
+        client_session_id: Session ID from request body
+        
+    Raises:
+        ChatOrchestrationError: If IDs don't match
+    """
     if header_session_id.strip() != client_session_id.strip():
         raise ChatOrchestrationError(
             reason_code="INVALID_REQUEST",
@@ -314,6 +552,22 @@ def _selection_item(
     confidence: float | None = None,
     meta: dict | None = None,
 ) -> dict:
+    """Create a normalized selection item for the chat UI.
+    
+    Builds a consistent item structure for selection lists. Confidence scores
+    are included for NLP-predicted specialties. Metadata can carry extra context
+    like time formatting, provider info, or availability flags.
+    
+    Args:
+        item_id: Unique identifier for the item (specialty ID, slot ID, etc.)
+        label: Display text shown to the user
+        description: Optional longer description or explanation
+        confidence: Optional confidence score (for NLP predictions)
+        meta: Optional dictionary of extra data for the UI
+        
+    Returns:
+        Normalized dictionary for selection list display
+    """
     payload: dict[str, Any] = {
         "id": item_id,
         "label": label,
@@ -328,6 +582,18 @@ def _selection_item(
 
 
 def _specialty_selection_list(*, candidates: list[dict] | None = None) -> list[dict]:
+    """Build the specialty selection list shown to the patient.
+    
+    Creates a selection list of medical specialties. If NLP candidates are provided,
+    they're ranked by confidence. Otherwise, all supported specialties are shown
+    in alphabetical order as a fallback for manual selection.
+    
+    Args:
+        candidates: Optional list of NLP-predicted specialties with confidence scores
+        
+    Returns:
+        List wrapped in selection format for chat UI specialty selection
+    """
     specialty_items: list[dict] = []
     if candidates:
         for candidate in candidates:
@@ -353,6 +619,18 @@ def _specialty_selection_list(*, candidates: list[dict] | None = None) -> list[d
 
 
 def _renewal_items_selection_list(items: list[Any]) -> list[dict]:
+    """Build the medication selection list for renewal flows.
+    
+    Transforms medication request objects into UI-ready selection items.
+    Includes medication dosage, refill status, repeat counts, and validity
+    periods in the item descriptions.
+    
+    Args:
+        items: List of medication request objects from FHIR gateway
+        
+    Returns:
+        List wrapped in selection format for chat UI medication selection
+    """
     selection_items: list[dict] = []
 
     for item in items:
@@ -389,6 +667,18 @@ def _find_selected_renewal_item(
     items: list[Any],
     medication_request_ref: str,
 ) -> Any | None:
+    """Locate the renewal item chosen by the patient.
+    
+    Searches the list of available renewal items to find the one with
+    matching medication request reference ID.
+    
+    Args:
+        items: List of available medication requests
+        medication_request_ref: Reference ID user selected
+        
+    Returns:
+        Matching medication request object, or None if not found
+    """
     target = (medication_request_ref or "").strip()
     if not target:
         return None
@@ -402,13 +692,22 @@ def _find_selected_renewal_item(
 def _slot_to_mapping(slot: Any) -> dict[str, Any]:
     """
     Normalize a slot-like object into a plain dictionary.
+    
+    Handles multiple object representations that might come from different
+    service layers, ensuring consistent dictionary format for downstream processing.
 
-    This supports:
-    - dict payloads
-    - Pydantic models with model_dump()
-    - older Pydantic models with dict()
-    - dataclass instances
-    - plain Python objects with expected attributes
+    Supports:
+    - dict payloads (returns as-is)
+    - Pydantic models with model_dump() (v2 API)
+    - Pydantic models with dict() (v1 API)
+    - dataclass instances (uses asdict)
+    - plain Python objects with expected attributes (extracts attributes)
+    
+    Args:
+        slot: Slot object in any of the supported formats
+        
+    Returns:
+        Dictionary with normalized field names (camelCase keys)
     """
     if slot is None:
         return {}
@@ -443,12 +742,36 @@ def _slot_to_mapping(slot: Any) -> dict[str, Any]:
 
 
 def _pick(mapping: Mapping[str, Any], *keys: str) -> Any:
+    """Return the first non-null value for any of the provided field names.
+    
+    Utility to handle inconsistent field naming conventions across different
+    upstream services. Supports both camelCase and snake_case field names,
+    allowing flexible integration with multiple APIs and data sources.
+    
+    Args:
+        mapping: Dictionary-like object to search
+        *keys: Field names to check in order (tries camelCase, then snake_case)
+        
+    Returns:
+        First non-null value found, or None if all keys are missing/null
+    """
     for key in keys:
         if key in mapping and mapping[key] is not None:
             return mapping[key]
     return None
 
 def _parse_utc_datetime(value: str | None) -> datetime | None:
+    """Parse an ISO timestamp and normalize it to UTC when possible.
+    
+    Handles various ISO 8601 timestamp formats including those with 'Z' suffix.
+    Safely returns None for invalid or missing timestamps rather than raising.
+    
+    Args:
+        value: ISO 8601 timestamp string (with or without timezone info)
+        
+    Returns:
+        Parsed datetime object in UTC timezone, or None if parsing fails
+    """
     if not value:
         return None
     normalized = value.replace("Z", "+00:00")
@@ -458,7 +781,23 @@ def _parse_utc_datetime(value: str | None) -> datetime | None:
         return None
 
 
+# ==============================================================================
+# DATETIME FORMATTING FOR UI DISPLAY
+# ==============================================================================
+# Convert UTC timestamps into human-readable labels for the chat interface.
+
 def _format_slot_start_label(value: str | None) -> str:
+    """Format a slot start time for display in the chat UI.
+    
+    Converts ISO timestamp to readable format: "YYYY-MM-DD HH:MM:SS UTC"
+    Falls back to raw value if parsing fails.
+    
+    Args:
+        value: ISO 8601 timestamp string
+        
+    Returns:
+        Formatted display string
+    """
     parsed = _parse_utc_datetime(value)
     if parsed is None:
         return str(value or "Unknown start time")
@@ -466,6 +805,17 @@ def _format_slot_start_label(value: str | None) -> str:
 
 
 def _format_slot_end_label(value: str | None) -> str | None:
+    """Format a slot end time for display when available.
+    
+    Converts ISO timestamp to readable time format: "HH:MM:SS UTC"
+    Used alongside the date from start label to show appointment duration.
+    
+    Args:
+        value: ISO 8601 timestamp string
+        
+    Returns:
+        Formatted time string, or None if parsing fails
+    """
     parsed = _parse_utc_datetime(value)
     if parsed is None:
         return str(value).replace("Z", " UTC") if value else None
@@ -473,6 +823,17 @@ def _format_slot_end_label(value: str | None) -> str | None:
 
 
 def _format_display_date(value: str | None) -> str | None:
+    """Format a UTC timestamp into a human-readable date label.
+    
+    Converts ISO timestamp to readable date format: "Mon DD Mon YYYY"
+    Example: "Wed 15 May 2024"
+    
+    Args:
+        value: ISO 8601 timestamp string
+        
+    Returns:
+        Formatted date string, or None if parsing fails
+    """
     parsed = _parse_utc_datetime(value)
     if parsed is None:
         return value[:10] if value else None
@@ -480,6 +841,17 @@ def _format_display_date(value: str | None) -> str | None:
 
 
 def _format_display_time(value: str | None) -> str | None:
+    """Format a UTC timestamp into a human-readable time label.
+    
+    Converts ISO timestamp to readable time format: "H:MM AM/PM"
+    Leading zero is stripped (e.g., "9:30 AM" not "09:30 AM")
+    
+    Args:
+        value: ISO 8601 timestamp string
+        
+    Returns:
+        Formatted time string, or None if parsing fails
+    """
     parsed = _parse_utc_datetime(value)
     if parsed is None:
         return None
@@ -487,6 +859,17 @@ def _format_display_time(value: str | None) -> str | None:
 
 
 def _date_key_from_iso(value: str | None) -> str | None:
+    """Extract a stable date key from an ISO timestamp.
+    
+    Generates a sortable date key in format "YYYY-MM-DD" for grouping
+    slots by date. Useful for UI organization of availability.
+    
+    Args:
+        value: ISO 8601 timestamp string
+        
+    Returns:
+        Date key string ("YYYY-MM-DD"), or None if parsing fails
+    """
     parsed = _parse_utc_datetime(value)
     if parsed is None:
         return value[:10] if value else None
@@ -498,6 +881,20 @@ def _preferred_practitioner_has_availability(
     items: list[Any],
     preferred_practitioner_ref: str | None,
 ) -> bool | None:
+    """Detect whether any returned slot matches the preferred practitioner.
+    
+    Scans the available slots to determine if the patient's preferred practitioner
+    has at least one available slot. Used for continuity-of-care feature to signal
+    to the UI whether continuity is possible in the current results.
+    
+    Args:
+        items: List of available appointment slots
+        preferred_practitioner_ref: Patient's preferred practitioner ID
+        
+    Returns:
+        True if preferred practitioner has availability, False if not,
+        None if no preferred practitioner is set
+    """
     if not preferred_practitioner_ref:
         return None
 
@@ -510,12 +907,34 @@ def _preferred_practitioner_has_availability(
     return False
 
 
+# ==============================================================================
+# CONTINUITY OF CARE & SLOT SELECTION
+# ==============================================================================
+# Continuity of care allows patients to request appointment with their existing
+# provider when possible. These functions build the UI responses and metadata
+# for continuity preferences and slot selection.
+
 def _build_continuity_payload(
     *,
     session: AssistantSession,
     preferred_practitioner_has_availability: bool | None,
     message: str | None,
 ) -> dict | None:
+    """Build the continuity-of-care payload exposed to the UI.
+    
+    Packages continuity-of-care information for display on the client.
+    Only returns data if continuity has been checked; returns None otherwise.
+    The UI uses this to show whether the patient's preferred practitioner
+    has availability and whether continuity of care is possible.
+    
+    Args:
+        session: Patient session with continuity state
+        preferred_practitioner_has_availability: Whether preferred provider has slots
+        message: Optional custom message about continuity status
+        
+    Returns:
+        Continuity payload dict, or None if continuity not checked
+    """
     if not session.continuity_checked:
         return None
 
@@ -532,6 +951,19 @@ def _slot_selection_list(
     items: list[Any],
     preferred_practitioner_ref: str | None = None,
 ) -> list[dict]:
+    """Build the slot selection list shown after availability lookup.
+    
+    Converts raw slot objects from the scheduling service into UI-ready
+    selection items with formatted times, provider information, and metadata.
+    Marks slots from the preferred practitioner if continuity is active.
+    
+    Args:
+        items: Raw slot objects from scheduling service
+        preferred_practitioner_ref: Optional preferred provider ID for continuity
+        
+    Returns:
+        List wrapped in selection format for chat UI
+    """
     slot_items: list[dict] = []
 
     for raw_slot in items:
@@ -585,12 +1017,32 @@ def _slot_selection_list(
     return [{"type": "slot", "items": slot_items}]
 
 
+# ==============================================================================
+# SESSION MANAGEMENT
+# ==============================================================================
+# Session objects store conversation state, appointment flow progress, and
+# continuity preferences. These functions create, save, and manage session state.
+
 def _get_or_create_session(
     *,
     db: Session,
     tenant_id: str,
     client_session_id: str,
 ) -> tuple[AssistantSession, bool]:
+    """Load the session row or create a new one for the current client session.
+    
+    Retrieves an existing assistant session from the database, or creates a fresh
+    one if none exists. Always ensures a session object is available for the
+    conversation flow.
+    
+    Args:
+        db: Database session
+        tenant_id: Tenant (hospital/organization) identifier
+        client_session_id: Client-side session ID (unique per browser/device)
+        
+    Returns:
+        Tuple of (AssistantSession object, was_created boolean)
+    """
     session = (
         db.query(AssistantSession)
         .filter(
@@ -630,12 +1082,31 @@ def _get_or_create_session(
 
 
 def _save_session(db: Session, session: AssistantSession) -> None:
+    """Persist the session and refresh it from the database.
+    
+    Commits all pending changes to the session object, then refreshes it
+    from the database to ensure state consistency and capture any server-side
+    defaults or automatic field updates.
+    
+    Args:
+        db: Database session
+        session: AssistantSession object with pending changes
+    """
     session.updated_at_utc = _utcnow()
     db.add(session)
     db.commit()
     db.refresh(session)
 
 def _clear_session_flow_state(session: AssistantSession) -> None:
+    """Clear all flow-specific fields so the session returns to the main menu.
+    
+    Resets the session to the NEW state by clearing appointment booking state,
+    specialty selection, slot selection, renewal state, and continuity context.
+    Called when user clicks "back" or starts a new flow.
+    
+    Args:
+        session: AssistantSession to reset
+    """
     session.current_state = reset_to_new_or_raise(current_state=session.current_state)
     session.flow_mode = None
 
@@ -657,6 +1128,18 @@ def _clear_session_flow_state(session: AssistantSession) -> None:
 
 
 def _session_has_active_flow(session: AssistantSession) -> bool:
+    """Detect whether the session still contains active flow state.
+    
+    Checks if any flow-specific state markers are set. Used to determine if
+    the session should be considered 'in progress' (e.g., for dropout tracking
+    or to show continuation options).
+    
+    Args:
+        session: AssistantSession to check
+        
+    Returns:
+        True if session has active flow state, False if in NEW/menu state
+    """
     return any(
         [
             bool(session.flow_mode),
@@ -672,6 +1155,14 @@ def _session_has_active_flow(session: AssistantSession) -> bool:
     )
 
 def _reset_continuity_context(session: AssistantSession) -> None:
+    """Clear continuity-of-care state without touching the rest of the flow.
+    
+    Resets only the continuity-specific fields while preserving other flow state.
+    Used when starting a new appointment flow or when continuity lookup fails.
+    
+    Args:
+        session: AssistantSession to update
+    """
     session.continuity_checked = False
     session.continuity_patient_ref = None
     session.continuity_preferred_practitioner_ref = None
@@ -680,6 +1171,18 @@ def _reset_continuity_context(session: AssistantSession) -> None:
 
 
 def _slot_failure_message(*, reason_code: str, specialty_id: str | None) -> str:
+    """Translate slot lookup failures into user-facing messages.
+    
+    Maps technical failure codes from the scheduling service into readable
+    messages that explain why no appointments are available.
+    
+    Args:
+        reason_code: Technical failure code (e.g., NO_PROVIDERS_AVAILABLE)
+        specialty_id: Specialty for which slots were requested
+        
+    Returns:
+        Human-friendly error message for the patient
+    """
     specialty_label = _humanize_specialty(specialty_id or "selected")
 
     if reason_code == NO_PROVIDERS_AVAILABLE:
@@ -699,6 +1202,22 @@ async def _load_slots_for_session(
     body_tenant_id: str,
     session: AssistantSession,
 ) -> dict:
+    """Fetch available slots and apply continuity-aware ordering when needed.
+    
+    Calls the scheduling service to retrieve available slots for the patient's
+    selected specialty. If the patient has an existing relationship with a
+    preferred practitioner (continuity-of-care), those slots are prioritized.
+    
+    Args:
+        db: Database session
+        header_tenant_id: Tenant ID from request headers (for access control)
+        header_session_id: Session ID from request headers (for logging)
+        body_tenant_id: Tenant ID from request body (validated against header)
+        session: Patient's assistant session with selected specialty
+        
+    Returns:
+        Slot lookup result dict with 'items', 'reasonCode', and optional 'message'
+    """
     slot_result = await list_available_slots(
         db=db,
         header_tenant_id=header_tenant_id,
@@ -731,6 +1250,32 @@ def _response(
     confirmation_summary: dict | None = None,
     errors: list[dict] | None = None,
 ) -> dict:
+    """Construct the standard chat API response payload.
+    
+    Builds the complete response object sent to the client, including the
+    user-facing message, interactive UI elements (selections, quick replies),
+    conversation state flags, and error information.
+    
+    Optional fields are only included in the response if explicitly provided,
+    keeping the payload lean and predictable.
+    
+    Args:
+        user_message: Primary text message for the user
+        quick_replies: Quick action buttons for common responses
+        selection_lists: Lists for specialty/slot/medication selection
+        needs_clarification: Whether NLP ambiguity requires user input
+        is_chronic_continuity: Whether this is a continuity of care case
+        continuity: Continuity preference metadata
+        show_consent_notice: Whether to show privacy/consent notice
+        requires_continuity_identity: Whether identity verification needed
+        booking_reference_id: Confirmation ID for successful bookings
+        confirmation_type: Type of confirmation (appointment/renewal)
+        confirmation_summary: Details of confirmed appointment/renewal
+        errors: List of errors that occurred during processing
+        
+    Returns:
+        Complete response dictionary ready to serialize to JSON
+    """
     payload: dict[str, Any] = {
         "userMessage": user_message,
         "correlationId": get_correlation_id(),
@@ -767,6 +1312,21 @@ def _build_slot_response(
     user_message: str | None = None,
     continuity_message: str | None = None,
 ) -> dict:
+    """Wrap slot lookup results into the common response shape.
+    
+    Converts raw slot lookup results (success or failure) into the standard
+    chat API response format. Always includes continuity metadata so the UI
+    can display the preferred practitioner state and availability.
+    
+    Args:
+        slot_result: Result dict from scheduling service with items and reasonCode
+        session: Patient session containing continuity preferences
+        user_message: Optional custom message (uses default if omitted)
+        continuity_message: Optional message about continuity preferences
+        
+    Returns:
+        Standard response dict ready to send to client
+    """
     preferred_has_availability = _preferred_practitioner_has_availability(
         items=slot_result.get("items", []),
         preferred_practitioner_ref=session.continuity_preferred_practitioner_ref,
@@ -809,6 +1369,19 @@ def _build_slot_response(
 
 
 def _transition_session(session: AssistantSession, target_state: str) -> None:
+    """Advance the conversation state machine or raise a chat error.
+    
+    Updates the session's state by invoking the state machine transition logic.
+    Catches state transition errors and converts them into user-facing
+    ChatOrchestrationError exceptions with appropriate HTTP status codes.
+    
+    Args:
+        session: Patient session to update
+        target_state: Desired next state from the state machine
+        
+    Raises:
+        ChatOrchestrationError: If the transition is not allowed
+    """
     try:
         session.current_state = transition_or_raise(
             current_state=session.current_state,
@@ -823,6 +1396,19 @@ def _transition_session(session: AssistantSession, target_state: str) -> None:
         ) from exc
 
 
+# ==============================================================================
+# MAIN ORCHESTRATION ENDPOINTS
+# ==============================================================================
+# These are the primary entry points for the orchestration service. Each process_*
+# function handles a specific conversation flow or action:
+# - process_chat_message: NLP-driven appointment booking
+# - process_direct_start: Manual specialty selection
+# - process_renewal_request: Medication renewal flow
+# - process_reset: Return to main menu
+# - process_renewal_identity, process_continuity_identity: Identity verification
+# - process_selection: Handle user selections (specialty, slot, medication)
+# - process_confirm: Finalize appointment or renewal booking
+
 async def process_chat_message(
     *,
     db: Session,
@@ -833,6 +1419,7 @@ async def process_chat_message(
     message_text: str,
     nlp_service: NlpService | None,
 ) -> dict:
+    """Classify a symptom complaint and route the patient into scheduling."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -860,6 +1447,9 @@ async def process_chat_message(
     _reset_continuity_context(session)
 
     if is_clarification_followup:
+        # CLARIFICATION FLOW: Accumulate follow-up details and rerun NLP classification
+        # with merged context (original complaint + new clarification details).
+        # This helps the classifier make a more confident decision with additional info.
         session.clarification_detail_text = _append_clarification_detail(
             existing_detail_text=session.clarification_detail_text,
             new_detail_text=clean_message_text,
@@ -926,6 +1516,7 @@ async def process_chat_message(
         )
 
     if nlp_service is None:
+        # FALLBACK: NLP service unavailable - present all specialties for manual selection
         _transition_session(session, AWAITING_SPECIALTY_SELECTION)
         _save_session(db, session)
         return _response(
@@ -974,7 +1565,9 @@ async def process_chat_message(
 
     ambiguity_decision = nlp_classified_payload["ambiguityDecision"]
 
+    # Prepare summary for event logging based on whether clarification is needed
     if prediction.needs_clarification:
+        # Classifier is uncertain - extract top candidates for user-friendly message
         top_labels = [item["id"] for item in candidates[:2]]
         if len(top_labels) == 2:
             safe_summary = (
@@ -984,6 +1577,7 @@ async def process_chat_message(
         else:
             safe_summary = "Ambiguous specialty prediction."
     else:
+        # Classifier made a confident prediction
         safe_summary = (
             f"Predicted specialty {_humanize_specialty(prediction.primary_specialty_id or 'general_practice')}."
         )
@@ -1009,6 +1603,9 @@ async def process_chat_message(
     _transition_session(session, AWAITING_SPECIALTY_SELECTION)
 
     if prediction.needs_clarification:
+        # AMBIGUITY HANDLING: Classifier uncertainty detected
+        # Keep session in complaint flow and ask user for clarification details.
+        # This allows the classifier to make a more confident decision with more context.
         if not session.original_complaint_text:
             session.original_complaint_text = clean_message_text
 
@@ -1090,6 +1687,7 @@ async def process_direct_start(
     body_tenant_id: str,
     client_session_id: str,
 ) -> dict:
+    """Start a direct scheduling flow without NLP classification."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -1129,6 +1727,7 @@ async def process_renewal_request(
     body_tenant_id: str,
     client_session_id: str,
 ) -> dict:
+    """Start the medication renewal flow."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -1182,6 +1781,7 @@ async def process_reset(
     body_tenant_id: str,
     client_session_id: str,
 ) -> dict:
+    """Return the session to the main menu and clear active flow state."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -1235,6 +1835,7 @@ async def process_renewal_identity(
     client_session_id: str,
     national_id: str,
 ) -> dict:
+    """Verify the renewal identity and fetch eligible medication requests."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -1278,6 +1879,7 @@ async def process_renewal_identity(
     session.renewal_patient_ref = renewal_signals.patientRef
 
     if not renewal_signals.patientFound:
+        # Keep the session context intact so the patient can correct the ID without restarting.
         _save_session(db, session)
         return _response(
             user_message="No patient record was found for that ID. Please check the ID and try again.",
@@ -1290,6 +1892,7 @@ async def process_renewal_identity(
         )
 
     if not renewal_signals.eligible or not renewal_signals.items:
+        # A found patient may still have no eligible refills, so surface that separately.
         _save_session(db, session)
         return _response(
             user_message="No active medication requests eligible for renewal were found.",
@@ -1335,6 +1938,7 @@ async def process_continuity_identity(
     client_session_id: str,
     national_id: str,
 ) -> dict:
+    """Verify continuity-of-care identity and load prioritized slots."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -1399,6 +2003,7 @@ async def process_continuity_identity(
             preferred_practitioner_display = continuity.lastPractitionerDisplay
 
     except Exception:
+        # If continuity lookup fails, fall back to the standard slot flow instead of blocking scheduling.
         continuity_patient_ref = None
         preferred_practitioner_ref = None
         preferred_practitioner_display = None
@@ -1485,6 +2090,7 @@ async def process_selection(
     selection_value: str | None,
     action: str,
 ) -> dict:
+    """Handle specialty, slot, medication, and continuity selection events."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -1507,6 +2113,7 @@ async def process_selection(
     resolved_selection_value = (selection_value or "").strip() or None
 
     if normalized_selection_type == "specialty":
+        # Specialty selection may lead into continuity screening before slot retrieval.
         if not resolved_selection_id:
             raise ChatOrchestrationError(
                 reason_code="INVALID_REQUEST",
@@ -1643,6 +2250,7 @@ async def process_selection(
         )
 
     if normalized_selection_type == "continuity":
+        # Skipping continuity still advances the conversation to normal slot selection.
         if normalized_action != "SKIP_CONTINUITY_CHECK":
             raise ChatOrchestrationError(
                 reason_code="INVALID_REQUEST",
@@ -1718,6 +2326,7 @@ async def process_confirm(
     renewal_item_id: str | None,
     idempotency_key: str | None,
 ) -> dict:
+    """Finalize an appointment or renewal after identity verification."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -1736,6 +2345,7 @@ async def process_confirm(
     normalized_action = action.strip().upper()
 
     if normalized_action == "CONFIRM_APPOINTMENT":
+        # Appointment confirmation validates identity and books the selected slot atomically.
         resolved_specialty_id = (specialty_id or session.selected_specialty_id or "").strip().lower()
         resolved_slot_id = (slot_id or session.selected_slot_id or "").strip()
 
@@ -1774,6 +2384,7 @@ async def process_confirm(
             ) from exc
 
         if booking_result["reasonCode"] != OK:
+            # A failed booking may still leave the original slot choices available, so refresh them.
             refreshed_slots = await _load_slots_for_session(
                 db=db,
                 header_tenant_id=header_tenant_id,
@@ -1849,6 +2460,7 @@ async def process_confirm(
         )
 
     if normalized_action == "CONFIRM_RENEWAL":
+        # Renewal confirmation rechecks the verified identity against the stored renewal context.
         resolved_renewal_item_id = (renewal_item_id or session.renewal_item_id or "").strip()
         resolved_renewal_item_label = (
             (session.renewal_item_label or "").strip() or resolved_renewal_item_id
@@ -1954,6 +2566,7 @@ async def process_confirm(
                 correlation_id=get_correlation_id(),
             )
         except FhirGatewayError as exc:
+            # Emit a failure event before surfacing the error so downstream observability keeps the attempt.
             emit_event(
                 db=db,
                 tenant_id=body_tenant_id,

@@ -19,6 +19,7 @@ REASON_EMAIL_DELIVERY_FAILED = "EMAIL_DELIVERY_FAILED"
 
 
 def _mask_email(email: str) -> str:
+    """Return a privacy-preserving version of an email address for event payloads."""
     local, _, domain = email.partition("@")
     if not local or not domain:
         return "***"
@@ -39,6 +40,7 @@ def _deliver_email_with_retry(
     notification_type: str,
     success_summary: str,
 ) -> None:
+    """Send an email, emit retry/failure events, and keep correlation context intact."""
     token = correlation_id_ctx.set(correlation_id)
 
     try:
@@ -49,6 +51,7 @@ def _deliver_email_with_retry(
                 body=body,
             )
         except EmailDeliveryError:
+            # The first failure is treated as transient, so we record a retry event and try once more.
             emit_event(
                 db=db,
                 tenant_id=tenant_id,
@@ -74,6 +77,7 @@ def _deliver_email_with_retry(
                     body=body,
                 )
             except EmailDeliveryError:
+                # If the retry fails too, persist a terminal failure event and stop.
                 emit_event(
                     db=db,
                     tenant_id=tenant_id,
@@ -129,6 +133,7 @@ def _queue_email_notification(
     success_summary: str,
     extra_payload: dict | None = None,
 ) -> None:
+    """Record the request event, then deliver immediately or defer to background tasks."""
     request_payload = {
         "component": "notification",
         "channel": "email",
@@ -152,6 +157,7 @@ def _queue_email_notification(
     db.commit()
 
     if background_tasks is None:
+        # Some callers run outside a FastAPI request lifecycle, so deliver synchronously.
         _deliver_email_with_retry(
             db=db,
             tenant_id=tenant_id,
@@ -193,6 +199,7 @@ def queue_appointment_confirmation_email(
     date_utc: str | None,
     slot_label: str | None,
 ) -> None:
+    """Queue the appointment confirmation email after the booking flow succeeds."""
     subject, body = render_appointment_confirmation_email(
         booking_reference_id=booking_reference_id,
         correlation_id=correlation_id,
@@ -229,6 +236,7 @@ def queue_renewal_confirmation_email(
     renewal_item_label: str | None,
     refill_task_ref: str | None = None,
 ) -> None:
+    """Queue the renewal confirmation email after a renewal task is created."""
     subject, body = render_renewal_confirmation_email(
         renewal_item_label=renewal_item_label,
         correlation_id=correlation_id,

@@ -1,3 +1,15 @@
+"""Complaint text normalization module.
+
+This module provides text normalization and spell-checking functionality for medical complaint texts.
+It uses SymSpell for spell correction and maintains protected medical terms and guard tokens to
+prevent incorrect corrections that could alter the semantic meaning of complaints.
+
+Key features:
+- Basic text cleanup (whitespace, noise, unicode normalization)
+- Spell correction with semantic awareness
+- Protection of medical terms and semantic guard tokens
+- Audit case tracking for quality assurance
+"""
 from __future__ import annotations
 
 import json
@@ -24,6 +36,8 @@ WHITESPACE_RE = re.compile(r"\s+")
 NOISE_RE = re.compile(r"[^\w\s/\-']")
 SLASH_RE = re.compile(r"\s*/\s*")
 
+# Tokens that have semantic significance and should not be removed or changed during correction.
+# These words often modify the meaning of complaints (e.g., negation, severity, timing).
 SEMANTIC_GUARD_TOKENS = {
     "not",
     "no",
@@ -44,6 +58,8 @@ SEMANTIC_GUARD_TOKENS = {
     "better",
 }
 
+# Tokens that provide structural/grammatical support. Preserving these ensures the complaint
+# remains grammatically coherent and maintains the patient's perspective (e.g., "I", "my").
 STABLE_SUPPORT_TOKENS = {
     "i",
     "a",
@@ -69,6 +85,14 @@ STABLE_SUPPORT_TOKENS = {
 
 @dataclass(frozen=True)
 class NormalizedComplaint:
+    """Result of normalizing a complaint text.
+    
+    Attributes:
+        raw_text: Original input text from the user.
+        cleaned_text: Text after basic cleanup (whitespace, noise removal).
+        corrected_text: Final text after spell correction (if applied).
+        applied_rules: Tuple of rule names applied during normalization.
+    """
     raw_text: str
     cleaned_text: str
     corrected_text: str
@@ -76,6 +100,17 @@ class NormalizedComplaint:
 
 
 def _read_terms_file(path: Path) -> set[str]:
+    """Read a text file containing terms, one per line.
+    
+    Skips empty lines and comments (lines starting with #). All terms are
+    converted to lowercase for case-insensitive matching.
+    
+    Args:
+        path: Path to the terms file.
+        
+    Returns:
+        Set of normalized terms from the file, or empty set if file doesn't exist.
+    """
     if not path.exists():
         return set()
 
@@ -89,6 +124,17 @@ def _read_terms_file(path: Path) -> set[str]:
 
 
 def _read_frequency_terms(path: Path) -> set[str]:
+    """Read frequency dictionary file containing terms and their counts.
+    
+    Expects format: term count [additional fields...]
+    Extracts only the term part (first column) and converts to lowercase.
+    
+    Args:
+        path: Path to the frequency dictionary file.
+        
+    Returns:
+        Set of terms (first column) from the dictionary, or empty set if file doesn't exist.
+    """
     if not path.exists():
         return set()
 
@@ -107,6 +153,21 @@ def _read_frequency_terms(path: Path) -> set[str]:
 
 
 def basic_cleanup_text(text: str) -> str:
+    """Perform basic text cleanup on raw complaint text.
+    
+    Steps performed:
+    1. Unicode normalization (NFKC form)
+    2. Lowercase conversion
+    3. Standardize slash delimiters with spaces
+    4. Remove noise characters (punctuation, special chars)
+    5. Normalize whitespace
+    
+    Args:
+        text: Raw text to clean.
+        
+    Returns:
+        Cleaned text ready for further processing.
+    """
     cleaned = unicodedata.normalize("NFKC", text)
     cleaned = cleaned.strip().lower()
     cleaned = SLASH_RE.sub(" / ", cleaned)
@@ -116,6 +177,12 @@ def basic_cleanup_text(text: str) -> str:
 
 
 class ComplaintTextNormalizer:
+    """Normalizes complaint text with semantic-aware spell correction.
+    
+    Uses SymSpell for spell checking and correction while protecting medical terms
+    and semantic guard tokens to prevent corrections that would alter meaning.
+    """
+
     def __init__(
         self,
         *,
@@ -125,6 +192,15 @@ class ComplaintTextNormalizer:
         dictionary_version: str,
         enabled: bool,
     ) -> None:
+        """Initialize the text normalizer.
+        
+        Args:
+            sym_spell: SymSpell instance for spell correction, or None if unavailable.
+            protected_terms: Medical/important terms that should not be corrected.
+            known_terms: All known valid terms from the dictionary.
+            dictionary_version: Version identifier for the loaded dictionary.
+            enabled: Whether normalization is enabled (False if dictionary load failed).
+        """
         self.sym_spell = sym_spell
         self.protected_terms = protected_terms
         self.known_terms = known_terms
@@ -133,6 +209,14 @@ class ComplaintTextNormalizer:
 
     @classmethod
     def from_assets(cls) -> "ComplaintTextNormalizer":
+        """Create a normalizer instance by loading dictionaries and assets from disk.
+        
+        Loads the base English dictionary, medical overlay terms, and protected medical terms.
+        Returns a disabled instance if dictionaries cannot be loaded.
+        
+        Returns:
+            ComplaintTextNormalizer instance with loaded assets.
+        """
         if not BASE_DICTIONARY_PATH.exists():
             return cls(
                 sym_spell=None,
@@ -198,6 +282,15 @@ class ComplaintTextNormalizer:
         )
 
     def normalize(self, text: str) -> NormalizedComplaint:
+        """Normalize complaint text through cleanup and optional spell correction.
+        
+        Args:
+            text: Raw complaint text to normalize.
+            
+        Returns:
+            NormalizedComplaint with cleaned and optionally corrected text,
+            along with list of applied normalization rules.
+        """
         cleaned = basic_cleanup_text(text)
         applied_rules: list[str] = []
 
@@ -255,6 +348,14 @@ class ComplaintTextNormalizer:
         )
 
     def _needs_spelling_help(self, text: str) -> bool:
+        """Check if text contains any unknown tokens that might need correction.
+        
+        Args:
+            text: Text to check.
+            
+        Returns:
+            True if any token is not in the known terms set, False otherwise.
+        """
         tokens = text.split()
         if not tokens:
             return False
@@ -266,9 +367,32 @@ class ComplaintTextNormalizer:
         return False
 
     def _unknown_token_count(self, text: str) -> int:
+        """Count how many tokens in the text are not in the known terms set.
+        
+        Args:
+            text: Text to analyze.
+            
+        Returns:
+            Number of unknown tokens.
+        """
         return sum(1 for token in text.split() if token not in self.known_terms)
 
     def _accept_correction(self, original: str, candidate: str) -> bool:
+        """Validate whether a spell correction candidate should be accepted.
+        
+        Performs multiple safety checks to prevent corrections that would:
+        - Remove protected medical terms or semantic guard tokens
+        - Not improve the unknown token count
+        - Change too many tokens (>40% or >2 tokens)
+        - Significantly change the token count (±2 limit)
+        
+        Args:
+            original: Original text before correction.
+            candidate: Suggested corrected text.
+            
+        Returns:
+            True if the correction is safe and improves the text, False otherwise.
+        """
         original_tokens = original.split()
         candidate_tokens = candidate.split()
 
@@ -278,24 +402,29 @@ class ComplaintTextNormalizer:
         original_set = set(original_tokens)
         candidate_set = set(candidate_tokens)
 
+        # Ensure no protected medical terms are removed
         for token in self.protected_terms:
             if token in original_set and token not in candidate_set:
                 return False
 
+        # Ensure semantic guard tokens (negations, timing, severity) are preserved
         for token in SEMANTIC_GUARD_TOKENS:
             if token in original_set and token not in candidate_set:
                 return False
 
+        # Ensure structural/grammatical support tokens are preserved
         for token in STABLE_SUPPORT_TOKENS:
             if token in original_set and token not in candidate_set:
                 return False
 
+        # Correction must reduce the number of unknown tokens
         original_unknown = self._unknown_token_count(original)
         candidate_unknown = self._unknown_token_count(candidate)
 
         if candidate_unknown >= original_unknown:
             return False
 
+        # Limit the number of token changes to prevent over-correction
         changed_positions = sum(
             1
             for left, right in zip_longest(original_tokens, candidate_tokens, fillvalue="")
@@ -306,6 +435,7 @@ class ComplaintTextNormalizer:
         if changed_positions > max_allowed_changes:
             return False
 
+        # Ensure the token count doesn't change drastically
         if abs(len(candidate_tokens) - len(original_tokens)) > 2:
             return False
 
@@ -314,10 +444,26 @@ class ComplaintTextNormalizer:
 
 @lru_cache(maxsize=1)
 def get_default_normalizer() -> ComplaintTextNormalizer:
+    """Get or create the default normalizer instance (cached).
+    
+    The normalizer is created once on first call and cached for subsequent calls.
+    This avoids repeatedly loading dictionaries and assets.
+    
+    Returns:
+        Cached ComplaintTextNormalizer instance.
+    """
     return ComplaintTextNormalizer.from_assets()
 
 
 def load_normalization_audit_cases() -> list[dict[str, str]]:
+    """Load audit cases for normalization quality assurance.
+    
+    Reads a JSON file containing test cases used to validate and audit
+    the normalization behavior.
+    
+    Returns:
+        List of audit case dictionaries, or empty list if file doesn't exist.
+    """
     if not AUDIT_CASES_PATH.exists():
         return []
     return json.loads(AUDIT_CASES_PATH.read_text(encoding="utf-8"))

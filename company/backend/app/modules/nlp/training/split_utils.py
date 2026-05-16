@@ -25,11 +25,37 @@ class TrainingRow:
 
 
 def _read_json(path: Path) -> Any:
+    """Load and parse a JSON file.
+
+    Args:
+        path (Path): File path to read from.
+
+    Returns:
+        Any: Parsed JSON object from the file.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+        json.JSONDecodeError: If the file contains invalid JSON.
+    """
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
 def _read_jsonl(path: Path) -> list[dict[str, Any]]:
+    """Read a JSONL (JSON Lines) file and return a list of parsed dictionaries.
+
+    Each line in the file should contain a valid JSON object. Empty lines are skipped.
+    Line numbers in error messages are 1-indexed for user convenience.
+
+    Args:
+        path (Path): File path to read from.
+
+    Returns:
+        list[dict[str, Any]]: List of parsed JSON objects, one per line.
+
+    Raises:
+        ValueError: If any line contains invalid JSON, with line number context.
+    """
     rows: list[dict[str, Any]] = []
     with path.open("r", encoding="utf-8") as f:
         for line_number, line in enumerate(f, start=1):
@@ -44,6 +70,18 @@ def _read_jsonl(path: Path) -> list[dict[str, Any]]:
 
 
 def _build_group_key(item: dict[str, Any]) -> str:
+    """Create a unique group key from an item's family IDs.
+
+    Family-aware grouping ensures that rows from the same family (patient/source)
+    stay together during train/val/test splits. This helps prevent data leakage
+    where similar samples from the same family appear in multiple splits.
+
+    Args:
+        item (dict[str, Any]): Data item with optional 'family_ids' and fallback fields.
+
+    Returns:
+        str: Pipe-separated family IDs if present, otherwise fallback key using label and text.
+    """
     family_ids = sorted(set(item.get("family_ids", [])))
     if family_ids:
         return "|".join(family_ids)
@@ -53,9 +91,18 @@ def _build_group_key(item: dict[str, Any]) -> str:
 
 
 def load_training_rows() -> list[TrainingRow]:
-    """
-    Prefer dataset_manifest.json because it contains family_ids.
-    Fall back to dataset.jsonl if needed, but then every row becomes its own group.
+    """Load training data from manifest or raw dataset file.
+
+    This function prioritizes dataset_manifest.json (which includes family_ids for
+    family-aware grouping) but gracefully falls back to dataset.jsonl if the manifest
+    doesn't exist. When falling back, each row becomes its own group, which may
+    result in different split characteristics.
+
+    Returns:
+        list[TrainingRow]: List of parsed training rows with family grouping information.
+
+    Raises:
+        FileNotFoundError: If neither manifest nor dataset file exists.
     """
     rows: list[TrainingRow] = []
 
@@ -99,6 +146,21 @@ def load_training_rows() -> list[TrainingRow]:
 
 
 def _group_rows(rows: list[TrainingRow]) -> tuple[dict[str, list[TrainingRow]], dict[str, str]]:
+    """Group training rows by their group key (family ID) with label consistency validation.
+
+    All rows in the same group must have the same label. This prevents data integrity
+    issues where a family group contains conflicting labels, which would corrupt
+    the model's ability to learn consistent decision boundaries.
+
+    Args:
+        rows (list[TrainingRow]): Unsorted list of training rows.
+
+    Returns:
+        tuple: (by_group dict mapping group_key to list of rows, group_label dict mapping group_key to label).
+
+    Raises:
+        ValueError: If any group has rows with conflicting labels.
+    """
     by_group: dict[str, list[TrainingRow]] = defaultdict(list)
     group_label: dict[str, str] = {}
 
@@ -116,6 +178,16 @@ def _group_rows(rows: list[TrainingRow]) -> tuple[dict[str, list[TrainingRow]], 
 
 
 def _class_counts(rows: list[TrainingRow]) -> dict[str, int]:
+    """Count the number of rows for each label class.
+
+    Useful for understanding class distribution and checking for imbalance in splits.
+
+    Args:
+        rows (list[TrainingRow]): List of training rows to count.
+
+    Returns:
+        dict[str, int]: Sorted dictionary mapping label to count of rows with that label.
+    """
     return dict(sorted(Counter(row.label for row in rows).items()))
 
 
@@ -126,10 +198,21 @@ def _safe_group_train_test_split(
     test_size: float,
     seed: int,
 ) -> tuple[list[str], list[str]]:
-    """
-    First try stratified split at group level.
-    If sklearn refuses because a class is too small for the requested split,
-    fall back to deterministic non-stratified split rather than crashing.
+    """Perform train/test split with graceful fallback when stratification is not possible.
+
+    Stratified splitting ensures that class distribution is preserved across splits.
+    However, if any class has fewer examples than required by the split parameters,
+    sklearn raises ValueError. In such cases, we fall back to a simple random split
+    to ensure the function never fails during dataset preparation.
+
+    Args:
+        group_keys (list[str]): Unique group identifiers to split.
+        group_labels (list[str]): Corresponding label for each group (same length as group_keys).
+        test_size (float): Proportion of data to assign to the test set (0.0 to 1.0).
+        seed (int): Random seed for reproducibility.
+
+    Returns:
+        tuple[list[str], list[str]]: (train_group_keys, test_group_keys) both sorted.
     """
     try:
         train_keys, test_keys = train_test_split(
@@ -159,6 +242,34 @@ def split_rows_family_aware(
     val_fraction: float = 0.1,
     test_fraction: float = 0.1,
 ) -> dict[str, Any]:
+    """Split training data into train/val/test sets while keeping family groups together.
+
+    This function ensures that all rows from the same family (same group_key) remain
+    in the same split. This is critical for medical datasets where multiple samples
+    may come from the same patient or source, and we want to prevent data leakage.
+
+    The split is done at the group level first (stratified by label when possible),
+    then expanded to include all rows in each group.
+
+    Args:
+        rows (list[TrainingRow]): All training rows to split.
+        seed (int): Random seed for reproducible splits. Defaults to 42.
+        train_fraction (float): Fraction of groups for training (default 0.8).
+        val_fraction (float): Fraction of groups for validation (default 0.1).
+        test_fraction (float): Fraction of groups for testing (default 0.1).
+
+    Returns:
+        dict[str, Any]: Dictionary containing split metadata and row assignments:
+            - 'splitStrategy': Description of the splitting method
+            - 'randomSeed': The seed used
+            - 'train_rows': List of TrainingRow objects for training
+            - 'val_rows': List of TrainingRow objects for validation
+            - 'test_rows': List of TrainingRow objects for testing
+            - 'summary': Aggregate statistics for each split
+
+    Raises:
+        ValueError: If split fractions don't sum to 1.0 or if no rows are provided.
+    """
     if not rows:
         raise ValueError("No training rows provided.")
 
@@ -229,6 +340,16 @@ def split_rows_family_aware(
 
 
 def save_split_manifest(split_result: dict[str, Any], *, path: Path = SPLIT_MANIFEST_PATH) -> None:
+    """Persist train/val/test split metadata to a JSON file for reproducible future loading.
+
+    Saves only the metadata needed to reconstruct splits (group keys and counts),
+    not the full row data, to keep file size manageable and enable reload of splits
+    when new training data is added.
+
+    Args:
+        split_result (dict[str, Any]): Result dictionary from split_rows_family_aware().
+        path (Path): Output file path. Defaults to SPLIT_MANIFEST_PATH.
+    """
     payload = {
         "splitStrategy": split_result["splitStrategy"],
         "randomSeed": split_result["randomSeed"],
@@ -251,6 +372,17 @@ def save_split_manifest(split_result: dict[str, Any], *, path: Path = SPLIT_MANI
 
 
 def load_split_manifest(path: Path = SPLIT_MANIFEST_PATH) -> dict[str, Any]:
+    """Load previously saved split manifest metadata.
+
+    Args:
+        path (Path): File path to load from. Defaults to SPLIT_MANIFEST_PATH.
+
+    Returns:
+        dict[str, Any]: Split metadata dictionary.
+
+    Raises:
+        FileNotFoundError: If the manifest file does not exist.
+    """
     if not path.exists():
         raise FileNotFoundError(f"Split manifest not found: {path}")
     return _read_json(path)
@@ -260,6 +392,22 @@ def apply_saved_group_split(
     rows: list[TrainingRow],
     split_manifest: dict[str, Any],
 ) -> dict[str, Any]:
+    """Apply a previously saved split to a new set of training rows.
+
+    This enables reproducible splits when retraining with updated data. The split
+    definition from the manifest is applied to the provided rows, raising an error
+    if any expected group is missing from the new data.
+
+    Args:
+        rows (list[TrainingRow]): New training rows to apply the saved split to.
+        split_manifest (dict[str, Any]): Split metadata loaded via load_split_manifest().
+
+    Returns:
+        dict[str, Any]: Split result with the same structure as split_rows_family_aware().
+
+    Raises:
+        ValueError: If saved split references group keys that don't exist in the new rows.
+    """
     by_group, _group_label = _group_rows(rows)
 
     train_group_keys = split_manifest["train"]["groupKeys"]

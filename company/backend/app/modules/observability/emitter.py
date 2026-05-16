@@ -18,10 +18,19 @@ def emit_event(
     reason_code: str | None = None,
     payload: dict | None = None,
 ) -> None:
+    """Persist a single observability event with the active correlation ID.
+
+    The payload is stored as JSON text only when present so the database row
+    stays compact for events that do not need extra structured context.
+    """
     safe_payload_json = None
     if payload:
+        # Keep the raw payload in a JSON column-compatible string; non-ASCII
+        # characters are preserved for diagnostics and UI display.
         safe_payload_json = json.dumps(payload, ensure_ascii=False)
 
+    # Capture the current request/session correlation so downstream queries can
+    # stitch related events together without the caller having to pass it in.
     db.add(
         Event(
             id=uuid.uuid4().hex,

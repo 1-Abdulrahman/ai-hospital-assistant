@@ -24,6 +24,11 @@ router = APIRouter(prefix="/portal", tags=["portal"])
 def get_current_user(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
 ) -> CurrentUserResponse:
+    """Return the authenticated portal identity used by the frontend shell.
+
+    This endpoint is typically called after login to hydrate user context
+    (tenant, email, role) for route guards and role-aware UI rendering.
+    """
     return CurrentUserResponse(
         tenantId=current_user.tenantId,
         email=current_user.email,
@@ -33,11 +38,17 @@ def get_current_user(
 
 @router.get("/analytics/summary")
 def portal_analytics_summary(
+    # Public API keeps `from`/`to` query names; map to Python-safe parameters.
     from_date: str = Query(..., alias="from", pattern=r"^\d{4}-\d{2}-\d{2}$"),
     to_date: str = Query(..., alias="to", pattern=r"^\d{4}-\d{2}-\d{2}$"),
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> dict:
+    """Return aggregate metrics for dashboard cards within a date window.
+
+    The query params are validated as ISO-like calendar dates (YYYY-MM-DD)
+    before delegating to the observability query service.
+    """
     return get_analytics_summary(
         db=db,
         current_user=current_user,
@@ -52,6 +63,7 @@ def portal_recent_bookings(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> list[dict]:
+    """Return a small, recency-ordered booking feed for quick portal views."""
     return get_recent_bookings(
         db=db,
         current_user=current_user,
@@ -61,6 +73,7 @@ def portal_recent_bookings(
 
 @router.get("/bookings")
 def portal_bookings(
+    # Alias external camelCase query keys to backend snake_case names.
     from_date: str = Query(..., alias="from", pattern=r"^\d{4}-\d{2}-\d{2}$"),
     to_date: str = Query(..., alias="to", pattern=r"^\d{4}-\d{2}-\d{2}$"),
     status: str | None = Query(default=None),
@@ -71,6 +84,11 @@ def portal_bookings(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> dict:
+    """Return paginated bookings filtered by operational and taxonomy fields.
+
+    Supports optional filtering by status, specialty, and normalized reason code.
+    Results are constrained by the authenticated user's tenant visibility.
+    """
     return get_bookings_page(
         db=db,
         current_user=current_user,
@@ -95,6 +113,11 @@ def portal_sessions(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> dict:
+    """Return paginated conversational session activity for reporting views.
+
+    Tenant admins can optionally narrow results to a specific tenant id while
+    keeping the same endpoint contract for super-admin and tenant scopes.
+    """
     return get_sessions_page(
         db=db,
         current_user=current_user,
@@ -106,11 +129,13 @@ def portal_sessions(
         page_size=page_size,
     )
 
+
 @router.get("/tenants")
 def portal_tenants(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> list[dict]:
+    """List tenants visible to the authenticated user role and scope."""
     return get_tenants(
         db=db,
         current_user=current_user,
@@ -123,12 +148,14 @@ def portal_tenant_detail(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> dict:
+    """Return tenant details by id with a consistent 404 error contract."""
     result = get_tenant_detail(
         db=db,
         current_user=current_user,
         tenant_id=tenant_id,
     )
     if result is None:
+        # Keep error payload shape consistent with other API modules.
         raise HTTPException(
             status_code=404,
             detail={
@@ -141,6 +168,7 @@ def portal_tenant_detail(
 
 @router.get("/audit")
 def portal_audit(
+    # Preserve frontend query names while exposing Pythonic parameter names.
     from_date: str = Query(..., alias="from", pattern=r"^\d{4}-\d{2}-\d{2}$"),
     to_date: str = Query(..., alias="to", pattern=r"^\d{4}-\d{2}-\d{2}$"),
     event_type: str | None = Query(default=None, alias="eventType"),
@@ -154,6 +182,11 @@ def portal_audit(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> dict:
+    """Return paginated audit events with optional traceability filters.
+
+    Supports filtering by event dimensions plus `correlationId`/`sessionId`
+    to help operators reconstruct end-to-end request flows.
+    """
     return get_audit_page(
         db=db,
         current_user=current_user,
@@ -175,7 +208,9 @@ def portal_nlp_stats(
     request: Request,
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
 ) -> dict:
+    """Expose runtime NLP health/status counters for portal observability."""
     return get_nlp_stats(
+        # NLP service/state may be unset in limited test environments.
         nlp_service=getattr(request.app.state, "nlp_service", None),
         nlp_status=getattr(request.app.state, "nlp_status", None),
     )
@@ -187,11 +222,13 @@ def portal_nlp_recent(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> list[dict]:
+    """Return recent NLP records scoped to the current user's visibility."""
     return get_nlp_recent(
         db=db,
         current_user=current_user,
         limit=limit,
     )
+
 
 @router.get("/traces/{correlation_id}")
 def portal_traces_by_correlation_id(
@@ -199,6 +236,7 @@ def portal_traces_by_correlation_id(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> list[dict]:
+    """Return trace records grouped under a shared correlation identifier."""
     return get_traces_by_correlation_id(
         db=db,
         current_user=current_user,
@@ -212,6 +250,7 @@ def portal_traces_by_session_id(
     current_user: AuthenticatedPortalUser = Depends(get_current_portal_user),
     db: Session = Depends(get_db),
 ) -> list[dict]:
+    """Return trace records associated with a conversational session id."""
     return get_traces_by_session_id(
         db=db,
         current_user=current_user,
