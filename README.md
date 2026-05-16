@@ -71,6 +71,17 @@ ai-hospital-assistant/
 - **Python 3.13**
 - **Node.js 18+** (if running UI locally outside Docker)
 
+## Large Model Files
+
+This repository uses Git LFS to store large NLP model and local wheel files.
+
+Before cloning or pulling the repository, install Git LFS:
+
+```bash
+sudo apt update
+sudo apt install git-lfs -y
+git lfs install
+```
 ---
 
 ## 🚀 Quick Start (Docker)
