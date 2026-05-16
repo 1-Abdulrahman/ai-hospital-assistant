@@ -1,2 +1,2 @@
 company/backend/app/assets/nlp_models/distilbert-specialty/** filter=lfs diff=lfs merge=lfs -text
-/home/abdelrahman/dev/ai-hospital-assistant/docs/offline/wheels/** filter=lfs diff=lfs merge=lfs -text
+docs/offline/wheels/** filter=lfs diff=lfs merge=lfs -text
