@@ -5,5 +5,6 @@ from app.core.config import settings
 
 engine = create_engine(
     settings.database_url,
+    # SQLite needs a per-connection thread safety override when used through SQLAlchemy.
     connect_args={"check_same_thread": False} if settings.database_url.startswith("sqlite") else {},
 )

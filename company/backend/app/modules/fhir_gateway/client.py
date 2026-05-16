@@ -19,6 +19,8 @@ from app.modules.fhir_gateway.mappers import (
     map_schedule_resource_to_dto,
     map_slot_bundle_to_dtos,
     map_slot_resource_to_dto,
+    extract_patient_emails,
+    map_task_resource_to_refill_task_dto,
 )
 from app.modules.fhir_gateway.reason_codes import (
     APPOINTMENT_CONFLICT,
@@ -29,6 +31,7 @@ from app.modules.fhir_gateway.reason_codes import (
     PATIENT_NOT_FOUND,
     SLOT_NO_LONGER_AVAILABLE,
     FhirGatewayError,
+    TASK_CREATE_FAILED,
 )
 from app.modules.fhir_gateway.schemas import (
     AppointmentDTO,
@@ -37,16 +40,26 @@ from app.modules.fhir_gateway.schemas import (
     PatientSummaryDTO,
     ScheduleDTO,
     SlotDTO,
+    MedicationRefillTaskDTO,
 )
 
 SPECIALTY_SYSTEM = "urn:ai-hospital-assistant:specialty"
 
 
 def _utc_now_iso() -> str:
+    """Return the current UTC time as an ISO-8601 string.
+
+    Used to populate timestamp fields on created FHIR resources.
+    """
     return datetime.now(timezone.utc).isoformat()
 
 
 def build_patient_identifier_system(tenant_id: str) -> str:
+    """Build and validate the patient identifier system for a tenant.
+
+    The returned value is used as the `system` portion of FHIR `Identifier`
+    objects so that patient keys are tenant-scoped.
+    """
     cleaned = tenant_id.strip()
     if not cleaned:
         raise FhirGatewayError(
@@ -56,8 +69,36 @@ def build_patient_identifier_system(tenant_id: str) -> str:
         )
     return f"urn:ai-hospital-assistant:patient-key:{cleaned}"
 
+def _normalize_email_value(email: str | None) -> str | None:
+    """Return a cleaned, lower-cased email or None if empty.
+
+    Trims whitespace and returns None for empty or missing values.
+    """
+    if email is None:
+        return None
+    cleaned = email.strip().lower()
+    return cleaned or None
+
+
+def _email_contact_point(email: str) -> dict[str, Any]:
+    """Create a FHIR `telecom` contact point for an email address.
+
+    Returns a dict suitable for inclusion in the `telecom` attribute
+    of a Patient resource.
+    """
+    return {
+        "system": "email",
+        "value": email,
+        "use": "home",
+    }
 
 def _ensure_reference(resource_type: str, value: str) -> str:
+    """Ensure a valid FHIR reference string for `resource_type`.
+
+    Accepts either an id ("123") or a full reference ("Patient/123").
+    Returns a properly formatted reference like "Patient/123" and
+    raises a `FhirGatewayError` for empty values.
+    """
     cleaned = value.strip()
     if not cleaned:
         raise FhirGatewayError(
@@ -71,28 +112,52 @@ def _ensure_reference(resource_type: str, value: str) -> str:
 
 
 def _reference_search_value(reference: str) -> str:
+    """Extract the id portion from a FHIR reference.
+
+    If passed "Patient/123" returns "123", otherwise returns the
+    trimmed input unchanged.
+    """
     cleaned = reference.strip()
     if "/" in cleaned:
         return cleaned.split("/", 1)[1]
     return cleaned
 
 def _normalize_specialty_token(value: str | None) -> str:
+    """Normalize specialty tokens for case- and separator-insensitive comparison.
+
+    Replaces underscores with spaces and lower-cases the value.
+    """
     if not value:
         return ""
     return value.strip().replace("_", " ").lower()
 
 
 def _specialty_matches(appointment_specialty: str | None, selected_specialty: str | None) -> bool:
+    """Compare two specialty values for a semantic match.
+
+    Uses normalization to ignore case and common token separators.
+    """
     return _normalize_specialty_token(appointment_specialty) == _normalize_specialty_token(selected_specialty)
 
 
 class FhirClient:
+    """Client for interacting with a FHIR server.
+
+    Wraps HTTP calls with error handling and provides higher-level helpers
+    for common operations (patients, slots, appointments, tasks).
+    """
     def __init__(
         self,
         *,
         base_url: str | None = None,
         timeout: httpx.Timeout | None = None,
     ) -> None:
+        """Initialize the client.
+
+        Args:
+            base_url: optional override for the FHIR base URL.
+            timeout: optional httpx.Timeout override for requests.
+        """
         self.base_url = (base_url or settings.fhir_base_url).rstrip("/")
         self.timeout = timeout or httpx.Timeout(
             connect=settings.fhir_timeout_connect,
@@ -102,6 +167,11 @@ class FhirClient:
         )
 
     async def get_status_payload(self) -> dict[str, Any]:
+        """Return a simple health payload reflecting FHIR availability.
+
+        Attempts to read the capability statement; if that fails a
+        degraded payload is returned with a reason code.
+        """
         try:
             await self.get_capability_statement()
             return {
@@ -123,6 +193,10 @@ class FhirClient:
         patient_ref: str,
         specialty: str | None = None,
     ) -> ContinuitySignalsDTO:
+        """Return continuity signals (appointments) for a patient.
+
+        Optionally filters appointments by specialty.
+        """
         appointments = await self.search_appointments(
             patient_ref=patient_ref,
             status="booked",
@@ -138,6 +212,10 @@ class FhirClient:
         return map_appointments_to_continuity_signals(appointments)
 
     async def get_capability_statement(self) -> dict[str, Any]:
+        """Retrieve the FHIR capability statement (metadata).
+
+        Uses `_request` and validates the response.
+        """
         response = await self._request(
             "GET",
             "/metadata",
@@ -151,6 +229,17 @@ class FhirClient:
         patient_key_hash: str,
         tenant_id: str | None = None,
     ) -> PatientSummaryDTO | str | None:
+        """Find a patient by a hashed patient key.
+
+        If `tenant_id` is provided the search is performed using a
+        tenant-scoped identifier system; otherwise a global identifier
+        search is performed and a `Patient/{id}` reference may be returned.
+
+        Returns a `PatientSummaryDTO` when tenant-scoped search finds a
+        mapped patient, a string reference like "Patient/123" when the
+        global search finds a raw patient resource, or `None` when not
+        found.
+        """
         if not patient_key_hash.strip():
             raise FhirGatewayError(
                 reason_code=INVALID_REQUEST,
@@ -233,12 +322,28 @@ class FhirClient:
         tenant_id: str,
         patient_key_hash: str,
         display_name: str | None = None,
+        email: str | None = None,
     ) -> PatientSummaryDTO:
+        """Ensure a patient exists for a given tenant and key.
+
+        If the patient exists, returns an up-to-date `PatientSummaryDTO`.
+        If not, attempts to create a new Patient resource in FHIR.
+        """
         existing = await self.find_patient_by_identifier(
             patient_key_hash=patient_key_hash,
             tenant_id=tenant_id,
         )
+        
         if isinstance(existing, PatientSummaryDTO):
+            normalized_email = _normalize_email_value(email)
+            if normalized_email and not existing.emails:
+                updated = await self.save_patient_email_if_missing(
+                    tenant_id=tenant_id,
+                    patient_key_hash=patient_key_hash,
+                    email=normalized_email,
+                )
+                if isinstance(updated, PatientSummaryDTO):
+                    return updated
             return existing
 
         resource: dict[str, Any] = {
@@ -253,6 +358,10 @@ class FhirClient:
 
         if display_name and display_name.strip():
             resource["name"] = [{"text": display_name.strip()}]
+            
+        normalized_email = _normalize_email_value(email)
+        if normalized_email:
+            resource["telecom"] = [_email_contact_point(normalized_email)]
 
         response = await self._request(
             "POST",
@@ -300,12 +409,114 @@ class FhirClient:
             details=self._operation_outcome_text(response),
         )
 
+    async def save_patient_email_if_missing(
+        self,
+        *,
+        tenant_id: str,
+        patient_key_hash: str,
+        email: str,
+    ) -> PatientSummaryDTO | None:
+        """Add an email contact point to a Patient if none exist.
+
+        Returns the updated `PatientSummaryDTO` when updated or the
+        existing DTO if no change was required. Returns `None` if the
+        patient cannot be located.
+        """
+        normalized_email = _normalize_email_value(email)
+        if not normalized_email:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Email is required for patient contact update.",
+                status_code=400,
+            )
+
+        existing = await self.find_patient_by_identifier(
+            patient_key_hash=patient_key_hash,
+            tenant_id=tenant_id,
+        )
+
+        if not isinstance(existing, PatientSummaryDTO):
+            return None
+
+        resource = await self._read_resource_or_raise(
+            resource_type="Patient",
+            resource_id_or_ref=existing.patientRef,
+            not_found_reason_code=PATIENT_NOT_FOUND,
+            not_found_message="Patient was not found in FHIR.",
+        )
+
+        existing_emails = extract_patient_emails(resource)
+
+        if normalized_email in existing_emails:
+            return map_patient_resource_to_dto(
+                resource,
+                tenant_id=tenant_id,
+                patient_key_hash=patient_key_hash,
+            )
+
+        if existing_emails:
+            return map_patient_resource_to_dto(
+                resource,
+                tenant_id=tenant_id,
+                patient_key_hash=patient_key_hash,
+            )
+
+        telecom = resource.get("telecom")
+        if not isinstance(telecom, list):
+            telecom = []
+
+        telecom.append(_email_contact_point(normalized_email))
+        resource["telecom"] = telecom
+
+        response = await self._request(
+            "PUT",
+            f"/Patient/{_reference_search_value(existing.patientRef)}",
+            json=resource,
+            headers={"Content-Type": "application/fhir+json"},
+            retry_on_read=False,
+        )
+
+        if response.status_code in {200, 201}:
+            return map_patient_resource_to_dto(
+                self._json_or_empty(response),
+                tenant_id=tenant_id,
+                patient_key_hash=patient_key_hash,
+            )
+
+        if response.status_code == 503:
+            raise FhirGatewayError(
+                reason_code=FHIR_UNAVAILABLE,
+                user_message="FHIR service is unavailable while updating patient contact email.",
+                status_code=503,
+                details=self._operation_outcome_text(response),
+            )
+
+        if 400 <= response.status_code < 500:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Patient contact update was rejected by FHIR.",
+                status_code=response.status_code,
+                details=self._operation_outcome_text(response),
+            )
+
+        raise FhirGatewayError(
+            reason_code=FHIR_UNAVAILABLE,
+            user_message="Patient contact email could not be updated.",
+            status_code=503,
+            details=self._operation_outcome_text(response),
+        )
+
     async def get_patient_or_raise(
         self,
         *,
         tenant_id: str,
         patient_key_hash: str,
     ) -> PatientSummaryDTO:
+        """Return a `PatientSummaryDTO` or raise `FhirGatewayError`.
+
+        Convenience wrapper that raises a 404-style error when the
+        patient cannot be found.
+        """
         patient = await self.find_patient_by_identifier(
             patient_key_hash=patient_key_hash,
             tenant_id=tenant_id,
@@ -319,6 +530,10 @@ class FhirClient:
         return patient
 
     async def get_medication_requests_for_patient(self, patient_ref: str) -> dict[str, Any]:
+        """Return the raw MedicationRequest bundle for an active patient.
+
+        The returned dict is the parsed JSON bundle from FHIR.
+        """
         patient_ref_q = quote(patient_ref, safe="")
         response = await self._request(
             "GET",
@@ -336,6 +551,11 @@ class FhirClient:
         *,
         patient_key_hash: str,
     ) -> MedicationRenewalSignalsDTO:
+        """Build medication renewal signals for a patient key.
+
+        If the patient is not found returns an empty/false DTO to indicate
+        no eligibility.
+        """
         patient_ref = await self.find_patient_by_identifier(patient_key_hash=patient_key_hash)
         if not isinstance(patient_ref, str):
             return MedicationRenewalSignalsDTO(
@@ -350,6 +570,141 @@ class FhirClient:
             patient_ref=patient_ref,
             bundle=med_bundle,
         )
+        
+        
+    async def create_medication_refill_task(
+        self,
+        *,
+        patient_ref: str,
+        medication_request_ref: str,
+        medication_label: str | None = None,
+        refill_status: str | None = None,
+        refill_status_message: str | None = None,
+        correlation_id: str | None = None,
+    ) -> MedicationRefillTaskDTO:
+        """Create a FHIR Task resource representing a medication refill request.
+
+        Builds a Task with inputs describing the medication and assistant
+        context, then POSTs it to the FHIR server. Returns a DTO on success
+        or raises an appropriate `FhirGatewayError`.
+        """
+        patient_reference = _ensure_reference("Patient", patient_ref)
+        medication_request_reference = _ensure_reference(
+            "MedicationRequest",
+            medication_request_ref,
+        )
+
+        input_items: list[dict[str, Any]] = [
+            {
+                "type": {"text": "Selected medication request"},
+                "valueReference": {"reference": medication_request_reference},
+            }
+        ]
+
+        if medication_label:
+            input_items.append(
+                {
+                    "type": {"text": "Medication display"},
+                    "valueString": medication_label,
+                }
+            )
+
+        if refill_status:
+            input_items.append(
+                {
+                    "type": {"text": "Assistant refill status"},
+                    "valueString": refill_status,
+                }
+            )
+
+        if refill_status_message:
+            input_items.append(
+                {
+                    "type": {"text": "Assistant refill status message"},
+                    "valueString": refill_status_message,
+                }
+            )
+
+        if correlation_id:
+            input_items.append(
+                {
+                    "type": {"text": "Assistant correlation id"},
+                    "valueString": correlation_id,
+                }
+            )
+
+        resource: dict[str, Any] = {
+            "resourceType": "Task",
+            "status": "requested",
+            "intent": "proposal",
+            "priority": "routine",
+            "code": {
+                "text": "Medication refill request",
+            },
+            "description": (
+                "Patient requested refill processing for an existing active medication request. "
+                "Pending clinical/pharmacy fulfillment."
+            ),
+            "for": {
+                "reference": patient_reference,
+            },
+            "focus": {
+                "reference": medication_request_reference,
+            },
+            "authoredOn": _utc_now_iso(),
+            "requester": {
+                "display": "Patient via AI Hospital Assistant MVP",
+            },
+            "owner": {
+                "display": "Clinical medication refill queue",
+            },
+            "businessStatus": {
+                "text": "Pending clinical/pharmacy fulfillment",
+            },
+            "note": [
+                {
+                    "text": (
+                        "Created after OTP verification. "
+                        "The assistant did not approve, prescribe, or dispense medication."
+                    )
+                }
+            ],
+            "input": input_items,
+        }
+
+        response = await self._request(
+            "POST",
+            "/Task",
+            json=resource,
+            headers={"Content-Type": "application/fhir+json"},
+            retry_on_read=False,
+        )
+
+        if response.status_code in {200, 201}:
+            return map_task_resource_to_refill_task_dto(self._json_or_empty(response))
+
+        if response.status_code == 503:
+            raise FhirGatewayError(
+                reason_code=FHIR_UNAVAILABLE,
+                user_message="FHIR service is unavailable while creating refill request.",
+                status_code=503,
+                details=self._operation_outcome_text(response),
+            )
+
+        if 400 <= response.status_code < 500:
+            raise FhirGatewayError(
+                reason_code=INVALID_REQUEST,
+                user_message="Refill request was rejected by FHIR.",
+                status_code=response.status_code,
+                details=self._operation_outcome_text(response),
+            )
+
+        raise FhirGatewayError(
+            reason_code=TASK_CREATE_FAILED,
+            user_message="Medication refill request could not be submitted to FHIR.",
+            status_code=503,
+            details=self._operation_outcome_text(response),
+        )
 
     async def search_schedules(
         self,
@@ -358,6 +713,10 @@ class FhirClient:
         specialty: str,
         active: bool = True,
     ) -> list[ScheduleDTO]:
+        """Search for schedules matching a tenant and specialty.
+
+        Returns a list of `ScheduleDTO` objects.
+        """
         if not specialty.strip():
             raise FhirGatewayError(
                 reason_code=INVALID_REQUEST,
@@ -383,6 +742,10 @@ class FhirClient:
         return map_schedule_bundle_to_dtos(self._json_or_empty(response))
 
     async def get_schedule_or_raise(self, schedule_ref: str) -> ScheduleDTO:
+        """Fetch a Schedule resource and convert to a `ScheduleDTO`.
+
+        Raises `FhirGatewayError` if the schedule cannot be found.
+        """
         resource = await self._read_resource_or_raise(
             resource_type="Schedule",
             resource_id_or_ref=schedule_ref,
@@ -398,13 +761,23 @@ class FhirClient:
         status: str = "free",
         start_from_utc: str | None = None,
     ) -> list[SlotDTO]:
+        """Search for slots for a schedule, optionally filtering by time.
+
+        Handles pagination by following `link` entries with relation "next".
+        """
         schedule = await self.get_schedule_or_raise(schedule_ref)
 
         params: list[tuple[str, str]] = [
             ("schedule", _reference_search_value(schedule_ref)),
         ]
+
         if status.strip():
             params.append(("status", status.strip()))
+
+        if start_from_utc and start_from_utc.strip():
+            params.append(("start", f"ge{start_from_utc.strip()}"))
+
+        params.append(("_count", "200"))
 
         response = await self._request(
             "GET",
@@ -414,10 +787,26 @@ class FhirClient:
         )
         self._ensure_read_success(response, operation="search slots")
 
-        items = map_slot_bundle_to_dtos(
-            self._json_or_empty(response), schedule=schedule)
+        first_bundle = self._json_or_empty(response)
+        items = map_slot_bundle_to_dtos(first_bundle, schedule=schedule)
 
-        if start_from_utc:
+        next_url = self._extract_next_link(first_bundle)
+
+        while next_url:
+            next_response = await self._request_absolute(
+                "GET",
+                next_url,
+                retry_on_read=True,
+            )
+            self._ensure_read_success(next_response, operation="search slots next page")
+
+            next_bundle = self._json_or_empty(next_response)
+            items.extend(map_slot_bundle_to_dtos(next_bundle, schedule=schedule))
+
+            next_url = self._extract_next_link(next_bundle)
+
+        # Defensive safety filter.
+        if start_from_utc and start_from_utc.strip():
             filtered: list[SlotDTO] = []
             for item in items:
                 if item.startUtc and item.startUtc >= start_from_utc:
@@ -427,6 +816,10 @@ class FhirClient:
         return items
 
     async def get_slot_or_raise(self, slot_id: str) -> SlotDTO:
+        """Return a `SlotDTO` for the specified slot id or raise.
+
+        Ensures the linked schedule is fetched and provided to the mapper.
+        """
         resource = await self._read_resource_or_raise(
             resource_type="Slot",
             resource_id_or_ref=slot_id,
@@ -451,6 +844,12 @@ class FhirClient:
         new_status: str,
         comment: str | None = None,
     ) -> SlotDTO:
+        """Update the `status` (and optional comment) on a Slot resource.
+
+        On success returns the updated `SlotDTO`. Handles common HTTP
+        failure codes by raising `FhirGatewayError` with appropriate
+        reason codes.
+        """
         resource = await self._read_resource_or_raise(
             resource_type="Slot",
             resource_id_or_ref=slot_id,
@@ -524,6 +923,7 @@ class FhirClient:
         end_utc: str | None = None,
         status: str | None = None,
     ) -> list[AppointmentDTO]:
+        """Search appointments with optional filters and return DTOs."""
         params: list[tuple[str, str]] = []
 
         if patient_ref:
@@ -566,6 +966,11 @@ class FhirClient:
         slot_ref: str,
         description: str | None = None,
     ) -> AppointmentDTO:
+        """Create an Appointment resource for a given slot and return DTO.
+
+        Validates required values and maps the successful response to an
+        `AppointmentDTO`.
+        """
         patient_ref_normalized = _ensure_reference("Patient", patient_ref)
         practitioner_ref_normalized = _ensure_reference(
             "Practitioner", practitioner_ref)
@@ -682,6 +1087,11 @@ class FhirClient:
         slot: SlotDTO,
         specialty: str,
     ) -> AppointmentDTO:
+        """Convenience to create an appointment using a `ScheduleDTO` and `SlotDTO`.
+
+        Picks practitioner and specialty values from the schedule or slot
+        if available.
+        """
         practitioner_ref = schedule.practitionerRef or slot.practitionerRef
         if not practitioner_ref:
             raise FhirGatewayError(
@@ -724,6 +1134,11 @@ class FhirClient:
         not_found_reason_code: str,
         not_found_message: str,
     ) -> dict[str, Any]:
+        """Read a resource by type and id (or reference) and return JSON.
+
+        Raises `FhirGatewayError` with a not-found reason when the resource
+        returns 404, and validates other failures as well.
+        """
         resource_id = _reference_search_value(resource_id_or_ref)
         if not resource_id.strip():
             raise FhirGatewayError(
@@ -759,6 +1174,11 @@ class FhirClient:
         headers: dict[str, str] | None = None,
         retry_on_read: bool = False,
     ) -> httpx.Response:
+        """Internal helper to perform an HTTP request against the FHIR base URL.
+
+        Supports an optional retry for GET/read operations when `retry_on_read`
+        is True. Translates network/timeout exceptions into `FhirGatewayError`.
+        """
         method_upper = method.upper()
         attempts = 2 if retry_on_read and method_upper == "GET" else 1
 
@@ -768,6 +1188,62 @@ class FhirClient:
                     response = await client.request(
                         method=method_upper,
                         url=self._url(path),
+                        params=params,
+                        json=json,
+                        headers=headers,
+                    )
+            except httpx.TimeoutException as exc:
+                # On timeout, retry once for read operations before raising.
+                if attempt < attempts - 1:
+                    continue
+                raise FhirGatewayError(
+                    reason_code=FHIR_TIMEOUT,
+                    user_message="FHIR request timed out.",
+                    status_code=503,
+                    details=str(exc),
+                ) from exc
+            except httpx.RequestError as exc:
+                raise FhirGatewayError(
+                    reason_code=FHIR_UNAVAILABLE,
+                    user_message="FHIR service is unavailable.",
+                    status_code=503,
+                    details=str(exc),
+                ) from exc
+
+            if retry_on_read and response.status_code == 503 and attempt < attempts - 1:
+                continue
+
+            return response
+
+        raise FhirGatewayError(
+            reason_code=FHIR_UNAVAILABLE,
+            user_message="FHIR service is unavailable.",
+            status_code=503,
+        )
+        
+    async def _request_absolute(
+        self,
+        method: str,
+        url: str,
+        *,
+        params: Any = None,
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+        retry_on_read: bool = False,
+    ) -> httpx.Response:
+        """Like `_request` but takes an absolute URL (used for pagination links).
+
+        Mirrors `_request` semantics including retry logic for reads.
+        """
+        method_upper = method.upper()
+        attempts = 2 if retry_on_read and method_upper == "GET" else 1
+
+        for attempt in range(attempts):
+            try:
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    response = await client.request(
+                        method=method_upper,
+                        url=url,
                         params=params,
                         json=json,
                         headers=headers,
@@ -799,13 +1275,39 @@ class FhirClient:
             user_message="FHIR service is unavailable.",
             status_code=503,
         )
+        
+    @staticmethod
+    def _extract_next_link(bundle: dict[str, Any]) -> str | None:
+        links = bundle.get("link")
+        if not isinstance(links, list):
+            return None
+
+        for link in links:
+            if not isinstance(link, dict):
+                continue
+
+            relation = link.get("relation")
+            url = link.get("url")
+
+            if relation == "next" and isinstance(url, str) and url.strip():
+                return url.strip()
+
+        return None
 
     def _url(self, path: str) -> str:
+        """Return a fully-qualified URL for a FHIR path.
+
+        Accepts either a leading-slash path or a path without it.
+        """
         if path.startswith("/"):
             return f"{self.base_url}{path}"
         return f"{self.base_url}/{path}"
 
     def _ensure_read_success(self, response: httpx.Response, *, operation: str) -> None:
+        """Validate a read response and raise a mapped `FhirGatewayError`.
+
+        Converts common HTTP failures into domain-specific reason codes.
+        """
         if 200 <= response.status_code < 300:
             return
 
@@ -834,6 +1336,10 @@ class FhirClient:
 
     @staticmethod
     def _json_or_empty(response: httpx.Response) -> dict[str, Any]:
+        """Parse response JSON and return an empty dict on parse error.
+
+        Ensures callers always receive a dict for downstream processing.
+        """
         try:
             payload = response.json()
         except ValueError:
@@ -841,6 +1347,11 @@ class FhirClient:
         return payload if isinstance(payload, dict) else {}
 
     def _operation_outcome_text(self, response: httpx.Response) -> str | None:
+        """Return a concise OperationOutcome message (truncated) when present.
+
+        Looks in the `issue` list for a `details.text` or `diagnostics` value
+        and returns a short string for logging and error payloads.
+        """
         body = self._json_or_empty(response)
         issues = body.get("issue")
         if not isinstance(issues, list) or not issues:

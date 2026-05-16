@@ -122,6 +122,7 @@ class FakeFhirClient:
         self.update_slot_should_fail = update_slot_should_fail
         self.updated_slot_calls: list[tuple[str, str, str | None]] = []
         self.create_appointment_for_slot_calls: list[dict] = []
+        self.ensure_patient_calls: list[dict] = []
 
     async def search_schedules(self, *, tenant_id: str, specialty: str, active: bool = True):
         return [
@@ -168,7 +169,23 @@ class FakeFhirClient:
                 return schedule
         raise AssertionError(f"Schedule not found in fake client: {schedule_ref}")
 
-    async def ensure_patient(self, *, tenant_id: str, patient_key_hash: str, display_name=None):
+    async def ensure_patient(
+        self,
+        *,
+        tenant_id: str,
+        patient_key_hash: str,
+        display_name=None,
+        email: str | None = None,
+    ):
+        self.ensure_patient_calls.append(
+            {
+                "tenant_id": tenant_id,
+                "patient_key_hash": patient_key_hash,
+                "display_name": display_name,
+                "email": email,
+            }
+        )
+
         return PatientSummaryDTO(
             patientId="patient-1",
             patientRef="Patient/patient-1",
@@ -596,10 +613,27 @@ async def test_book_success_creates_appointment(db_session) -> None:
             "specialty": "cardiology",
         }
     ]
+    assert len(client.ensure_patient_calls) == 1
+    assert client.ensure_patient_calls[0]["tenant_id"] == "demo"
+    assert client.ensure_patient_calls[0]["email"] == "patient@example.com"
+    assert client.updated_slot_calls == [
+        (
+            slot.slotId,
+            "busy",
+            "Booked via Appointment/appt-new",
+        )
+    ]
+
+    assert result["slot"]["status"] == "busy"
+    assert result["slotStatusSync"] == {
+        "attempted": True,
+        "synced": True,
+        "reasonCode": None,
+    }
 
 
 @pytest.mark.asyncio
-async def test_book_success_creates_appointment_without_slot_status_sync_step(db_session) -> None:
+async def test_book_success_continues_when_slot_status_sync_fails(db_session) -> None:
     add_verified_otp(
         db_session,
         session_id="patient-session-1",
@@ -641,7 +675,22 @@ async def test_book_success_creates_appointment_without_slot_status_sync_step(db
 
     assert result["reasonCode"] == OK
     assert result["appointmentId"] == "appt-new"
-    assert client.updated_slot_calls == []
+    assert result["appointmentRef"] == "Appointment/appt-new"
+
+    assert client.updated_slot_calls == [
+        (
+            slot.slotId,
+            "busy",
+            "Booked via Appointment/appt-new",
+        )
+    ]
+
+    assert result["slot"]["status"] == "busy"
+    assert result["slotStatusSync"] == {
+        "attempted": True,
+        "synced": False,
+        "reasonCode": FHIR_UNAVAILABLE,
+    }
 
     event = (
         db_session.query(Event)
@@ -649,6 +698,8 @@ async def test_book_success_creates_appointment_without_slot_status_sync_step(db
         .first()
     )
     assert event is not None
+    assert event.reason_code == OK
+    assert "slotStatusSync" in (event.payload_json or "")
 
 
 def test_overlap_detection_matches_frozen_rule() -> None:

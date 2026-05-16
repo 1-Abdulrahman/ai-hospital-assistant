@@ -1,5 +1,17 @@
 from __future__ import annotations
 
+"""Training entrypoint for fine-tuning an NLP classification model.
+
+This module provides a small training pipeline that:
+- reads a labelled JSONL dataset
+- prepares family-aware train/val/test splits
+- tokenizes inputs and fine-tunes a Hugging Face model
+- saves model artifacts and metrics
+
+The file is intentionally self-contained for clarity and repeatability
+within the project's training tooling.
+"""
+
 import json
 import os
 import platform
@@ -13,7 +25,6 @@ from typing import Any
 import numpy as np
 import torch
 from sklearn.metrics import accuracy_score, f1_score
-from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset
 from transformers import (
     AutoModelForSequenceClassification,
@@ -21,12 +32,18 @@ from transformers import (
     Trainer,
     TrainingArguments,
 )
+from app.modules.nlp.training.split_utils import (
+    SPLIT_MANIFEST_PATH,
+    load_training_rows,
+    save_split_manifest,
+    split_rows_family_aware,
+)
 
 # ============================================================
 # Configuration
 # ============================================================
 
-RANDOM_SEED = 42
+RANDOM_SEED = int(os.getenv("NLP_RANDOM_SEED", "42"))
 MAX_LENGTH = 96
 NUM_EPOCHS = 4
 TRAIN_BATCH_SIZE = 16
@@ -75,9 +92,17 @@ DEFAULT_MODEL_VERSION = "1.0.0"
 # ============================================================
 
 def set_seed(seed: int) -> None:
+    """Set random seeds for Python, NumPy, and PyTorch.
+
+    This helps ensure reproducible training runs across CPU/GPU setups.
+
+    Args:
+        seed: Integer seed to apply to all random generators.
+    """
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
+    # If CUDA is available, set the CUDA RNGs as well for full reproducibility
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
 
@@ -87,17 +112,43 @@ def set_seed(seed: int) -> None:
 # ============================================================
 
 def read_json(path: Path) -> Any:
+    """Read a JSON file and return the parsed object.
+
+    Args:
+        path: Path to a JSON file.
+
+    Returns:
+        The Python object parsed from the JSON file.
+    """
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
 def write_json(path: Path, payload: Any) -> None:
+    """Write a Python object to a JSON file, creating parent dirs.
+
+    Args:
+        path: Destination file path to write JSON to.
+        payload: JSON-serializable Python object to write.
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
 
 
 def read_jsonl(path: Path) -> list[dict[str, str]]:
+    """Read a newline-delimited JSON (JSONL) dataset with validation.
+
+    Each line must be a JSON object containing `text` and `label` keys.
+    Raises helpful ValueErrors when encountering malformed lines so the
+    caller can fix dataset issues before training.
+
+    Args:
+        path: Path to a `.jsonl` file.
+
+    Returns:
+        A list of dicts with normalized `text` and `label` strings.
+    """
     items: list[dict[str, str]] = []
     with path.open("r", encoding="utf-8") as f:
         for line_number, line in enumerate(f, start=1):
@@ -107,6 +158,7 @@ def read_jsonl(path: Path) -> list[dict[str, str]]:
             try:
                 row = json.loads(line)
             except json.JSONDecodeError as exc:
+                # Provide line number context to make debugging easier
                 raise ValueError(f"Invalid JSON on line {line_number}: {exc}") from exc
 
             if "text" not in row or "label" not in row:
@@ -129,12 +181,64 @@ def read_jsonl(path: Path) -> list[dict[str, str]]:
 
     return items
 
+def prepare_family_aware_splits(
+    random_seed: int,
+) -> tuple[list[str], list[str], list[str], list[str], list[str], list[str], dict[str, Any]]:
+    """Prepare family-aware train/validation/test splits.
+
+    This function uses the project's `split_utils` to create splits that keep
+    related samples (by family id) together so that evaluations better reflect
+    generalization to unseen families.
+
+    Args:
+        random_seed: Seed used to make the splitting deterministic.
+
+    Returns:
+        Tuple containing train_texts, train_labels, val_texts, val_labels,
+        test_texts, test_labels, and a summary dict describing the split.
+    """
+    rows = load_training_rows()
+
+    # Perform the family-aware split and persist a manifest for reproducibility
+    split_result = split_rows_family_aware(rows, seed=random_seed)
+    save_split_manifest(split_result, path=SPLIT_MANIFEST_PATH)
+
+    train_rows = split_result["train_rows"]
+    val_rows = split_result["val_rows"]
+    test_rows = split_result["test_rows"]
+
+    # Convert row objects into plain lists for the Dataset class
+    train_texts = [row.text for row in train_rows]
+    train_labels = [row.label for row in train_rows]
+
+    val_texts = [row.text for row in val_rows]
+    val_labels = [row.label for row in val_rows]
+
+    test_texts = [row.text for row in test_rows]
+    test_labels = [row.label for row in test_rows]
+
+    return (
+        train_texts,
+        train_labels,
+        val_texts,
+        val_labels,
+        test_texts,
+        test_labels,
+        split_result["summary"],
+    )
+
 
 # ============================================================
 # Dataset class
 # ============================================================
 
 class ComplaintDataset(Dataset):
+    """PyTorch Dataset wrapping tokenized texts and label ids.
+
+    This dataset returns tokenized inputs compatible with Hugging Face
+    `Trainer` (i.e., tensors for input_ids, attention_mask, etc.) along with
+    a `labels` tensor for supervised training.
+    """
     def __init__(
         self,
         texts: list[str],
@@ -151,6 +255,15 @@ class ComplaintDataset(Dataset):
         return len(self.texts)
 
     def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
+        """Return a single tokenized example with label tensor.
+
+        Args:
+            idx: Index of the sample to retrieve.
+
+        Returns:
+            A dict mapping input names (e.g., `input_ids`) to tensors, and a
+            `labels` tensor for the target class id.
+        """
         text = self.texts[idx]
         label_id = self.label_ids[idx]
 
@@ -162,6 +275,7 @@ class ComplaintDataset(Dataset):
             return_tensors="pt",
         )
 
+        # The tokenizer returns batch tensors; squeeze to get single-example tensors
         item = {k: v.squeeze(0) for k, v in encoded.items()}
         item["labels"] = torch.tensor(label_id, dtype=torch.long)
         return item
@@ -173,6 +287,11 @@ class ComplaintDataset(Dataset):
 
 @dataclass
 class TrainingContext:
+    """Lightweight record of training hyperparameters and environment.
+
+    This dataclass is serialized into `training_report.json` to help with
+    experiment tracking and reproducibility.
+    """
     model_name_or_path: str
     local_files_only: bool
     device: str
@@ -199,6 +318,12 @@ class TrainingContext:
 # ============================================================
 
 def compute_metrics(eval_pred: tuple[np.ndarray, np.ndarray]) -> dict[str, float]:
+    """Compute evaluation metrics used for model selection.
+
+    The Trainer expects a function that takes `(logits, labels)` and returns
+    a dict of scalar metrics. We compute accuracy and macro-averaged F1 to
+    handle class imbalance in a multi-class setting.
+    """
     logits, labels = eval_pred
     predictions = np.argmax(logits, axis=-1)
 
@@ -216,10 +341,17 @@ def compute_metrics(eval_pred: tuple[np.ndarray, np.ndarray]) -> dict[str, float
 # ============================================================
 
 def main() -> None:
+    """Main training routine.
+
+    This function orchestrates loading configuration and data, preparing
+    splits, tokenizing, training with Hugging Face `Trainer`, evaluating, and
+    saving artifacts such as the final model, tokenizer, and metrics.
+    """
+    # Reproducibility and output dirs
     set_seed(RANDOM_SEED)
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
 
-    # 1) Load supporting files
+    # 1) Load supporting files and configuration
     if not DATASET_PATH.exists():
         raise FileNotFoundError(f"Dataset not found: {DATASET_PATH}")
 
@@ -228,6 +360,7 @@ def main() -> None:
 
     label_to_id: dict[str, int] = read_json(LABEL_TO_ID_PATH)
 
+    # Labels file is optional; if missing infer labels from label_to_id mapping
     if LABELS_PATH.exists():
         labels_list: list[str] = read_json(LABELS_PATH)
     else:
@@ -242,54 +375,48 @@ def main() -> None:
         else DEFAULT_MODEL_VERSION
     )
 
-    # 2) Load dataset
+    # 2) Load and validate dataset
     rows = read_jsonl(DATASET_PATH)
 
-    # Validate labels
+    # Ensure every label in the dataset is recognized by the label map
     unknown_labels = sorted({row["label"] for row in rows if row["label"] not in label_to_id})
     if unknown_labels:
         raise ValueError(
             f"Dataset contains labels not found in label_to_id.json: {unknown_labels}"
         )
 
-    texts = [row["text"] for row in rows]
     labels = [row["label"] for row in rows]
-    label_ids = [label_to_id[label] for label in labels]
-
     class_counts = Counter(labels)
 
-    # 3) Save dataset report before training
+    # 3) Create family-aware splits to avoid leakage between related samples
+    (
+        train_texts,
+        train_labels,
+        val_texts,
+        val_labels,
+        test_texts,
+        test_labels,
+        split_summary,
+    ) = prepare_family_aware_splits(random_seed=RANDOM_SEED)
+
+    # Convert labels to integer ids for model training
+    train_ids = [label_to_id[label] for label in train_labels]
+    val_ids = [label_to_id[label] for label in val_labels]
+    test_ids = [label_to_id[label] for label in test_labels]
+
+    # 4) Save lightweight dataset report to aid debugging and reproducibility
     dataset_report = {
         "total_samples": len(rows),
         "labels_count": len(label_to_id),
         "class_counts": dict(sorted(class_counts.items())),
-        "split_strategy": "stratified train/val/test split (80/10/10)",
+        "split_strategy": "family-aware group split by family_ids",
         "random_seed": RANDOM_SEED,
+        "split_summary": split_summary,
+        "split_manifest_path": str(SPLIT_MANIFEST_PATH),
     }
     write_json(DATASET_REPORT_PATH, dataset_report)
 
-    # 4) Stratified 80/10/10 split
-    # First split: 80% train, 20% temp
-    train_texts, temp_texts, train_ids, temp_ids = train_test_split(
-        texts,
-        label_ids,
-        test_size=0.20,
-        random_state=RANDOM_SEED,
-        shuffle=True,
-        stratify=label_ids,
-    )
-
-    # Second split: temp -> 10% val, 10% test
-    val_texts, test_texts, val_ids, test_ids = train_test_split(
-        temp_texts,
-        temp_ids,
-        test_size=0.50,
-        random_state=RANDOM_SEED,
-        shuffle=True,
-        stratify=temp_ids,
-    )
-
-    # 5) Tokenizer and model
+    # 5) Tokenizer and model: leverage `local_files_only` for offline usage
     tokenizer = AutoTokenizer.from_pretrained(
         BASE_MODEL_NAME_OR_PATH,
         local_files_only=LOCAL_FILES_ONLY,
@@ -303,12 +430,12 @@ def main() -> None:
         local_files_only=LOCAL_FILES_ONLY,
     )
 
-    # 6) Build datasets
+    # 6) Build PyTorch datasets used by the Trainer
     train_dataset = ComplaintDataset(train_texts, train_ids, tokenizer, MAX_LENGTH)
     val_dataset = ComplaintDataset(val_texts, val_ids, tokenizer, MAX_LENGTH)
     test_dataset = ComplaintDataset(test_texts, test_ids, tokenizer, MAX_LENGTH)
 
-    # 7) Device context for reporting
+    # 7) Record environment and hyperparameters for the training report
     device = "cuda" if torch.cuda.is_available() else "cpu"
     cuda_device_name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else None
 
@@ -336,11 +463,11 @@ def main() -> None:
 
     write_json(TRAINING_REPORT_PATH, asdict(training_context))
 
-    # 8) Clean old checkpoints
+    # 8) Clean any previous checkpoints to ensure a fresh run
     if CHECKPOINT_DIR.exists():
         shutil.rmtree(CHECKPOINT_DIR)
 
-    # 9) Training arguments
+    # 9) Training arguments for Hugging Face Trainer
     training_args = TrainingArguments(
         output_dir=str(CHECKPOINT_DIR),
         overwrite_output_dir=True,
@@ -362,7 +489,7 @@ def main() -> None:
         report_to="none",
     )
 
-    # 10) Trainer
+    # 10) Create Trainer and attach metric computation
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -371,24 +498,24 @@ def main() -> None:
         compute_metrics=compute_metrics,
     )
 
-    # 11) Fine-tune
+    # 11) Run training loop
     trainer.train()
 
-    # 12) Evaluate on validation and test sets
+    # 12) Evaluate on validation and test splits
     val_metrics = trainer.evaluate(eval_dataset=val_dataset)
     test_metrics = trainer.evaluate(eval_dataset=test_dataset, metric_key_prefix="test")
 
-    # 13) Save final model artifacts
+    # 13) Persist final model and tokenizer to the model directory
     trainer.save_model(str(MODEL_DIR))
     tokenizer.save_pretrained(str(MODEL_DIR))
 
-    # Keep label and threshold files beside the model
+    # Keep label and threshold files beside the model for serving
     write_json(LABEL_TO_ID_PATH, label_to_id)
     write_json(LABELS_PATH, labels_list)
     write_json(THRESHOLDS_PATH, thresholds)
     MODEL_VERSION_PATH.write_text(model_version, encoding="utf-8")
 
-    # 14) Save combined metrics summary
+    # 14) Save a combined metrics summary including training context
     metrics_payload = {
         "modelVersion": model_version,
         "thresholds": thresholds,

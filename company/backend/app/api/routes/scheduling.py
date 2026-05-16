@@ -17,11 +17,18 @@ router = APIRouter(prefix="/scheduling", tags=["scheduling"])
 
 
 def raise_from_scheduling_error(exc: SchedulingError) -> None:
+    """Raise a FastAPI ``HTTPException`` from a domain scheduling error.
+
+    This centralizes translation from domain-layer errors into the API
+    response contract so all scheduling endpoints return a consistent error
+    payload shape.
+    """
     raise HTTPException(
         status_code=exc.status_code,
         detail={
             "message": exc.user_message,
             "reasonCode": exc.reason_code,
+            # Surface optional domain context only when present.
             **({"details": exc.details} if exc.details else {}),
         },
     )
@@ -33,6 +40,12 @@ async def get_slots(
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     db: Session = Depends(get_db),
 ) -> SlotsResponse:
+    """Return available appointment slots for the requested specialty.
+
+    The request context provides the authoritative tenant/session information
+    from headers, while ``body.tenantId`` is forwarded for validation and
+    compatibility with the domain service contract.
+    """
     try:
         result = await list_available_slots(
             db=db,
@@ -54,6 +67,11 @@ async def create_booking(
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
     db: Session = Depends(get_db),
 ) -> BookingResponse:
+    """Create an appointment booking for an available slot.
+
+    If ``Idempotency-Key`` is supplied, repeated client retries can safely
+    return the original booking outcome instead of creating duplicates.
+    """
     try:
         result = await book_appointment(
             db=db,
@@ -64,6 +82,7 @@ async def create_booking(
             email=body.email,
             specialty=body.specialty,
             slot_id=body.slotId,
+            # Prevent duplicate bookings when clients retry after transient failures.
             idempotency_key=idempotency_key,
         )
     except SchedulingError as exc:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app.api.deps import HospitalRequestContext, get_db, get_hospital_request_context
@@ -10,6 +10,7 @@ from app.api.schemas.chat import (
     ChatDirectStartRequest,
     ChatMessageRequest,
     ChatRenewalRequest,
+    ChatResetRequest,
     ChatResponse,
     ChatSelectionRequest,
     ChatRenewalIdentifyRequest,
@@ -21,6 +22,7 @@ from app.modules.orchestration.service import (
     process_continuity_identity,
     process_direct_start,
     process_renewal_request,
+    process_reset,
     process_selection,
     process_renewal_identity,
 )
@@ -29,6 +31,8 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 
 
 def _raise_from_chat_error(exc: ChatOrchestrationError) -> None:
+    """Convert orchestration failures into the API's standard HTTP error shape."""
+    # Keep a consistent error envelope across all chat endpoints.
     raise HTTPException(
         status_code=exc.status_code,
         detail={
@@ -46,6 +50,7 @@ async def chat_message(
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     db: Session = Depends(get_db),
 ) -> ChatResponse:
+    """Handle the generic chat message flow and return the next assistant step."""
     try:
         result = await process_chat_message(
             db=db,
@@ -67,6 +72,7 @@ async def chat_direct_start(
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     db: Session = Depends(get_db),
 ) -> ChatResponse:
+    """Start a direct booking flow without going through the generic message parser."""
     try:
         result = await process_direct_start(
             db=db,
@@ -86,6 +92,7 @@ async def chat_renewal_request(
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     db: Session = Depends(get_db),
 ) -> ChatResponse:
+    """Kick off the prescription renewal path for the current chat session."""
     try:
         result = await process_renewal_request(
             db=db,
@@ -98,6 +105,25 @@ async def chat_renewal_request(
         _raise_from_chat_error(exc)
     return ChatResponse(**result)
 
+@router.post("/reset", response_model=ChatResponse)
+async def chat_reset(
+    body: ChatResetRequest,
+    context: HospitalRequestContext = Depends(get_hospital_request_context),
+    db: Session = Depends(get_db),
+) -> ChatResponse:
+    """Reset chat state so the client can start a fresh conversation flow."""
+    try:
+        result = await process_reset(
+            db=db,
+            header_tenant_id=context.tenant_id,
+            header_session_id=context.session_id,
+            body_tenant_id=body.tenantId,
+            client_session_id=body.clientSessionId,
+        )
+    except ChatOrchestrationError as exc:
+        _raise_from_chat_error(exc)
+
+    return ChatResponse(**result)
 
 @router.post("/selection", response_model=ChatResponse)
 async def chat_selection(
@@ -105,6 +131,7 @@ async def chat_selection(
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     db: Session = Depends(get_db),
 ) -> ChatResponse:
+    """Apply a user selection (specialty, slot, or similar option) to the flow state."""
     try:
         result = await process_selection(
             db=db,
@@ -129,6 +156,7 @@ async def chat_continuity_identify(
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     db: Session = Depends(get_db),
 ) -> ChatResponse:
+    """Identify a patient by national ID for continuity-related appointments."""
     try:
         result = await process_continuity_identity(
             db=db,
@@ -147,13 +175,16 @@ async def chat_continuity_identify(
 @router.post("/confirm", response_model=ChatResponse)
 async def chat_confirm(
     body: ChatConfirmRequest,
+    background_tasks: BackgroundTasks,
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
     db: Session = Depends(get_db),
 ) -> ChatResponse:
+    """Confirm the current user intent (booking or renewal) and execute side effects."""
     try:
         result = await process_confirm(
             db=db,
+            background_tasks=background_tasks,
             header_tenant_id=context.tenant_id,
             header_session_id=context.session_id,
             body_tenant_id=body.tenantId,
@@ -164,6 +195,7 @@ async def chat_confirm(
             national_id=body.nationalId,
             email=body.email,
             renewal_item_id=body.renewalItemId,
+            # Allows safe retries from clients without duplicating final actions.
             idempotency_key=idempotency_key,
         )
     except ChatOrchestrationError as exc:
@@ -177,6 +209,7 @@ async def chat_renewal_identify(
     context: HospitalRequestContext = Depends(get_hospital_request_context),
     db: Session = Depends(get_db),
 ) -> ChatResponse:
+    """Identify a patient by national ID before listing renewal-eligible medications."""
     try:
         result = await process_renewal_identity(
             db=db,
@@ -190,3 +223,4 @@ async def chat_renewal_identify(
         _raise_from_chat_error(exc)
 
     return ChatResponse(**result)
+

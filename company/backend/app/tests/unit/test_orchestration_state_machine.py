@@ -10,7 +10,9 @@ from app.modules.orchestration.state_machine import (
     AWAITING_CONFIRMATION,
     AWAITING_RENEWAL_IDENTITY,
     AWAITING_RENEWAL_SELECTION,
+    AWAITING_CONTINUITY_IDENTITY,
     COMPLETED,
+    reset_to_new_or_raise,
     transition_or_raise,
 )
 
@@ -150,4 +152,12 @@ def test_awaiting_renewal_selection_can_be_completed() -> None:
             target_state=COMPLETED,
         )
         == COMPLETED
+    )
+    
+def test_reset_to_new_allows_returning_home_from_active_state() -> None:
+    assert (
+        reset_to_new_or_raise(
+            current_state=AWAITING_CONTINUITY_IDENTITY,
+        )
+        == NEW
     )

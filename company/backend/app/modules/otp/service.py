@@ -23,6 +23,14 @@ from app.modules.otp.validators import (
     validate_national_id_and_infer_type,
 )
 
+from app.modules.fhir_gateway.client import FhirClient
+from app.modules.fhir_gateway.reason_codes import FhirGatewayError
+from app.modules.fhir_gateway.schemas import PatientSummaryDTO
+
+
+EMAIL_MISMATCH_WITH_PATIENT_RECORD = "EMAIL_MISMATCH_WITH_PATIENT_RECORD"
+PATIENT_CONTACT_VERIFICATION_UNAVAILABLE = "PATIENT_CONTACT_VERIFICATION_UNAVAILABLE"
+
 
 def _raise_http_error(
     *,
@@ -31,6 +39,7 @@ def _raise_http_error(
     reason_code: str,
     details: str | None = None,
 ) -> None:
+    """Raise the API error shape used by OTP endpoints."""
     raise HTTPException(
         status_code=status_code,
         detail={
@@ -42,10 +51,12 @@ def _raise_http_error(
 
 
 def _utcnow() -> datetime:
+    """Return the current UTC timestamp for OTP comparisons."""
     return datetime.utcnow()
 
 
 def hmac_hex(secret: str, value: str) -> str:
+    """Compute a stable SHA-256 HMAC digest as a hex string."""
     return hmac.new(
         secret.encode("utf-8"),
         value.encode("utf-8"),
@@ -54,6 +65,7 @@ def hmac_hex(secret: str, value: str) -> str:
 
 
 def normalize_email(email: str) -> str:
+    """Normalize user input before comparing or persisting email addresses."""
     cleaned = email.strip().lower()
     if not cleaned:
         _raise_http_error(
@@ -65,6 +77,7 @@ def normalize_email(email: str) -> str:
 
 
 def ensure_tenant_header_matches_body(*, header_tenant_id: str, body_tenant_id: str) -> None:
+    """Reject requests where the tenant header and payload disagree."""
     if header_tenant_id != body_tenant_id:
         _raise_http_error(
             status_code=400,
@@ -74,6 +87,7 @@ def ensure_tenant_header_matches_body(*, header_tenant_id: str, body_tenant_id: 
 
 
 def ensure_tenant_exists(*, db: Session, tenant_id: str) -> None:
+    """Confirm the tenant exists before processing any OTP work."""
     tenant = db.get(Tenant, tenant_id)
     if tenant is None:
         _raise_http_error(
@@ -89,13 +103,149 @@ def build_patient_key_hash(
     identity_type: str,
     normalized_identity_number: str,
 ) -> str:
+    """Derive the opaque patient lookup key used across OTP and FHIR flows."""
     return hmac_hex(
         settings.otp_secret,
         f"{tenant_id}:{identity_type}:{normalized_identity_number}",
     )
 
 
-def request_otp_code(
+async def ensure_patient_email_allows_otp_or_raise(
+    *,
+    db: Session,
+    tenant_id: str,
+    session_id: str,
+    patient_key_hash: str,
+    normalized_email: str,
+    fhir_client: FhirClient | None = None,
+) -> PatientSummaryDTO | None:
+    """Verify that the submitted email is allowed for the matched patient record.
+
+    If the FHIR gateway cannot be reached, the request fails closed so OTPs are
+    not issued against an unverified contact method.
+    """
+    client = fhir_client or FhirClient()
+
+    try:
+        patient = await client.find_patient_by_identifier(
+            patient_key_hash=patient_key_hash,
+            tenant_id=tenant_id,
+        )
+    except FhirGatewayError as exc:
+        emit_event(
+            db=db,
+            tenant_id=tenant_id,
+            session_id=session_id,
+            actor_type="system",
+            event_type="OTP_REQUEST",
+            outcome="FAILURE",
+            reason_code=PATIENT_CONTACT_VERIFICATION_UNAVAILABLE,
+            payload={
+                "component": "otp",
+                "safeSummary": "FHIR patient contact verification could not be completed.",
+                "fhirReasonCode": exc.reason_code,
+            },
+        )
+        db.commit()
+        _raise_http_error(
+            status_code=503,
+            message="Patient contact verification is temporarily unavailable. Please try again later.",
+            reason_code=PATIENT_CONTACT_VERIFICATION_UNAVAILABLE,
+        )
+
+    if not isinstance(patient, PatientSummaryDTO):
+        return None
+
+    # Normalize the stored FHIR contacts before comparing user input against them.
+    registered_emails = {
+        item.strip().lower()
+        for item in patient.emails
+        if item and item.strip()
+    }
+
+    if registered_emails and normalized_email not in registered_emails:
+        emit_event(
+            db=db,
+            tenant_id=tenant_id,
+            session_id=session_id,
+            actor_type="patient",
+            event_type="OTP_REQUEST",
+            outcome="FAILURE",
+            reason_code=EMAIL_MISMATCH_WITH_PATIENT_RECORD,
+            payload={
+                "component": "otp",
+                "safeSummary": "Rejected OTP request because submitted email did not match registered patient contact.",
+            },
+        )
+        db.commit()
+        _raise_http_error(
+            status_code=409,
+            message="The email address does not match the patient profile. Please use the registered email or contact the front desk to update your contact information.",
+            reason_code=EMAIL_MISMATCH_WITH_PATIENT_RECORD,
+        )
+
+    return patient
+
+
+async def save_verified_email_to_patient_if_missing(
+    *,
+    db: Session,
+    tenant_id: str,
+    session_id: str,
+    patient_key_hash: str,
+    normalized_email: str,
+    fhir_client: FhirClient | None = None,
+) -> None:
+    """Persist the verified email back to FHIR when the profile has no match.
+
+    This is intentionally best effort. OTP verification must succeed even when
+    the downstream profile update cannot be completed.
+    """
+    client = fhir_client or FhirClient()
+
+    try:
+        updated = await client.save_patient_email_if_missing(
+            tenant_id=tenant_id,
+            patient_key_hash=patient_key_hash,
+            email=normalized_email,
+        )
+    except FhirGatewayError as exc:
+        # Verification is already complete, so the profile sync only emits telemetry.
+        emit_event(
+            db=db,
+            tenant_id=tenant_id,
+            session_id=session_id,
+            actor_type="system",
+            event_type="OTP_VERIFY",
+            outcome="INFO",
+            reason_code="PATIENT_EMAIL_SAVE_SKIPPED",
+            payload={
+                "component": "otp",
+                "safeSummary": "OTP was verified, but patient email could not be saved to FHIR.",
+                "fhirReasonCode": exc.reason_code,
+            },
+        )
+        db.commit()
+        return
+
+    if updated is not None and normalized_email in updated.emails:
+        emit_event(
+            db=db,
+            tenant_id=tenant_id,
+            session_id=session_id,
+            actor_type="system",
+            event_type="OTP_VERIFY",
+            outcome="INFO",
+            reason_code="PATIENT_EMAIL_SAVED",
+            payload={
+                "component": "otp",
+                "safeSummary": "Verified email was saved to FHIR patient contact details.",
+            },
+        )
+        db.commit()
+
+
+async def request_otp_code(
     *,
     db: Session,
     header_tenant_id: str,
@@ -104,7 +254,9 @@ def request_otp_code(
     body_tenant_id: str,
     national_id: str,
     email: str,
+    fhir_client: FhirClient | None = None,
 ) -> dict:
+    """Validate the request context, issue a fresh OTP, and send it by email."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -144,6 +296,15 @@ def request_otp_code(
         tenant_id=body_tenant_id,
         identity_type=identity_type,
         normalized_identity_number=normalized_identity_number,
+    )
+
+    await ensure_patient_email_allows_otp_or_raise(
+        db=db,
+        tenant_id=body_tenant_id,
+        session_id=session_id,
+        patient_key_hash=patient_key_hash,
+        normalized_email=normalized_email,
+        fhir_client=fhir_client,
     )
 
     rate_bucket = build_rate_bucket(
@@ -190,6 +351,7 @@ def request_otp_code(
         .all()
     )
 
+    # Retire any still-open OTPs so only the newest code can be used.
     for rec in existing_open_records:
         rec.expires_at = now
 
@@ -263,7 +425,7 @@ def request_otp_code(
     }
 
 
-def verify_otp_code(
+async def verify_otp_code(
     *,
     db: Session,
     header_tenant_id: str,
@@ -273,7 +435,9 @@ def verify_otp_code(
     national_id: str,
     email: str,
     otp: str,
+    fhir_client: FhirClient | None = None,
 ) -> dict:
+    """Validate an OTP submission and mark the matching record as verified."""
     ensure_tenant_header_matches_body(
         header_tenant_id=header_tenant_id,
         body_tenant_id=body_tenant_id,
@@ -359,6 +523,7 @@ def verify_otp_code(
     )
 
     if latest_record is None:
+        # No record means the caller is outside the active OTP window.
         emit_event(
             db=db,
             tenant_id=body_tenant_id,
@@ -380,6 +545,7 @@ def verify_otp_code(
         )
 
     if latest_record.verified:
+        # Idempotent success keeps repeated submits from surfacing as errors.
         return {
             "ok": True,
             "verified": True,
@@ -469,6 +635,16 @@ def verify_otp_code(
         },
     )
     db.commit()
+
+    # Updating the patient email is a post-verification convenience, not part of auth.
+    await save_verified_email_to_patient_if_missing(
+        db=db,
+        tenant_id=body_tenant_id,
+        session_id=session_id,
+        patient_key_hash=patient_key_hash,
+        normalized_email=normalized_email,
+        fhir_client=fhir_client,
+    )
 
     return {
         "ok": True,

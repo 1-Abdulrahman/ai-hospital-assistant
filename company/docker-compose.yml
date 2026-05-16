@@ -1,10 +1,8 @@
 services:
   backend:
-  
     build:
       context: ..
       dockerfile: company/backend/Dockerfile
-
     container_name: company-backend
     env_file:
       - ./.env
@@ -14,16 +12,13 @@ services:
       - ./data:/data
       - ./backend/app/assets/nlp_models/distilbert-specialty:/app/app/assets/nlp_models/distilbert-specialty:ro
     deploy:
-        resources:
-          reservations:
-            devices:
-              - driver: nvidia
-                count: all
-                capabilities: [gpu]
-
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     depends_on:
-      fhir:
-        condition: service_started
       mailhog:
         condition: service_started
     healthcheck:
@@ -34,28 +29,6 @@ services:
     networks:
       - company-net
 
-  fhir:
-    image: hapiproject/hapi:v8.6.0-1-tomcat
-    container_name: company-fhir
-    ports:
-      - "8080:8080"
-    environment:
-      - JAVA_OPTS=-Xms512m -Xmx1024m
-      - SPRING_DATASOURCE_URL=jdbc:h2:file:/data/hapi-fhir-db;DB_CLOSE_ON_EXIT=FALSE
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
-      - SPRING_DATASOURCE_USERNAME=sa
-      - SPRING_DATASOURCE_PASSWORD=
-      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=ca.uhn.fhir.jpa.model.dialect.HapiFhirH2Dialect
-    volumes:
-      - ./fhir-data:/data
-  # healthcheck:
-#   test: ["CMD-SHELL", "wget -qO- http://localhost:8080/fhir/metadata >/dev/null 2>&1 || exit 1"]
-#   interval: 10s
-#   timeout: 5s
-#   retries: 20
-#   start_period: 45s
-    networks:
-      - company-net
 
   mailhog:
     image: mailhog/mailhog:v1.0.1
@@ -70,6 +43,8 @@ services:
     build:
       context: ..
       dockerfile: company/portal-ui/Dockerfile
+      args:
+        VITE_USE_MOCKS: ${PORTAL_VITE_USE_MOCKS:-false}
     container_name: company-portal-ui
     ports:
       - "3001:80"
@@ -79,4 +54,3 @@ services:
 networks:
   company-net:
     driver: bridge
-

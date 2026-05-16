@@ -1,83 +1,175 @@
-import { useState } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { StatusBadge } from '@/components/shared/StatusBadge';
 import { ErrorBanner } from '@/components/shared/ErrorBanner';
+import { StatusBadge } from '@/components/shared/StatusBadge';
 import { useApiCall } from '@/hooks/useApiCall';
 import { safeFormatDate } from '@/lib/safeDate';
-import { ArrowLeft } from 'lucide-react';
-import type { TenantDetail } from '@/api/types';
+import { cn } from '@/lib/utils';
+
+// Tenants
+//
+// Admin page for managing and viewing tenant organizations.
+// Left panel shows a searchable catalog of all tenants; right panel displays
+// detailed configuration for the selected tenant including FHIR/SMTP status,
+// allowed origins, and feature flags.
 
 export default function TenantsPage() {
-  const [selectedTenant, setSelectedTenant] = useState<string | null>(null);
+  // Track which tenant is currently selected for detail view.
+  const [selectedTenantId, setSelectedTenantId] = useState('');
 
-  const { data: tenants, loading, error, refetch } = useApiCall((api) => api.getTenants(), []);
-  const { data: detail, loading: detailLoading, error: detailError } = useApiCall<TenantDetail | null>(
-    (api) => selectedTenant ? api.getTenantDetail(selectedTenant) : Promise.resolve({ data: null as any, requestCorrelationId: '' }),
-    [selectedTenant]
+  // Fetch all tenants for the catalog list.
+  const {
+    data: tenants,
+    loading: tenantsLoading,
+    error: tenantsError,
+    refetch: refetchTenants,
+  } = useApiCall((api) => api.getTenants(), []);
+
+  // Auto-select first tenant when catalog loads (if no selection yet).
+  useEffect(() => {
+    if (!selectedTenantId && tenants && tenants.length > 0) {
+      setSelectedTenantId(tenants[0].tenantId);
+    }
+  }, [tenants, selectedTenantId]);
+
+  // Fetch detailed configuration for the selected tenant.
+  // Conditional fetch: only runs when selectedTenantId is non-empty.
+  const {
+    data: tenantDetail,
+    loading: detailLoading,
+    error: detailError,
+    refetch: refetchDetail,
+  } = useApiCall(
+    (api) =>
+      selectedTenantId
+        ? api.getTenantDetail(selectedTenantId)
+        : Promise.resolve({ data: null as any, requestCorrelationId: '' }),
+    [selectedTenantId],
   );
-
-  if (selectedTenant && detail) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => setSelectedTenant(null)}><ArrowLeft className="h-4 w-4 mr-1" /> Back</Button>
-          <h2 className="text-2xl font-bold">Tenant: {detail.tenantId}</h2>
-        </div>
-        {detailLoading && <Skeleton className="h-48" />}
-        {detailError && <ErrorBanner error={detailError} />}
-        {detail && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card><CardHeader><CardTitle className="text-sm">General</CardTitle></CardHeader><CardContent className="space-y-2 text-sm">
-              <p><span className="text-muted-foreground">ID:</span> {detail.tenantId}</p>
-              <p><span className="text-muted-foreground">Name:</span> {detail.name}</p>
-              <p><span className="text-muted-foreground">Status:</span> <StatusBadge status={detail.status} /></p>
-              <p><span className="text-muted-foreground">Created:</span> {safeFormatDate(detail.createdAt)}</p>
-            </CardContent></Card>
-            <Card><CardHeader><CardTitle className="text-sm">Allowed Origins</CardTitle></CardHeader><CardContent>
-              {detail.allowedOrigins?.length ? detail.allowedOrigins.map((o) => <Badge key={o} variant="secondary" className="mr-1 mb-1">{o}</Badge>) : <span className="text-sm text-muted-foreground">N/A</span>}
-            </CardContent></Card>
-            <Card><CardHeader><CardTitle className="text-sm">Feature Flags</CardTitle></CardHeader><CardContent>
-              {detail.featureFlags ? Object.entries(detail.featureFlags).map(([k, v]) => (
-                <p key={k} className="text-sm"><span className="text-muted-foreground">{k}:</span> {v ? '✅' : '❌'}</p>
-              )) : <span className="text-sm text-muted-foreground">N/A</span>}
-            </CardContent></Card>
-            <Card><CardHeader><CardTitle className="text-sm">Integrations</CardTitle></CardHeader><CardContent className="space-y-2 text-sm">
-              <p><span className="text-muted-foreground">FHIR:</span> {detail.fhirStatus ? <StatusBadge status={detail.fhirStatus} /> : 'N/A'}</p>
-              <p><span className="text-muted-foreground">SMTP:</span> {detail.smtpStatus || 'SMTP status not exposed in MVP'}</p>
-            </CardContent></Card>
-          </div>
-        )}
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Tenants</h2>
-      {loading && <Skeleton className="h-32" />}
-      {error && <ErrorBanner error={error} onRetry={refetch} />}
-      {tenants && tenants.length === 0 && <p className="text-muted-foreground text-sm">No tenants found.</p>}
-      {tenants && tenants.length > 0 && (
-        <Table>
-          <TableHeader><TableRow>
-            <TableHead>Tenant ID</TableHead><TableHead>Name</TableHead><TableHead>Status</TableHead><TableHead>Created</TableHead>
-          </TableRow></TableHeader>
-          <TableBody>
-            {tenants.map((t) => (
-              <TableRow key={t.tenantId} className="cursor-pointer" onClick={() => setSelectedTenant(t.tenantId)}>
-                <TableCell className="font-mono text-xs">{t.tenantId}</TableCell>
-                <TableCell>{t.name}</TableCell>
-                <TableCell><StatusBadge status={t.status} /></TableCell>
-                <TableCell className="text-xs">{safeFormatDate(t.createdAt)}</TableCell>
-              </TableRow>
+
+      {/* Two-column layout: tenant list (360px fixed) on left, details pane on right. */}
+      <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+        {/* Left panel: scrollable tenant list with selection buttons. */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Tenant catalog</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {tenantsLoading && <Skeleton className="h-48" />}
+            {tenantsError && <ErrorBanner error={tenantsError} onRetry={refetchTenants} />}
+            {tenants && tenants.length === 0 && (
+              <p className="text-sm text-muted-foreground">No tenants found.</p>
+            )}
+
+            {/* Each tenant renders as a selectable button with status badge and creation date. */}
+            {tenants?.map((tenant) => (
+              {/* Selection highlight (primary border + background) when active. */}
+              <button
+                key={tenant.tenantId}
+                type="button"
+                onClick={() => setSelectedTenantId(tenant.tenantId)}
+                className={cn(
+                  'w-full rounded-md border p-3 text-left transition-colors',
+                  selectedTenantId === tenant.tenantId
+                    ? 'border-primary bg-primary/5'
+                    : 'hover:bg-muted/40'
+                )}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-medium">{tenant.name}</div>
+                    <div className="text-xs text-muted-foreground">{tenant.tenantId}</div>
+                  </div>
+                  <StatusBadge status={tenant.status} />
+                </div>
+                <div className="mt-2 text-xs text-muted-foreground">
+                  Created: {safeFormatDate(tenant.createdAt) || 'N/A'}
+                </div>
+              </button>
             ))}
-          </TableBody>
-        </Table>
-      )}
+          </CardContent>
+        </Card>
+
+        {/* Right panel: detailed tenant configuration and settings. */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Tenant detail</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {detailLoading && <Skeleton className="h-64" />}
+            {detailError && <ErrorBanner error={detailError} onRetry={refetchDetail} />}
+
+            {/* Tenant metadata grid: ID, name, status, FHIR/SMTP integration status. */}
+            {tenantDetail && (
+              <>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <div className="text-xs text-muted-foreground">Tenant ID</div>
+                    <div className="text-sm font-medium">{tenantDetail.tenantId}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">Name</div>
+                    <div className="text-sm font-medium">{tenantDetail.name}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">Status</div>
+                    <StatusBadge status={tenantDetail.status} />
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">Created</div>
+                    <div className="text-sm">{safeFormatDate(tenantDetail.createdAt) || 'N/A'}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">FHIR Status</div>
+                    <StatusBadge status={tenantDetail.fhirStatus || 'UNKNOWN'} />
+                  </div>
+                  <div>
+                    <div className="text-xs text-muted-foreground">SMTP Status</div>
+                    <StatusBadge status={tenantDetail.smtpStatus || 'UNKNOWN'} />
+                  </div>
+                </div>
+
+                {/* Allowed origins: CORS whitelist for browser requests from this tenant's domains. */}
+                <div>
+                  <div className="text-sm font-medium mb-2">Allowed origins</div>
+                  <div className="space-y-2">
+                    {tenantDetail.allowedOrigins?.map((origin) => (
+                      <div key={origin} className="rounded-md border p-2 text-xs font-mono">
+                        {origin}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Feature flags: tenant-specific feature toggles (ACTIVE or DOWN). */}
+                <div>
+                  <div className="text-sm font-medium mb-2">Feature flags</div>
+                  <div className="grid gap-2 md:grid-cols-2">
+                    {/* Each flag entry shows key name and toggle status. */}
+                    {Object.entries(tenantDetail.featureFlags || {}).map(([key, value]) => (
+                      <div key={key} className="rounded-md border p-3">
+                        <div className="text-xs text-muted-foreground">{key}</div>
+                        <div className="mt-1">
+                          <StatusBadge status={value ? 'ACTIVE' : 'DOWN'} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {!detailLoading && !tenantDetail && (
+              <p className="text-sm text-muted-foreground">Select a tenant to view details.</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

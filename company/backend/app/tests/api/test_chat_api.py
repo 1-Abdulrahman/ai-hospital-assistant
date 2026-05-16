@@ -2,6 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import json
+
+from datetime import datetime, timedelta, timezone
+
+from app.db.models import AssistantSession, Event, OtpRecord
+from app.modules.notification.email_sender import EmailDeliveryError
+from app.modules.otp.service import build_patient_key_hash, normalize_email
 
 def hospital_headers() -> dict[str, str]:
     return {
@@ -9,6 +16,37 @@ def hospital_headers() -> dict[str, str]:
         "X-Session-Id": "patient-session-001",
         "X-Correlation-Id": "corr-chat-001",
     }
+    
+    
+def make_prediction(
+    *,
+    primary_specialty_id: str | None = "cardiology",
+    top_candidates=None,
+    needs_clarification: bool = False,
+    reason_code: str = "OK",
+    clarifier_question: str | None = None,
+    clarification_key: str | None = None,
+    clarification_quick_replies=(),
+    model_version: str = "test-1.0",
+    input_summary: str = "safe-summary",
+):
+    class _Prediction:
+        pass
+
+    obj = _Prediction()
+    obj.primary_specialty_id = primary_specialty_id
+    obj.top_candidates = top_candidates or [
+        FakeCandidate("cardiology", 0.91),
+        FakeCandidate("neurology", 0.06),
+    ]
+    obj.needs_clarification = needs_clarification
+    obj.reason_code = reason_code
+    obj.clarifier_question = clarifier_question
+    obj.clarification_key = clarification_key
+    obj.clarification_quick_replies = clarification_quick_replies
+    obj.model_version = model_version
+    obj.input_summary = input_summary
+    return obj
 
 
 class FakeCandidate:
@@ -16,6 +54,11 @@ class FakeCandidate:
         self.specialty_id = specialty_id
         self.confidence = confidence
 
+class FakeQuickReply:
+    def __init__(self, label: str, value: str, action: str | None = None) -> None:
+        self.label = label
+        self.value = value
+        self.action = action
 
 class FakePrediction:
     def __init__(self) -> None:
@@ -27,10 +70,57 @@ class FakePrediction:
         self.needs_clarification = False
         self.reason_code = "OK"
         self.clarifier_question = None
+        self.clarification_key = None
+        self.clarification_quick_replies = ()
         self.model_version = "test-1.0"
+        self.input_summary = "chest pain when walking"
+        self.original_input_summary = "I have chest pain when walking."
+        self.cleaned_input_summary = "i have chest pain when walking"
+        self.normalized_input_summary = "i have chest pain when walking"
+        self.preprocessing_actions = ("basic_cleanup",)
+        
+class FakeAmbiguousPrediction:
+    def __init__(self) -> None:
+        self.primary_specialty_id = None
+        self.top_candidates = [
+            FakeCandidate("gastroenterology", 0.32),
+            FakeCandidate("general_practice", 0.16),
+            FakeCandidate("cardiology", 0.11),
+        ]
+        self.needs_clarification = True
+        self.reason_code = "NEEDS_CLARIFICATION"
+        self.clarifier_question = (
+            "I am not fully confident yet. Add more detail if you want, "
+            "or choose one of the suggested specialties to continue."
+        )
+        self.clarification_key = "free-text-clarification-only"
+        self.clarification_quick_replies = (
+            FakeQuickReply(
+                "I will give more details",
+                "I will give more details.",
+                "PROMPT_FOR_TEXT",
+            ),
+        )
+        self.model_version = "test-1.0"
+        self.input_summary = "i have a stomach ache"
+        self.original_input_summary = "I have a stomach ache"
+        self.cleaned_input_summary = "i have a stomach ache"
+        self.normalized_input_summary = "i have a stomach ache"
+        self.preprocessing_actions = ("basic_cleanup",)
+
+
+class FakeAmbiguousNlpService:
+    min_confidence = 0.70
+    ambiguity_delta = 0.10
+
+    def classify(self, message_text: str):
+        return FakeAmbiguousPrediction()
 
 
 class FakeNlpService:
+    min_confidence = 0.70
+    ambiguity_delta = 0.10
+
     def classify(self, message_text: str):
         return FakePrediction()
 
@@ -84,6 +174,43 @@ def test_chat_direct_start_returns_supported_specialties(client) -> None:
     assert body["selectionLists"][0]["type"] == "specialty"
     assert len(body["selectionLists"][0]["items"]) >= 3
 
+def test_chat_selection_persists_specialty_selected_event(client, db_session) -> None:
+    client.post(
+        "/chat/direct/start",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "START_DIRECT_SCHEDULING",
+        },
+    )
+
+    response = client.post(
+        "/chat/selection",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "selectionType": "specialty",
+            "selectionId": "gastroenterology",
+            "action": "SELECT_SPECIALTY",
+        },
+    )
+
+    assert response.status_code == 200
+
+    event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "SPECIALTY_SELECTED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert event is not None
+
+    payload = json.loads(event.payload_json)
+    assert payload["selectedSpecialty"] == "gastroenterology"
+    assert payload["selectionSource"] == "direct_specialty_selection"
 
 def test_chat_selection_for_specialty_requests_continuity_identity(client) -> None:
     client.post(
@@ -202,9 +329,25 @@ def test_chat_continuity_identify_accepts_slot_dto_items(client, monkeypatch) ->
 
     assert response.status_code == 200
     body = response.json()
+
     assert body["isChronicContinuity"] is True
+    assert body["continuity"]["matched"] is True
+    assert body["continuity"]["preferredPractitionerRef"] == "Practitioner/prac-1"
+    assert body["continuity"]["preferredPractitionerDisplay"] == "Dr. Lina Alharbi"
+    assert body["continuity"]["preferredPractitionerHasAvailability"] is True
+    assert "prioritized" in body["continuity"]["message"].lower()
+
     assert body["selectionLists"][0]["type"] == "slot"
     assert body["selectionLists"][0]["items"][0]["id"] == "slot-1"
+
+    meta = body["selectionLists"][0]["items"][0]["meta"]
+    assert meta["practitionerRef"] == "Practitioner/prac-1"
+    assert meta["practitionerDisplay"] == "Dr. Lina Alharbi"
+    assert meta["specialtyId"] == "cardiology"
+    assert meta["specialtyDisplay"] == "Cardiology"
+    assert meta["dateKey"] == "2026-04-12"
+    assert meta["displayTime"] == "9:00 AM"
+    assert meta["isPreferredPractitioner"] is True
 
 
 def test_chat_continuity_identify_returns_prioritized_slots(client, monkeypatch) -> None:
@@ -306,12 +449,42 @@ def test_chat_continuity_identify_returns_prioritized_slots(client, monkeypatch)
 
     assert response.status_code == 200
     body = response.json()
+
     assert body["isChronicContinuity"] is True
+    assert body["continuity"]["matched"] is True
+    assert body["continuity"]["preferredPractitionerRef"] == "Practitioner/prac-card-1"
+    assert body["continuity"]["preferredPractitionerDisplay"] == "Dr. Lina Alharbi"
+    assert body["continuity"]["preferredPractitionerHasAvailability"] is True
+
     assert body["selectionLists"][0]["type"] == "slot"
     assert body["selectionLists"][0]["items"][0]["label"].startswith("Dr. Lina Alharbi")
 
+    first_meta = body["selectionLists"][0]["items"][0]["meta"]
+    second_meta = body["selectionLists"][0]["items"][1]["meta"]
 
-def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypatch) -> None:
+    assert first_meta["practitionerRef"] == "Practitioner/prac-card-1"
+    assert first_meta["isPreferredPractitioner"] is True
+
+    assert second_meta["practitionerRef"] == "Practitioner/prac-card-2"
+    assert second_meta["isPreferredPractitioner"] is False
+
+
+def test_chat_confirm_appointment_returns_confirmation_summary_and_sends_notification(
+    client,
+    db_session,
+    monkeypatch,
+) -> None:
+    sent_messages: list[dict] = []
+
+    def fake_send_plain_text_email(*, to_email: str, subject: str, body: str) -> None:
+        sent_messages.append(
+            {
+                "to_email": to_email,
+                "subject": subject,
+                "body": body,
+            }
+        )
+
     async def fake_book_appointment(
         *,
         db,
@@ -348,6 +521,10 @@ def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypat
         "app.modules.orchestration.service.book_appointment",
         fake_book_appointment,
     )
+    monkeypatch.setattr(
+        "app.modules.notification.service.send_plain_text_email",
+        fake_send_plain_text_email,
+    )
 
     response = client.post(
         "/chat/confirm",
@@ -368,6 +545,260 @@ def test_chat_confirm_appointment_returns_confirmation_summary(client, monkeypat
     assert body["confirmationType"] == "appointment"
     assert body["bookingReferenceId"] == "Appointment/appt-1"
     assert body["confirmationSummary"]["doctorLabel"] == "Dr. Lina Alharbi"
+
+    assert len(sent_messages) == 1
+    assert sent_messages[0]["to_email"] == "patient@example.com"
+    assert "Appointment Confirmation" in sent_messages[0]["subject"]
+    assert "Appointment/appt-1" in sent_messages[0]["body"]
+
+    requested_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_REQUESTED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+    sent_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_SENT")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert requested_event is not None
+    assert sent_event is not None
+
+    requested_payload = json.loads(requested_event.payload_json)
+    sent_payload = json.loads(sent_event.payload_json)
+
+    assert requested_payload["notificationType"] == "appointment_confirmation"
+    assert requested_payload["channel"] == "email"
+    assert requested_payload["bookingReferenceId"] == "Appointment/appt-1"
+
+    assert sent_payload["notificationType"] == "appointment_confirmation"
+    assert sent_payload["channel"] == "email"
+
+def test_chat_confirm_appointment_retries_notification_once_then_succeeds(
+    client,
+    db_session,
+    monkeypatch,
+) -> None:
+    attempts = {"count": 0}
+
+    def flaky_send_plain_text_email(*, to_email: str, subject: str, body: str) -> None:
+        attempts["count"] += 1
+        if attempts["count"] == 1:
+            raise EmailDeliveryError("first attempt failed")
+
+    async def fake_book_appointment(
+        *,
+        db,
+        header_tenant_id,
+        session_id,
+        body_tenant_id,
+        national_id,
+        email,
+        specialty,
+        slot_id,
+        idempotency_key,
+    ):
+        return {
+            "ok": True,
+            "reasonCode": "OK",
+            "appointmentId": "appt-2",
+            "appointmentRef": "Appointment/appt-2",
+            "specialty": specialty,
+            "slot": {
+                "slotId": slot_id,
+                "slotRef": f"Slot/{slot_id}",
+                "scheduleRef": "Schedule/schedule-1",
+                "practitionerRef": "Practitioner/prac-1",
+                "practitionerDisplay": "Dr. Lina Alharbi",
+                "specialty": specialty,
+                "startUtc": "2026-04-12T09:00:00Z",
+                "endUtc": "2026-04-12T09:30:00Z",
+                "status": "busy",
+            },
+            "message": "Appointment booked successfully.",
+        }
+
+    monkeypatch.setattr(
+        "app.modules.orchestration.service.book_appointment",
+        fake_book_appointment,
+    )
+    monkeypatch.setattr(
+        "app.modules.notification.service.send_plain_text_email",
+        flaky_send_plain_text_email,
+    )
+
+    response = client.post(
+        "/chat/confirm",
+        headers={**hospital_headers(), "Idempotency-Key": "idem-chat-retry"},
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "CONFIRM_APPOINTMENT",
+            "specialtyId": "cardiology",
+            "slotId": "slot-1",
+            "nationalId": "2123456788",
+            "email": "patient@example.com",
+        },
+    )
+
+    assert response.status_code == 200
+    assert attempts["count"] == 2
+
+    retried_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_RETRIED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+    sent_event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NOTIFICATION_SENT")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert retried_event is not None
+    assert sent_event is not None
+    
+def test_chat_confirm_renewal_sends_confirmation_notification(
+    client,
+    db_session,
+    monkeypatch,
+) -> None:
+    sent_messages: list[dict] = []
+
+    class FakeRenewalItem:
+        medicationRequestRef = "MedicationRequest/1"
+        medicationDisplay = "Metformin"
+        dosageText = "500 mg twice daily"
+        refillStatus = "READY_FOR_REFILL_REQUEST"
+        refillStatusMessage = (
+            "This medication can be submitted as a refill request pending "
+            "clinical/pharmacy fulfillment."
+        )
+
+    class FakeRenewalSignals:
+        patientRef = "Patient/patient-1"
+        patientFound = True
+        eligible = True
+        items = [FakeRenewalItem()]
+
+    class FakeRefillTask:
+        taskId = "task-refill-1"
+        taskRef = "Task/task-refill-1"
+        status = "requested"
+        intent = "proposal"
+        businessStatus = "Pending clinical/pharmacy fulfillment"
+        patientRef = "Patient/patient-1"
+        medicationRequestRef = "MedicationRequest/1"
+
+    class FakeFhirClient:
+        async def get_medication_renewal_signals(self, *, patient_key_hash: str):
+            return FakeRenewalSignals()
+
+        async def create_medication_refill_task(
+            self,
+            *,
+            patient_ref: str,
+            medication_request_ref: str,
+            medication_label: str | None = None,
+            refill_status: str | None = None,
+            refill_status_message: str | None = None,
+            correlation_id: str | None = None,
+        ):
+            assert patient_ref == "Patient/patient-1"
+            assert medication_request_ref == "MedicationRequest/1"
+            assert medication_label in {"MedicationRequest/1", "Metformin"}
+            assert refill_status == "READY_FOR_REFILL_REQUEST"
+            return FakeRefillTask()
+
+    def fake_send_plain_text_email(*, to_email: str, subject: str, body: str) -> None:
+        sent_messages.append(
+            {
+                "to_email": to_email,
+                "subject": subject,
+                "body": body,
+            }
+        )
+
+    normalized_email_value = normalize_email("patient@example.com")
+    patient_key_hash = build_patient_key_hash(
+        tenant_id="demo",
+        identity_type="iqama",
+        normalized_identity_number="2123456788",
+    )
+
+    db_session.add(
+        OtpRecord(
+            id="otp-renew-1",
+            tenant_id="demo",
+            session_id="patient-session-001",
+            patient_key_hash=patient_key_hash,
+            email=normalized_email_value,
+            otp_hash="verified-hash",
+            expires_at=datetime.now(timezone.utc) + timedelta(minutes=5),
+            attempts=1,
+            verified=True,
+        )
+    )
+
+    db_session.add(
+        AssistantSession(
+            id="assistant-session-renewal-1",
+            tenant_id="demo",
+            client_session_id="patient-session-001",
+            current_state="AWAITING_CONFIRMATION",
+            flow_mode="renewal",
+            renewal_item_id="MedicationRequest/1",
+            renewal_item_label="Metformin",
+            renewal_patient_key_hash=patient_key_hash,
+            renewal_patient_ref="Patient/patient-1",
+        )
+    )
+
+    db_session.commit()
+
+    monkeypatch.setattr(
+        "app.modules.orchestration.service.FhirClient",
+        lambda: FakeFhirClient(),
+    )
+
+    monkeypatch.setattr(
+        "app.modules.notification.service.send_plain_text_email",
+        fake_send_plain_text_email,
+    )
+
+    response = client.post(
+        "/chat/confirm",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "CONFIRM_RENEWAL",
+            "renewalItemId": "MedicationRequest/1",
+            "nationalId": "2123456788",
+            "email": "patient@example.com",
+        },
+    )
+
+    assert response.status_code == 200, response.json()
+
+    body = response.json()
+    assert body["confirmationType"] == "renewal"
+    assert body["confirmationSummary"]["renewalItemLabel"] == "Metformin"
+    assert body["confirmationSummary"]["refillTaskRef"] == "Task/task-refill-1"
+    assert "pending clinical/pharmacy fulfillment" in body["userMessage"]
+
+    assert len(sent_messages) == 1
+    assert sent_messages[0]["to_email"] == "patient@example.com"
+    assert "Medication Renewal Refill Request Confirmation" in sent_messages[0]["subject"]
+    assert "Metformin" in sent_messages[0]["body"]
+    assert "Task/task-refill-1" in sent_messages[0]["body"]
+    assert "pending clinical/pharmacy fulfillment" in sent_messages[0]["body"]
+
 
 
 def test_chat_renewal_identify_returns_fhir_driven_medications(client, monkeypatch) -> None:
@@ -431,3 +862,285 @@ def test_chat_renewal_identify_returns_fhir_driven_medications(client, monkeypat
     assert body["selectionLists"][0]["type"] == "medication"
     assert body["selectionLists"][0]["items"][0]["label"] == "Metformin"
     assert body["selectionLists"][0]["items"][1]["label"] == "Atorvastatin"
+    
+    
+def test_chat_reset_clears_session_and_logs_drop_event(client, db_session) -> None:
+    client.post(
+        "/chat/direct/start",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "START_DIRECT_SCHEDULING",
+        },
+    )
+
+    client.post(
+        "/chat/selection",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "selectionType": "specialty",
+            "selectionId": "cardiology",
+            "action": "SELECT_SPECIALTY",
+        },
+    )
+
+    response = client.post(
+        "/chat/reset",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "action": "RESET_FLOW",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["userMessage"] == "Returned to the main menu. Choose how you would like to continue."
+    assert body["correlationId"] == "corr-chat-001"
+
+    session = (
+        db_session.query(AssistantSession)
+        .filter(
+            AssistantSession.tenant_id == "demo",
+            AssistantSession.client_session_id == "patient-session-001",
+        )
+        .first()
+    )
+
+    assert session is not None
+    assert session.current_state == "NEW"
+    assert session.flow_mode is None
+    assert session.selected_specialty_id is None
+    assert session.selected_doctor_id is None
+    assert session.selected_slot_id is None
+    assert session.selected_slot_label is None
+    assert session.selected_slot_start_utc is None
+    assert session.selected_date is None
+    assert session.last_input_summary is None
+    assert session.renewal_item_id is None
+    assert session.renewal_item_label is None
+    assert session.renewal_patient_key_hash is None
+    assert session.renewal_patient_ref is None
+    assert session.continuity_checked is False
+    assert session.continuity_patient_ref is None
+    assert session.continuity_preferred_practitioner_ref is None
+    assert session.continuity_preferred_practitioner_display is None
+    assert session.continuity_is_returning is False
+
+    dropped_event = (
+        db_session.query(Event)
+        .filter(
+            Event.tenant_id == "demo",
+            Event.session_id == "patient-session-001",
+            Event.event_type == "SESSION_DROPPED",
+        )
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert dropped_event is not None
+    assert dropped_event.reason_code == "OK"
+
+    payload = json.loads(dropped_event.payload_json)
+    assert payload["component"] == "assistant-api"
+    assert "returned to the main menu" in payload["safeSummary"].lower()
+    assert payload["previousState"] == "AWAITING_CONTINUITY_IDENTITY"
+    assert payload["previousFlowMode"] == "direct"
+    
+    
+    
+class RecordingClarificationNlpService:
+    min_confidence = 0.70
+    ambiguity_delta = 0.10
+
+    def __init__(self) -> None:
+        self.inputs: list[str] = []
+        self.call_count = 0
+
+    def classify(self, message_text: str):
+        self.inputs.append(message_text)
+        self.call_count += 1
+
+        # Keep the session in clarification mode for the first two turns:
+        # 1) original ambiguous complaint
+        # 2) first clarification detail still ambiguous
+        # Then let the third turn resolve.
+        if self.call_count in (1, 2):
+            return FakeAmbiguousPrediction()
+
+        return FakePrediction()
+    
+
+def test_chat_message_persists_nlp_preprocessed_event_with_safe_trace_fields(
+    client,
+    db_session,
+) -> None:
+    client.app.state.nlp_service = FakeAmbiguousNlpService()
+
+    response = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "I have a stomach ache",
+        },
+    )
+
+    assert response.status_code == 200
+
+    event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NLP_PREPROCESSED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert event is not None
+
+    payload = json.loads(event.payload_json)
+    assert payload["component"] == "nlp"
+    assert payload["classifierInputSummary"] == "I have a stomach ache"
+    assert payload["cleanedInputSummary"] == "i have a stomach ache"
+    assert payload["normalizedInputSummary"] == "i have a stomach ache"
+    assert payload["usedMergedClarificationInput"] is False
+    assert "preprocessingActions" in payload
+    
+    
+def test_chat_message_persists_nlp_classified_event_with_confidence_diagnostics(
+    client,
+    db_session,
+) -> None:
+    client.app.state.nlp_service = FakeAmbiguousNlpService()
+
+    response = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "I have a stomach ache",
+        },
+    )
+
+    assert response.status_code == 200
+
+    event = (
+        db_session.query(Event)
+        .filter(Event.event_type == "NLP_CLASSIFIED")
+        .order_by(Event.ts_utc.desc())
+        .first()
+    )
+
+    assert event is not None
+
+    payload = json.loads(event.payload_json)
+    assert payload["component"] == "nlp"
+    assert "topCandidates" in payload
+    assert payload["topConfidence"] == 0.32
+    assert payload["secondConfidence"] == 0.16
+    assert payload["confidenceGap"] == 0.16
+    assert payload["thresholdMinConfidence"] == 0.7
+    assert payload["thresholdAmbiguityDelta"] == 0.1
+    assert payload["ambiguityDecision"] == "below_min_confidence"
+    assert payload["safeSummary"].startswith("Ambiguous specialty prediction")
+
+def test_chat_message_accumulates_multiple_clarification_followups(
+    client,
+    db_session,
+) -> None:
+    fake_service = RecordingClarificationNlpService()
+    client.app.state.nlp_service = fake_service
+
+    first = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "I have a stomach ache",
+        },
+    )
+    assert first.status_code == 200
+    assert first.json()["needsClarification"] is True
+
+    second = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "when i eat my stomach hurts me",
+        },
+    )
+    assert second.status_code == 200
+    assert second.json()["needsClarification"] is True
+
+    third = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "it goes away after 5 hours",
+        },
+    )
+    assert third.status_code == 200
+
+    assert len(fake_service.inputs) == 3
+
+    assert fake_service.inputs[0] == "I have a stomach ache"
+
+    assert "Original complaint:" in fake_service.inputs[1]
+    assert "Clarification details:" in fake_service.inputs[1]
+    assert "I have a stomach ache" in fake_service.inputs[1]
+    assert "when i eat my stomach hurts me" in fake_service.inputs[1]
+
+    assert "Original complaint:" in fake_service.inputs[2]
+    assert "Clarification details:" in fake_service.inputs[2]
+    assert "I have a stomach ache" in fake_service.inputs[2]
+    assert "when i eat my stomach hurts me" in fake_service.inputs[2]
+    assert "it goes away after 5 hours" in fake_service.inputs[2]
+
+    session = (
+        db_session.query(AssistantSession)
+        .filter(AssistantSession.client_session_id == "patient-session-001")
+        .first()
+    )
+    assert session is not None
+    assert session.original_complaint_text == "I have a stomach ache"
+    assert session.clarification_detail_text is not None
+    assert "when i eat my stomach hurts me" in session.clarification_detail_text
+    assert "it goes away after 5 hours" in session.clarification_detail_text
+    assert session.merged_classification_text is not None
+    assert "Clarification details:" in session.merged_classification_text
+    
+def test_chat_message_returns_single_clarification_helper_and_specialty_choices(client) -> None:
+    client.app.state.nlp_service = FakeAmbiguousNlpService()
+
+    response = client.post(
+        "/chat/message",
+        headers=hospital_headers(),
+        json={
+            "tenantId": "demo",
+            "clientSessionId": "patient-session-001",
+            "messageText": "I have a stomach ache",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+
+    assert body["needsClarification"] is True
+    assert body["quickReplies"] is not None
+    assert len(body["quickReplies"]) == 1
+    assert body["quickReplies"][0]["label"] == "I will give more details"
+    assert body["quickReplies"][0]["action"] == "PROMPT_FOR_TEXT"
+
+    assert body["selectionLists"] is not None
+    assert body["selectionLists"][0]["type"] == "specialty"
+    assert len(body["selectionLists"][0]["items"]) >= 1

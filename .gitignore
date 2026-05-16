@@ -20,6 +20,8 @@ company/backend/app/assets/nlp_models/*
 # Runtime data
 company/data/
 company/fhir-data/
+hospital/fhir-data/
+.runtime
 
 # Environment
 .env
@@ -32,4 +34,8 @@ coverage/
 
 # Build artifacts
 build/
+
+# Local NLP training run archives and checkpoints
+company/backend/app/assets/nlp_model_runs/
+company/backend/app/assets/nlp_models/distilbert-specialty/_checkpoints/
 

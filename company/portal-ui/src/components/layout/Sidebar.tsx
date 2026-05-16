@@ -1,7 +1,12 @@
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, CalendarCheck, Building2, FileText,
-  GitBranch, MessageSquare, Brain,
+  LayoutDashboard,
+  CalendarCheck,
+  Building2,
+  FileText,
+  GitBranch,
+  MessageSquare,
+  Brain,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,7 +25,10 @@ const adminOnlyPaths = new Set(['/tenants', '/audit', '/traces', '/nlp-monitorin
 
 export function Sidebar() {
   const { role } = useAuth();
-  const links = role === 'ADMIN' ? allLinks : allLinks.filter(l => !adminOnlyPaths.has(l.to));
+  const links =
+    role === 'ADMIN'
+      ? allLinks
+      : allLinks.filter((l) => !adminOnlyPaths.has(l.to));
 
   return (
     <aside className="w-56 border-r bg-sidebar flex flex-col py-4">
@@ -38,8 +46,8 @@ export function Sidebar() {
               )
             }
           >
-            <Icon className="h-4 w-4" />
-            {label}
+            <Icon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{label}</span>
           </NavLink>
         ))}
       </nav>

@@ -1,0 +1,30 @@
+[
+  {
+    "text": "I have stomache ache",
+    "expectedBehavior": "typo cleanup only"
+  },
+  {
+    "text": "I have sorethroat",
+    "expectedBehavior": "split merged word"
+  },
+  {
+    "text": "my chest pain gets worse when walking",
+    "expectedBehavior": "preserve clinically meaningful modifier"
+  },
+  {
+    "text": "I feel nausia and vomitting",
+    "expectedBehavior": "common typo cleanup"
+  },
+  {
+    "text": "I have sudden headache and dizziness",
+    "expectedBehavior": "preserve sudden"
+  },
+  {
+    "text": "my eyes are blurry",
+    "expectedBehavior": "minimal cleanup only"
+  },
+  {
+    "text": "I have a stomach ache",
+    "expectedBehavior": "minimal cleanup in 9.8A; article may remain"
+  }
+]

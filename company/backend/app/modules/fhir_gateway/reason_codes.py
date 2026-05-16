@@ -9,6 +9,7 @@ SLOT_NO_LONGER_AVAILABLE = "SLOT_NO_LONGER_AVAILABLE"
 APPOINTMENT_CONFLICT = "APPOINTMENT_CONFLICT"
 APPOINTMENT_CREATE_FAILED = "APPOINTMENT_CREATE_FAILED"
 INVALID_REQUEST = "INVALID_REQUEST"
+TASK_CREATE_FAILED = "TASK_CREATE_FAILED"
 
 
 DEFAULT_MESSAGES: dict[str, str] = {
@@ -20,15 +21,20 @@ DEFAULT_MESSAGES: dict[str, str] = {
     APPOINTMENT_CONFLICT: "Appointment conflicts with an existing booking.",
     APPOINTMENT_CREATE_FAILED: "Appointment could not be created.",
     INVALID_REQUEST: "FHIR request is invalid.",
+    TASK_CREATE_FAILED: "FHIR Task could not be created.",
 }
 
 
 def message_for(reason_code: str) -> str:
+    """Return the user-facing message for a FHIR gateway reason code."""
     return DEFAULT_MESSAGES.get(reason_code, "FHIR request failed.")
 
 
 def default_status_code_for(reason_code: str) -> int:
-    if reason_code in {FHIR_UNAVAILABLE, FHIR_TIMEOUT, APPOINTMENT_CREATE_FAILED}:
+    """Map a FHIR gateway reason code to the default HTTP status code."""
+    # Specific client and availability failures are mapped first so callers get
+    # a predictable status even when a reason code is reused across flows.
+    if reason_code in {FHIR_UNAVAILABLE, FHIR_TIMEOUT, APPOINTMENT_CREATE_FAILED, TASK_CREATE_FAILED}:
         return 503
     if reason_code in {APPOINTMENT_CONFLICT, SLOT_NO_LONGER_AVAILABLE}:
         return 409
@@ -40,10 +46,13 @@ def default_status_code_for(reason_code: str) -> int:
 
 
 def is_retryable(reason_code: str) -> bool:
+    """Return whether the failure should be treated as retryable."""
     return reason_code in {FHIR_UNAVAILABLE, FHIR_TIMEOUT}
 
 
 class FhirGatewayError(Exception):
+    """Exception raised when the FHIR gateway cannot complete an operation."""
+
     def __init__(
         self,
         *,

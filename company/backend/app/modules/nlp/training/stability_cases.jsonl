@@ -1,0 +1,607 @@
+{"text": "chest pain when walking up stairs", "label": "cardiology", "family_id": "cardio_exertional_chest_pain_001"}
+{"text": "i have chest pain when walking up stairs", "label": "cardiology", "family_id": "cardio_exertional_chest_pain_001"}
+{"text": "i get chest tightness when climbing stairs and i become short of breath", "label": "cardiology", "family_id": "cardio_exertional_chest_tightness_002"}
+{"text": "i have i get chest tightness when climbing stairs and i become short of breath", "label": "cardiology", "family_id": "cardio_exertional_chest_tightness_002"}
+{"text": "i feel pressure in my chest when i walk fast and i start sweating", "label": "cardiology", "family_id": "cardio_exertional_pressure_003"}
+{"text": "pressure in my chest when i walk fast and i start sweating", "label": "cardiology", "family_id": "cardio_exertional_pressure_003"}
+{"text": "my heartbeat suddenly becomes irregular and rapid while i am sitting still and that is the main thing i notice", "label": "cardiology", "family_id": "cardio_gold_v11_001"}
+{"text": "i feel repeated skipped beats followed by a strong thumping heartbeat that makes me stop what i am doing", "label": "cardiology", "family_id": "cardio_gold_v11_002"}
+{"text": "my pulse suddenly races and flutters for a minute at a time even though i am not moving much", "label": "cardiology", "family_id": "cardio_gold_v11_003"}
+{"text": "the main problem is a pounding irregular heartbeat with lightheadedness coming after the rhythm starts", "label": "cardiology", "family_id": "cardio_gold_v11_004"}
+{"text": "i get chest uneasiness with a rapid heartbeat but it is not triggered by moving my arm or pressing on my chest", "label": "cardiology", "family_id": "cardio_gold_v11_005"}
+{"text": "when i walk uphill my heart starts racing unevenly and i need to pause because the rhythm feels wrong", "label": "cardiology", "family_id": "cardio_gold_v11_006"}
+{"text": "i notice a fluttering pulse in my chest and throat followed by weakness but the fluttering comes first", "label": "cardiology", "family_id": "cardio_gold_v11_007"}
+{"text": "there are short attacks where my heartbeat feels chaotic and forceful and i have to sit quietly until it settles", "label": "cardiology", "family_id": "cardio_gold_v11_008"}
+{"text": "i get chest tightness when i climb stairs and i become short of breath", "label": "cardiology", "family_id": "cardio_gold_v3_001"}
+{"text": "i feel pressure in my chest after brisk walking and i start sweating", "label": "cardiology", "family_id": "cardio_gold_v3_002"}
+{"text": "i have chest discomfort after light effort and the pain goes toward my left arm", "label": "cardiology", "family_id": "cardio_gold_v3_003"}
+{"text": "i feel chest heaviness when i walk uphill and i get breathless", "label": "cardiology", "family_id": "cardio_gold_v3_004"}
+{"text": "my heart races and i feel chest pain after mild effort", "label": "cardiology", "family_id": "cardio_gold_v3_005"}
+{"text": "i feel a squeezing pain in my chest when i hurry to catch my breath", "label": "cardiology", "family_id": "cardio_gold_v4_001"}
+{"text": "i get chest pressure when walking uphill and i need to slow down", "label": "cardiology", "family_id": "cardio_gold_v4_002"}
+{"text": "my chest hurts after mild activity and the pain spreads into my shoulder", "label": "cardiology", "family_id": "cardio_gold_v4_003"}
+{"text": "i feel tightness in my chest when i climb stairs and i start sweating", "label": "cardiology", "family_id": "cardio_gold_v4_004"}
+{"text": "i get chest discomfort with fast walking and it eases when i rest", "label": "cardiology", "family_id": "cardio_gold_v4_005"}
+{"text": "i feel chest tightness when i walk against the wind and i get short of breath", "label": "cardiology", "family_id": "cardio_gold_v5_001"}
+{"text": "i get pressure in my chest when i carry groceries upstairs", "label": "cardiology", "family_id": "cardio_gold_v5_002"}
+{"text": "my chest hurts when i hurry and it gets better when i stop and rest", "label": "cardiology", "family_id": "cardio_gold_v5_003"}
+{"text": "i have chest heaviness with mild activity and it reaches into my left shoulder", "label": "cardiology", "family_id": "cardio_gold_v5_004"}
+{"text": "my heart races and i feel uncomfortable in my chest during a brisk walk", "label": "cardiology", "family_id": "cardio_gold_v5_005"}
+{"text": "i feel chest pressure when i rush to catch the elevator and have to stop", "label": "cardiology", "family_id": "cardio_gold_v5_006"}
+{"text": "i get chest pressure when i walk uphill and it eases with rest", "label": "cardiology", "family_id": "cardio_gold_v7_001"}
+{"text": "my chest feels heavy when i hurry and i become short of breath", "label": "cardiology", "family_id": "cardio_gold_v7_002"}
+{"text": "i have chest discomfort that spreads to my shoulder when i exert myself", "label": "cardiology", "family_id": "cardio_gold_v7_003"}
+{"text": "my heart races and i feel pressure in my chest during brisk walking", "label": "cardiology", "family_id": "cardio_gold_v7_004"}
+{"text": "i feel tightness in my chest when i walk uphill and it eases when i rest", "label": "cardiology", "family_id": "cardio_gold_v8_001"}
+{"text": "my heart suddenly races and flutters and i feel lightheaded when it happens", "label": "cardiology", "family_id": "cardio_gold_v8_002"}
+{"text": "i get short of breath when i lie flat and my ankles look swollen by evening", "label": "cardiology", "family_id": "cardio_gold_v8_003"}
+{"text": "i feel pressure in the middle of my chest with sweating when i walk fast", "label": "cardiology", "family_id": "cardio_gold_v8_004"}
+{"text": "i have episodes of irregular pounding heartbeat with weakness and near fainting", "label": "cardiology", "family_id": "cardio_gold_v8_005"}
+{"text": "there is heaviness in my chest when i carry groceries and it improves after sitting down", "label": "cardiology", "family_id": "cardio_gold_v8_006"}
+{"text": "i wake up at night short of breath and need to sit upright to breathe better", "label": "cardiology", "family_id": "cardio_gold_v8_007"}
+{"text": "my chest feels squeezed when i climb stairs and the feeling settles with rest", "label": "cardiology", "family_id": "cardio_gold_v8_008"}
+{"text": "i become breathless much faster than usual and feel a pressing sensation in my chest", "label": "cardiology", "family_id": "cardio_gold_v8_009"}
+{"text": "i keep noticing a fast fluttering heartbeat even when i am sitting quietly", "label": "cardiology", "family_id": "cardio_gold_v8_010"}
+{"text": "i get chest pressure during brisk walking and it is not triggered by moving my arm", "label": "cardiology", "family_id": "cardio_gold_v8_011"}
+{"text": "my heartbeat feels uneven and i get tired and short of breath during simple activity", "label": "cardiology", "family_id": "cardio_gold_v8_012"}
+{"text": "i feel chest heaviness with nausea when i hurry to catch up with someone walking", "label": "cardiology", "family_id": "cardio_gold_v8_013"}
+{"text": "i have pounding palpitations with mild chest discomfort and dizziness", "label": "cardiology", "family_id": "cardio_gold_v8_014"}
+{"text": "there is pressure across my chest whenever i walk against the wind and it stops after rest", "label": "cardiology", "family_id": "cardio_gold_v8_015"}
+{"text": "i get breathless on stairs and feel a weight on my chest that fades after a few minutes of rest", "label": "cardiology", "family_id": "cardio_gold_v8_016"}
+{"text": "my heart feels like it skips beats and then races for a minute or two", "label": "cardiology", "family_id": "cardio_gold_v8_017"}
+{"text": "chest tightness after exercise", "label": "cardiology", "family_id": "cardio_gp_borderline_001"}
+{"text": "i have chest tightness after exercise", "label": "cardiology", "family_id": "cardio_gp_borderline_001"}
+{"text": "i get chest discomfort when climbing stairs and i become short of breath", "label": "cardiology", "family_id": "cardio_gp_borderline_002"}
+{"text": "i have i get chest discomfort when climbing stairs and i become short of breath", "label": "cardiology", "family_id": "cardio_gp_borderline_002"}
+{"text": "i have mild chest discomfort with fever and body aches", "label": "general_practice", "family_id": "cardio_gp_borderline_003"}
+{"text": "mild chest discomfort with fever and body aches", "label": "general_practice", "family_id": "cardio_gp_borderline_003"}
+{"text": "my heart races and i feel chest pressure when i exert myself", "label": "cardiology", "family_id": "cardio_gp_borderline_004"}
+{"text": "i feel generally tired and shaky today but the main issue is a sudden racing heartbeat that feels irregular", "label": "cardiology", "family_id": "cardio_gp_hn_v11_001"}
+{"text": "i almost feel faint but that happens only after my heart starts pounding and skipping beats", "label": "cardiology", "family_id": "cardio_gp_hn_v11_002"}
+{"text": "i feel feverish with chest discomfort and body aches", "label": "general_practice", "family_id": "cardio_gp_hn_v3_001"}
+{"text": "i get chest pressure and shortness of breath when i hurry upstairs", "label": "cardiology", "family_id": "cardio_gp_hn_v3_002"}
+{"text": "i have chest pressure with exertion and shortness of breath not pain with arm movement", "label": "cardiology", "family_id": "cardio_ortho_hn_v5_001"}
+{"text": "i have chest heaviness when climbing stairs and it improves when i rest", "label": "cardiology", "family_id": "cardio_ortho_hn_v5_002"}
+{"text": "i get chest pressure when walking uphill with shortness of breath and it is not worse with arm movement", "label": "cardiology", "family_id": "cardio_ortho_hn_v6_001"}
+{"text": "there is heaviness in my chest when i carry groceries relieved by rest and not tender to touch", "label": "cardiology", "family_id": "cardio_ortho_hn_v6_002"}
+{"text": "my heart starts racing and i feel chest pressure when i climb stairs", "label": "cardiology", "family_id": "cardio_palpitations_exertion_005"}
+{"text": "chest discomfort after light effort and the pain goes to my left arm", "label": "cardiology", "family_id": "cardio_radiating_chest_discomfort_004"}
+{"text": "i have chest discomfort after light effort and the pain goes to my left arm", "label": "cardiology", "family_id": "cardio_radiating_chest_discomfort_004"}
+{"text": "an itchy rash on my hands after using a new soap", "label": "dermatology", "family_id": "derm_contact_rash_hands_002"}
+{"text": "i have an itchy rash on my hands after using a new soap", "label": "dermatology", "family_id": "derm_contact_rash_hands_002"}
+{"text": "dry red patches on my neck and they get worse at night", "label": "dermatology", "family_id": "derm_dry_red_patches_neck_003"}
+{"text": "i have dry red patches on my neck and they get worse at night", "label": "dermatology", "family_id": "derm_dry_red_patches_neck_003"}
+{"text": "a flaky itchy rash on my arms that keeps spreading", "label": "dermatology", "family_id": "derm_flaky_spreading_rash_005"}
+{"text": "i have a flaky itchy rash on my arms that keeps spreading", "label": "dermatology", "family_id": "derm_flaky_spreading_rash_005"}
+{"text": "the skin on my eyelids is itchy and flaky but my eyes are not red and my vision is normal", "label": "dermatology", "family_id": "derm_gold_v12_001"}
+{"text": "i have a burning rash at the outer corner of one eye socket but the eyeball itself feels fine", "label": "dermatology", "family_id": "derm_gold_v12_002"}
+{"text": "the skin above my lashes is peeling and irritated with no blurred vision or light sensitivity", "label": "dermatology", "family_id": "derm_gold_v12_003"}
+{"text": "red cracked skin around my eye itches badly after using a new cream but the eye itself looks normal", "label": "dermatology", "family_id": "derm_gold_v12_004"}
+{"text": "i have an itchy red rash on my wrists after using hand sanitizer", "label": "dermatology", "family_id": "derm_gold_v3_001"}
+{"text": "i have dry scaly patches on my elbows and they itch a lot", "label": "dermatology", "family_id": "derm_gold_v3_002"}
+{"text": "i developed itchy bumps on my neck after trying a new detergent", "label": "dermatology", "family_id": "derm_gold_v3_003"}
+{"text": "i have a red itchy rash under my watch strap", "label": "dermatology", "family_id": "derm_gold_v3_004"}
+{"text": "i have a flaky itchy rash behind my knees that keeps spreading", "label": "dermatology", "family_id": "derm_gold_v3_005"}
+{"text": "i have itchy dry patches on my fingers that crack in cold weather", "label": "dermatology", "family_id": "derm_gold_v4_001"}
+{"text": "i developed a red itchy rash on my neck after wearing a new perfume", "label": "dermatology", "family_id": "derm_gold_v4_002"}
+{"text": "i have small itchy bumps on my forearms and they keep spreading", "label": "dermatology", "family_id": "derm_gold_v4_003"}
+{"text": "i have a flaky rash behind my ears and it keeps getting irritated", "label": "dermatology", "family_id": "derm_gold_v4_004"}
+{"text": "the skin on my hands is red itchy and peeling", "label": "dermatology", "family_id": "derm_gold_v4_005"}
+{"text": "i have itchy red patches around my ankles after wearing new socks", "label": "dermatology", "family_id": "derm_gold_v5_001"}
+{"text": "the skin around my nose is flaky red and irritated", "label": "dermatology", "family_id": "derm_gold_v5_002"}
+{"text": "i have an itchy rash under my ring finger where i wear jewelry", "label": "dermatology", "family_id": "derm_gold_v5_003"}
+{"text": "my forearms get dry and itchy after hot showers", "label": "dermatology", "family_id": "derm_gold_v5_004"}
+{"text": "i developed a red itchy rash around my waist after switching detergent", "label": "dermatology", "family_id": "derm_gold_v5_005"}
+{"text": "my scalp is itchy and flaky and it keeps shedding on my clothes", "label": "dermatology", "family_id": "derm_gold_v5_006"}
+{"text": "i have itchy bumps on my legs after spending time in the garden", "label": "dermatology", "family_id": "derm_gold_v5_007"}
+{"text": "i have itchy flaky skin on my eyelids and around my eyes but my vision is normal", "label": "dermatology", "family_id": "derm_gold_v8_001"}
+{"text": "the skin near the corners of my eyes is red and burning but the eyeball itself is not painful", "label": "dermatology", "family_id": "derm_gold_v8_002"}
+{"text": "i have dry cracking skin behind my ears and along my hairline that keeps itching", "label": "dermatology", "family_id": "derm_gold_v8_003"}
+{"text": "small itchy blisters appeared on my fingers after i used cleaning chemicals", "label": "dermatology", "family_id": "derm_gold_v8_004"}
+{"text": "i have round scaly patches on my forearm that are slowly getting bigger", "label": "dermatology", "family_id": "derm_gold_v8_005"}
+{"text": "i broke out in raised itchy welts after trying a new body wash", "label": "dermatology", "family_id": "derm_gold_v8_006"}
+{"text": "there is a painful boil in my armpit with red swollen skin around it", "label": "dermatology", "family_id": "derm_gold_v8_007"}
+{"text": "my scalp is greasy flaky and shedding onto my shoulders", "label": "dermatology", "family_id": "derm_gold_v8_008"}
+{"text": "i have very itchy red patches inside my elbows that come back often", "label": "dermatology", "family_id": "derm_gold_v8_009"}
+{"text": "i developed a burning rash under my breast fold where the skin stays moist", "label": "dermatology", "family_id": "derm_gold_v8_010"}
+{"text": "painful acne-like bumps keep appearing along my jawline and chin", "label": "dermatology", "family_id": "derm_gold_v8_011"}
+{"text": "i have thick silvery patches on my elbows and knees that keep flaking", "label": "dermatology", "family_id": "derm_gold_v8_012"}
+{"text": "the skin between my toes is peeling itchy and a little cracked", "label": "dermatology", "family_id": "derm_gold_v8_013"}
+{"text": "i have several swollen itchy bite-like bumps on my legs that are very red", "label": "dermatology", "family_id": "derm_gold_v8_014"}
+{"text": "my hands are red dry and cracked after washing them again and again", "label": "dermatology", "family_id": "derm_gold_v8_015"}
+{"text": "i got an itchy rash on my neck after spraying perfume there", "label": "dermatology", "family_id": "derm_gold_v8_016"}
+{"text": "the skin around my mouth is irritated and peeling after using a new cream", "label": "dermatology", "family_id": "derm_gold_v8_017"}
+{"text": "i have tender red bumps on the back of my neck after shaving", "label": "dermatology", "family_id": "derm_gold_v8_018"}
+{"text": "my lower legs have itchy dry patches that become darker after scratching", "label": "dermatology", "family_id": "derm_gold_v8_019"}
+{"text": "there is a red itchy rash where my watch touches my wrist", "label": "dermatology", "family_id": "derm_gold_v8_020"}
+{"text": "i have flaky itchy eyebrows and redness around the nose folds", "label": "dermatology", "family_id": "derm_gold_v8_021"}
+{"text": "i have itchy red skin patches", "label": "dermatology", "family_id": "derm_gp_borderline_001"}
+{"text": "itchy red skin patches", "label": "dermatology", "family_id": "derm_gp_borderline_001"}
+{"text": "i have itchy red rash on my arms", "label": "dermatology", "family_id": "derm_itchy_rash_001"}
+{"text": "itchy red rash on my arms", "label": "dermatology", "family_id": "derm_itchy_rash_001"}
+{"text": "it looks like an eye problem because the rash is on the eyelid but the eyeball is not red and i can see clearly", "label": "dermatology", "family_id": "derm_oph_hn_v12_001"}
+{"text": "my eyelid skin burns and peels after makeup yet there is no eye pain or blurred vision", "label": "dermatology", "family_id": "derm_oph_hn_v12_002"}
+{"text": "the area around my eye is itchy and scaly but light does not bother me and the eye itself feels fine", "label": "dermatology", "family_id": "derm_oph_hn_v12_003"}
+{"text": "my eyelid has an itchy red rash but my eye itself feels normal", "label": "dermatology", "family_id": "derm_oph_hn_v3_001"}
+{"text": "my eye is itchy watery and red and light bothers it", "label": "ophthalmology", "family_id": "derm_oph_hn_v3_002"}
+{"text": "i have a rash on the eyelid skin but the eye itself feels normal and vision is fine", "label": "dermatology", "family_id": "derm_oph_hn_v4_001"}
+{"text": "the skin on my eyelids is itchy and flaky but my vision is normal and the eyeball is not red", "label": "dermatology", "family_id": "derm_oph_hn_v6_001"}
+{"text": "i have a rash on the skin around my eye that burns and peels but i can see normally", "label": "dermatology", "family_id": "derm_oph_hn_v6_002"}
+{"text": "red dry patches on my eyelids and brow itch a lot with no eye pain or blurred vision", "label": "dermatology", "family_id": "derm_oph_hn_v6_003"}
+{"text": "i developed a red itchy rash on my chest after trying a new lotion", "label": "dermatology", "family_id": "derm_triggered_chest_rash_004"}
+{"text": "i have i developed a red itchy rash on my chest after trying a new lotion", "label": "dermatology", "family_id": "derm_triggered_chest_rash_004"}
+{"text": "ear pain and fever since yesterday", "label": "ent", "family_id": "ent_ear_pain_fever_003"}
+{"text": "i have ear pain and fever since yesterday", "label": "ent", "family_id": "ent_ear_pain_fever_003"}
+{"text": "my sore throat and painful swallowing are clearly worse than the mild fever i have", "label": "ent", "family_id": "ent_gold_v12_001"}
+{"text": "my ear hurts and sounds muffled with popping and that bothers me more than the mild body aches", "label": "ent", "family_id": "ent_gold_v12_002"}
+{"text": "i have sore throat with swollen glands and painful swallowing", "label": "ent", "family_id": "ent_gold_v3_001"}
+{"text": "i have ear pain and muffled hearing since yesterday", "label": "ent", "family_id": "ent_gold_v3_002"}
+{"text": "my nose is blocked and i have sinus pressure that is getting worse", "label": "ent", "family_id": "ent_gold_v3_003"}
+{"text": "my voice is hoarse and my throat has been hurting for several days", "label": "ent", "family_id": "ent_gold_v3_004"}
+{"text": "i have pain when i swallow with fever and bad breath", "label": "ent", "family_id": "ent_gold_v3_005"}
+{"text": "i have a blocked nose with sinus pressure around my cheeks", "label": "ent", "family_id": "ent_gold_v4_001"}
+{"text": "my throat feels raw and swallowing is painful", "label": "ent", "family_id": "ent_gold_v4_002"}
+{"text": "i have ear pain with a blocked feeling in that ear", "label": "ent", "family_id": "ent_gold_v4_003"}
+{"text": "my voice is hoarse and my throat has been sore for days", "label": "ent", "family_id": "ent_gold_v4_004"}
+{"text": "i have pain in my throat with swollen glands in my neck", "label": "ent", "family_id": "ent_gold_v4_005"}
+{"text": "i have sinus pressure and facial pain that gets worse when i bend forward", "label": "ent", "family_id": "ent_gold_v5_001"}
+{"text": "my sore throat is getting worse and i can see white spots in it", "label": "ent", "family_id": "ent_gold_v5_002"}
+{"text": "one ear feels blocked and painful and i also hear ringing", "label": "ent", "family_id": "ent_gold_v5_003"}
+{"text": "my voice became hoarse after a cold and it has not improved", "label": "ent", "family_id": "ent_gold_v5_004"}
+{"text": "my nose is stuffed up and i feel pain around my forehead and eyes", "label": "ent", "family_id": "ent_gold_v5_005"}
+{"text": "it hurts when i swallow even my saliva and my throat feels swollen", "label": "ent", "family_id": "ent_gold_v5_006"}
+{"text": "i have ear pain after swimming and my ear feels tender inside", "label": "ent", "family_id": "ent_gold_v5_007"}
+{"text": "i have sinus congestion with thick mucus and pressure in my face", "label": "ent", "family_id": "ent_gold_v5_008"}
+{"text": "i have sharp throat pain when i swallow and my neck glands feel swollen", "label": "ent", "family_id": "ent_gold_v7_001"}
+{"text": "my ear feels blocked and painful and my hearing seems muffled", "label": "ent", "family_id": "ent_gold_v7_002"}
+{"text": "i have sinus pressure a blocked nose and pain around my cheeks", "label": "ent", "family_id": "ent_gold_v7_003"}
+{"text": "my throat is sore my voice is hoarse and swallowing hurts", "label": "ent", "family_id": "ent_gold_v7_004"}
+{"text": "i have ear pain after swimming and the ear feels tender and irritated", "label": "ent", "family_id": "ent_gold_v7_005"}
+{"text": "i have painful swallowing with a very sore throat and bad breath", "label": "ent", "family_id": "ent_gold_v7_006"}
+{"text": "i have strong pressure in my cheeks with thick nasal mucus and blocked sinuses", "label": "ent", "family_id": "ent_gold_v8_001"}
+{"text": "my ear is painful blocked and my hearing sounds muffled on that side", "label": "ent", "family_id": "ent_gold_v8_002"}
+{"text": "my throat is very sore with white spots and it hurts sharply to swallow", "label": "ent", "family_id": "ent_gold_v8_003"}
+{"text": "my voice has been hoarse for days and my throat feels irritated", "label": "ent", "family_id": "ent_gold_v8_004"}
+{"text": "my nose is blocked on one side with facial pain and a bad smell", "label": "ent", "family_id": "ent_gold_v8_005"}
+{"text": "i have ear pain with fluid coming out after swimming", "label": "ent", "family_id": "ent_gold_v8_006"}
+{"text": "i keep getting nosebleeds from one nostril and the inside feels crusted", "label": "ent", "family_id": "ent_gold_v8_007"}
+{"text": "my throat hurts and the glands in my neck are swollen and tender", "label": "ent", "family_id": "ent_gold_v8_008"}
+{"text": "i have sinus congestion with pressure around my forehead and under my eyes", "label": "ent", "family_id": "ent_gold_v8_009"}
+{"text": "it hurts to swallow and the pain seems to go toward my ear", "label": "ent", "family_id": "ent_gold_v8_010"}
+{"text": "my hearing became muffled with popping in my ears during a flight", "label": "ent", "family_id": "ent_gold_v8_011"}
+{"text": "my tonsils feel very swollen and swallowing saliva is painful", "label": "ent", "family_id": "ent_gold_v8_012"}
+{"text": "i have sharp pain deep in my ear whenever i chew or yawn", "label": "ent", "family_id": "ent_gold_v8_013"}
+{"text": "a sore throat with fever and fatigue", "label": "ent", "family_id": "ent_gp_borderline_001"}
+{"text": "i have sore throat with fever and fatigue", "label": "ent", "family_id": "ent_gp_borderline_001"}
+{"text": "sore thorat with fever and fatigue", "label": "ent", "family_id": "ent_gp_borderline_001"}
+{"text": "sore throat with a fever and fatigue", "label": "ent", "family_id": "ent_gp_borderline_001"}
+{"text": "sore throat with fever and fatigue", "label": "ent", "family_id": "ent_gp_borderline_001"}
+{"text": "sorethroat with fever and fatigue", "label": "ent", "family_id": "ent_gp_borderline_001"}
+{"text": "i have a sore throat with fever and body aches", "label": "ent", "family_id": "ent_gp_borderline_002"}
+{"text": "i have sore thorat with fever and body aches", "label": "ent", "family_id": "ent_gp_borderline_002"}
+{"text": "i have sore throat with a fever and body aches", "label": "ent", "family_id": "ent_gp_borderline_002"}
+{"text": "i have sore throat with fever and body aches", "label": "ent", "family_id": "ent_gp_borderline_002"}
+{"text": "i have sorethroat with fever and body aches", "label": "ent", "family_id": "ent_gp_borderline_002"}
+{"text": "sore throat with fever and body aches", "label": "ent", "family_id": "ent_gp_borderline_002"}
+{"text": "fever fatigue and a scratchy throat", "label": "general_practice", "family_id": "ent_gp_borderline_003"}
+{"text": "i have a fever fatigue and a scratchy throat", "label": "general_practice", "family_id": "ent_gp_borderline_003"}
+{"text": "i have fever fatigue and a scratchy thorat", "label": "general_practice", "family_id": "ent_gp_borderline_003"}
+{"text": "i have fever fatigue and a scratchy throat", "label": "general_practice", "family_id": "ent_gp_borderline_003"}
+{"text": "ear pain with mild cough and fever", "label": "ent", "family_id": "ent_gp_borderline_004"}
+{"text": "i have ear pain with mild cough and fever", "label": "ent", "family_id": "ent_gp_borderline_004"}
+{"text": "my face feels heavy with thick nasal mucus and pain when i bend forward which feels more local than general illness", "label": "ent", "family_id": "ent_gp_hn_v12_001"}
+{"text": "i feel generally unwell and my throat is a little scratchy", "label": "general_practice", "family_id": "ent_gp_hn_v3_002"}
+{"text": "i have painful swallowing and swollen glands in my neck", "label": "ent", "family_id": "ent_gp_hn_v4_001"}
+{"text": "i have painful swallowing with swollen glands and throat pain", "label": "ent", "family_id": "ent_gp_hn_v5_001"}
+{"text": "my ear feels blocked and painful and i hear less on that side", "label": "ent", "family_id": "ent_gp_hn_v5_002"}
+{"text": "my sore throat is the main problem and swallowing is sharply painful", "label": "ent", "family_id": "ent_gp_hn_v6_001"}
+{"text": "ear pain and muffled hearing are much worse than the mild fever i have", "label": "ent", "family_id": "ent_gp_hn_v6_002"}
+{"text": "sinus pressure with thick nasal discharge is the main complaint not the body aches", "label": "ent", "family_id": "ent_gp_hn_v6_003"}
+{"text": "a sore throat and painful swallowing", "label": "ent", "family_id": "ent_sore_throat_001"}
+{"text": "i have sore throat and painful swallowing", "label": "ent", "family_id": "ent_sore_throat_001"}
+{"text": "sore thorat and painful swallowing", "label": "ent", "family_id": "ent_sore_throat_001"}
+{"text": "sore throat and painful swallowing", "label": "ent", "family_id": "ent_sore_throat_001"}
+{"text": "sorethroat and painful swallowing", "label": "ent", "family_id": "ent_sore_throat_001"}
+{"text": "i have a sore throat and swollen glands for three days", "label": "ent", "family_id": "ent_sore_throat_swollen_glands_002"}
+{"text": "i have sore thorat and swollen glands for three days", "label": "ent", "family_id": "ent_sore_throat_swollen_glands_002"}
+{"text": "i have sore throat and swollen glands for three days", "label": "ent", "family_id": "ent_sore_throat_swollen_glands_002"}
+{"text": "i have sorethroat and swollen glands for three days", "label": "ent", "family_id": "ent_sore_throat_swollen_glands_002"}
+{"text": "sore throat and swollen glands for three days", "label": "ent", "family_id": "ent_sore_throat_swollen_glands_002"}
+{"text": "i have trouble swallowing and bad breath with thorat pain", "label": "ent", "family_id": "ent_swallowing_bad_breath_004"}
+{"text": "i have trouble swallowing and bad breath with throat pain", "label": "ent", "family_id": "ent_swallowing_bad_breath_004"}
+{"text": "trouble swallowing and bad breath with throat pain", "label": "ent", "family_id": "ent_swallowing_bad_breath_004"}
+{"text": "abdominal pain for three days and loose stool", "label": "gastroenterology", "family_id": "gastro_abdominal_pain_loose_stool_003"}
+{"text": "i have abdominal pain for three days and loose stool", "label": "gastroenterology", "family_id": "gastro_abdominal_pain_loose_stool_003"}
+{"text": "i have stomach cramps after eating greasy food and i feel nauseated", "label": "gastroenterology", "family_id": "gastro_gold_v3_001"}
+{"text": "i have burning pain in my upper stomach and heartburn at night", "label": "gastroenterology", "family_id": "gastro_gold_v3_002"}
+{"text": "i have abdominal pain with bloating and loose stool", "label": "gastroenterology", "family_id": "gastro_gold_v3_003"}
+{"text": "i have been vomiting with stomach pain since last night", "label": "gastroenterology", "family_id": "gastro_gold_v3_004"}
+{"text": "i have lower abdominal pain with diarrhea for two days", "label": "gastroenterology", "family_id": "gastro_gold_v3_005"}
+{"text": "i have stomach pain after meals and feel bloated and nauseated", "label": "gastroenterology", "family_id": "gastro_gold_v4_001"}
+{"text": "i have abdominal cramps with diarrhea since yesterday", "label": "gastroenterology", "family_id": "gastro_gold_v4_002"}
+{"text": "i feel burning pain in my upper stomach with acid coming up", "label": "gastroenterology", "family_id": "gastro_gold_v4_003"}
+{"text": "i have stomach pain and vomiting since last night", "label": "gastroenterology", "family_id": "gastro_gold_v4_004"}
+{"text": "my lower abdomen hurts and i have loose stool and bloating", "label": "gastroenterology", "family_id": "gastro_gold_v4_005"}
+{"text": "i get stomach cramps after spicy food and feel sick afterward", "label": "gastroenterology", "family_id": "gastro_gold_v5_001"}
+{"text": "i have abdominal pain and diarrhea after eating out", "label": "gastroenterology", "family_id": "gastro_gold_v5_002"}
+{"text": "i feel acid coming up into my throat when i lie down", "label": "gastroenterology", "family_id": "gastro_gold_v5_003"}
+{"text": "i have nausea and vomiting after a greasy meal", "label": "gastroenterology", "family_id": "gastro_gold_v5_004"}
+{"text": "my stomach feels bloated after meals and i get upper abdominal discomfort", "label": "gastroenterology", "family_id": "gastro_gold_v5_005"}
+{"text": "i have pain below my belly button with diarrhea since yesterday", "label": "gastroenterology", "family_id": "gastro_gold_v5_006"}
+{"text": "i wake up with stomach pain at night and feel nauseated", "label": "gastroenterology", "family_id": "gastro_gold_v5_007"}
+{"text": "i get cramping stomach pain after meals and feel bloated afterward", "label": "gastroenterology", "family_id": "gastro_gold_v7_001"}
+{"text": "i have diarrhea and stomach cramps since eating restaurant food yesterday", "label": "gastroenterology", "family_id": "gastro_gold_v7_002"}
+{"text": "i feel acid coming up into my mouth when i lie down after eating", "label": "gastroenterology", "family_id": "gastro_gold_v7_003"}
+{"text": "i have upper stomach burning with nausea after spicy food", "label": "gastroenterology", "family_id": "gastro_gold_v7_004"}
+{"text": "i have lower abdominal pain and loose stool for two days", "label": "gastroenterology", "family_id": "gastro_gold_v7_005"}
+{"text": "i feel sick to my stomach and vomited after a heavy greasy meal", "label": "gastroenterology", "family_id": "gastro_gold_v7_006"}
+{"text": "my stomach feels swollen and uncomfortable after eating and i keep burping", "label": "gastroenterology", "family_id": "gastro_gold_v7_007"}
+{"text": "i have stomach pain with nausea and diarrhea since last night", "label": "gastroenterology", "family_id": "gastro_gold_v7_008"}
+{"text": "i get cramping lower abdominal pain that feels better after i move my bowels", "label": "gastroenterology", "family_id": "gastro_gold_v8_001"}
+{"text": "i have nausea and vomiting with upper stomach pain after eating greasy food", "label": "gastroenterology", "family_id": "gastro_gold_v8_002"}
+{"text": "acid keeps coming up into my throat after meals and when i lie down", "label": "gastroenterology", "family_id": "gastro_gold_v8_003"}
+{"text": "i feel bloated and get diarrhea after eating spicy food", "label": "gastroenterology", "family_id": "gastro_gold_v8_004"}
+{"text": "i have stomach cramps and loose stool since eating at a restaurant yesterday", "label": "gastroenterology", "family_id": "gastro_gold_v8_005"}
+{"text": "my upper abdomen hurts with nausea and i keep burping after meals", "label": "gastroenterology", "family_id": "gastro_gold_v8_006"}
+{"text": "i have urgent diarrhea with stomach rumbling and cramps all day", "label": "gastroenterology", "family_id": "gastro_gold_v8_007"}
+{"text": "my stomach burns and i feel sour fluid in my throat after dinner", "label": "gastroenterology", "family_id": "gastro_gold_v8_008"}
+{"text": "i feel sick to my stomach and have repeated vomiting with belly pain", "label": "gastroenterology", "family_id": "gastro_gold_v8_009"}
+{"text": "a stomach ache", "label": "gastroenterology", "family_id": "gastro_gp_borderline_001"}
+{"text": "i have a a stomach ache", "label": "gastroenterology", "family_id": "gastro_gp_borderline_001"}
+{"text": "i have a stomach ache", "label": "gastroenterology", "family_id": "gastro_gp_borderline_001"}
+{"text": "i have a stomache ache", "label": "gastroenterology", "family_id": "gastro_gp_borderline_001"}
+{"text": "i have stomach ache", "label": "gastroenterology", "family_id": "gastro_gp_borderline_001"}
+{"text": "i feel tired and a bit sick in my stomach", "label": "general_practice", "family_id": "gastro_gp_borderline_002"}
+{"text": "i feel tired and a bit sick in my stomache", "label": "general_practice", "family_id": "gastro_gp_borderline_002"}
+{"text": "tired and a bit sick in my stomach", "label": "general_practice", "family_id": "gastro_gp_borderline_002"}
+{"text": "a stomach ache after eating and i feel nauseated", "label": "gastroenterology", "family_id": "gastro_gp_borderline_003"}
+{"text": "i have a a stomach ache after eating and i feel nauseated", "label": "gastroenterology", "family_id": "gastro_gp_borderline_003"}
+{"text": "i have a stomach ache after eating and i feel nauseated", "label": "gastroenterology", "family_id": "gastro_gp_borderline_003"}
+{"text": "i have a stomach ache after eating and i feel nausiated", "label": "gastroenterology", "family_id": "gastro_gp_borderline_003"}
+{"text": "i have a stomache ache after eating and i feel nauseated", "label": "gastroenterology", "family_id": "gastro_gp_borderline_003"}
+{"text": "i have stomach ache after eating and i feel nauseated", "label": "gastroenterology", "family_id": "gastro_gp_borderline_003"}
+{"text": "i have mild stomach discomfort with fever and body aches", "label": "general_practice", "family_id": "gastro_gp_borderline_005"}
+{"text": "i have mild stomache discomfort with fever and body aches", "label": "general_practice", "family_id": "gastro_gp_borderline_005"}
+{"text": "mild stomach discomfort with fever and body aches", "label": "general_practice", "family_id": "gastro_gp_borderline_005"}
+{"text": "cramping pain in my stomach after meals", "label": "gastroenterology", "family_id": "gastro_gp_borderline_006"}
+{"text": "i have cramping pain in my stomach after meals", "label": "gastroenterology", "family_id": "gastro_gp_borderline_006"}
+{"text": "i have cramping pain in my stomache after meals", "label": "gastroenterology", "family_id": "gastro_gp_borderline_006"}
+{"text": "i have a stomach ache with fever and body aches", "label": "general_practice", "family_id": "gastro_gp_hn_v3_001"}
+{"text": "i have stomach pain after meals with bloating and nausea", "label": "gastroenterology", "family_id": "gastro_gp_hn_v3_002"}
+{"text": "i have stomach pain after meals with nausea and bloating", "label": "gastroenterology", "family_id": "gastro_gp_hn_v4_001"}
+{"text": "i have diarrhea and cramps after eating out yesterday", "label": "gastroenterology", "family_id": "gastro_gp_hn_v4_002"}
+{"text": "i have stomach cramps after meals with bloating and nausea", "label": "gastroenterology", "family_id": "gastro_gp_hn_v5_001"}
+{"text": "i have diarrhea and stomach pain after eating greasy food", "label": "gastroenterology", "family_id": "gastro_gp_hn_v5_002"}
+{"text": "i get acid coming up when i lie down after dinner", "label": "gastroenterology", "family_id": "gastro_gp_hn_v5_003"}
+{"text": "stomach cramps diarrhea and nausea are the main problem not the general fatigue", "label": "gastroenterology", "family_id": "gastro_gp_hn_v6_001"}
+{"text": "acid reflux after meals is the main issue even though i also feel tired", "label": "gastroenterology", "family_id": "gastro_gp_hn_v6_002"}
+{"text": "vomiting and upper stomach pain after food are much stronger than the body aches", "label": "gastroenterology", "family_id": "gastro_gp_hn_v6_003"}
+{"text": "i have stomach pain after eating with nausea and bloating", "label": "gastroenterology", "family_id": "gastro_stomach_after_eating_bloating_002"}
+{"text": "i have stomach pain after eating with nausia and bloating", "label": "gastroenterology", "family_id": "gastro_stomach_after_eating_bloating_002"}
+{"text": "i have stomache pain after eating with nausea and bloating", "label": "gastroenterology", "family_id": "gastro_stomach_after_eating_bloating_002"}
+{"text": "stomach pain after eating with nausea and bloating", "label": "gastroenterology", "family_id": "gastro_stomach_after_eating_bloating_002"}
+{"text": "i have stomach pain and nausea after eating", "label": "gastroenterology", "family_id": "gastro_stomach_pain_nausea_001"}
+{"text": "stomach pain and nausea after eating", "label": "gastroenterology", "family_id": "gastro_stomach_pain_nausea_001"}
+{"text": "stomach pain and nausia after eating", "label": "gastroenterology", "family_id": "gastro_stomach_pain_nausea_001"}
+{"text": "stomache pain and nausea after eating", "label": "gastroenterology", "family_id": "gastro_stomach_pain_nausea_001"}
+{"text": "burning pain in my upper stomach with heartburn and vomiting", "label": "gastroenterology", "family_id": "gastro_upper_stomach_burning_004"}
+{"text": "i have burning pain in my upper stomach with heartburn and vomiting", "label": "gastroenterology", "family_id": "gastro_upper_stomach_burning_004"}
+{"text": "i have burning pain in my upper stomach with heartburn and vomitting", "label": "gastroenterology", "family_id": "gastro_upper_stomach_burning_004"}
+{"text": "i have burning pain in my upper stomache with heartburn and vomiting", "label": "gastroenterology", "family_id": "gastro_upper_stomach_burning_004"}
+{"text": "body aches and some dizziness for two days", "label": "general_practice", "family_id": "gp_body_aches_dizziness_005"}
+{"text": "i have body aches and some dizziness for two days", "label": "general_practice", "family_id": "gp_body_aches_dizziness_005"}
+{"text": "i have body aches and some dizzyness for two days", "label": "general_practice", "family_id": "gp_body_aches_dizziness_005"}
+{"text": "i feel unwell and weak all over with poor sleep and sometimes i am just more aware of my heartbeat than usual", "label": "general_practice", "family_id": "gp_cardio_hn_v11_001"}
+{"text": "i am mostly fatigued and stressed with body heaviness and there is only mild occasional heartbeat awareness", "label": "general_practice", "family_id": "gp_cardio_hn_v11_002"}
+{"text": "i have chest discomfort with body aches and low fever but no exertional trigger", "label": "general_practice", "family_id": "gp_cardio_hn_v4_001"}
+{"text": "i have mild chest discomfort with fatigue and low fever but no exertional trigger", "label": "general_practice", "family_id": "gp_cardio_hn_v5_001"}
+{"text": "i mostly feel feverish drained and achy all over and the throat irritation is only minor", "label": "general_practice", "family_id": "gp_ent_hn_v12_001"}
+{"text": "i have body aches low fever and a slightly scratchy throat but mostly feel sick all over", "label": "general_practice", "family_id": "gp_ent_hn_v4_001"}
+{"text": "my throat feels a little scratchy but i mostly have chills fatigue and body aches", "label": "general_practice", "family_id": "gp_ent_hn_v4_002"}
+{"text": "i have a scratchy throat and body aches but mostly feel sick all over", "label": "general_practice", "family_id": "gp_ent_hn_v5_001"}
+{"text": "i feel generally unwell with slight throat irritation and body aches", "label": "general_practice", "family_id": "gp_ent_hn_v5_002"}
+{"text": "i feel feverish achy and tired all over with only a mild scratchy throat", "label": "general_practice", "family_id": "gp_ent_hn_v6_001"}
+{"text": "i mainly feel sick and weak with body aches and just a little throat irritation", "label": "general_practice", "family_id": "gp_ent_hn_v6_002"}
+{"text": "i have low fever fatigue and chills all over with minor congestion but nothing local dominates", "label": "general_practice", "family_id": "gp_ent_hn_v6_003"}
+{"text": "i feel tired with fever and body aches", "label": "general_practice", "family_id": "gp_fever_fatigue_001"}
+{"text": "tired with fever and body aches", "label": "general_practice", "family_id": "gp_fever_fatigue_001"}
+{"text": "i feel weak and feverish with mild stomach upset but nothing is clearly the main problem", "label": "general_practice", "family_id": "gp_gastro_hn_v4_001"}
+{"text": "i have mild stomach discomfort and body aches but mostly feel weak and unwell", "label": "general_practice", "family_id": "gp_gastro_hn_v5_001"}
+{"text": "i feel a little nauseated with low fever and no clear stomach trigger", "label": "general_practice", "family_id": "gp_gastro_hn_v5_002"}
+{"text": "i feel weak feverish and achy with slight nausea but no clear stomach trigger", "label": "general_practice", "family_id": "gp_gastro_hn_v6_001"}
+{"text": "i am mostly tired and unwell all over with only a little stomach discomfort", "label": "general_practice", "family_id": "gp_gastro_hn_v6_002"}
+{"text": "i have low fever headache and mild nausea but the illness feels general rather than stomach-centered", "label": "general_practice", "family_id": "gp_gastro_hn_v6_003"}
+{"text": "i feel feverish tired and achy all over with only a slight scratchy throat and nothing strongly local", "label": "general_practice", "family_id": "gp_gold_v12_001"}
+{"text": "i feel tired all week with low fever and body aches", "label": "general_practice", "family_id": "gp_gold_v3_001"}
+{"text": "i feel weak and run down after a viral illness", "label": "general_practice", "family_id": "gp_gold_v3_002"}
+{"text": "i have mild fever and fatigue and i am not sure what is wrong", "label": "general_practice", "family_id": "gp_gold_v3_003"}
+{"text": "i feel generally unwell with headache and no clear main symptom", "label": "general_practice", "family_id": "gp_gold_v3_005"}
+{"text": "i feel drained with low fever and no clear main symptom", "label": "general_practice", "family_id": "gp_gold_v4_001"}
+{"text": "i have body aches fatigue and just feel unwell overall", "label": "general_practice", "family_id": "gp_gold_v4_002"}
+{"text": "i have mild fever and weakness and i am not sure what is wrong", "label": "general_practice", "family_id": "gp_gold_v4_003"}
+{"text": "i feel generally sick with some dizziness and body aches", "label": "general_practice", "family_id": "gp_gold_v4_004"}
+{"text": "i have fatigue for days and no single symptom stands out", "label": "general_practice", "family_id": "gp_gold_v4_005"}
+{"text": "i have low fever body aches and no clear main problem", "label": "general_practice", "family_id": "gp_gold_v5_001"}
+{"text": "i feel run down tired and a little dizzy", "label": "general_practice", "family_id": "gp_gold_v5_002"}
+{"text": "i have chills fatigue and just feel unwell overall", "label": "general_practice", "family_id": "gp_gold_v5_003"}
+{"text": "i feel weak after a recent cold and do not know what is wrong", "label": "general_practice", "family_id": "gp_gold_v5_004"}
+{"text": "i have mild fever and headache but nothing feels clearly localized", "label": "general_practice", "family_id": "gp_gold_v5_005"}
+{"text": "i feel sick all over with body aches and tiredness", "label": "general_practice", "family_id": "gp_gold_v5_006"}
+{"text": "i have been tired for days and no single symptom stands out", "label": "general_practice", "family_id": "gp_gold_v5_007"}
+{"text": "i feel weak feverish and generally unwell with no clear main symptom", "label": "general_practice", "family_id": "gp_gold_v6_001"}
+{"text": "i have body aches chills and tiredness but nothing hurts in one specific place", "label": "general_practice", "family_id": "gp_gold_v6_002"}
+{"text": "i feel run down and dizzy and i am not sure what is causing it", "label": "general_practice", "family_id": "gp_gold_v6_003"}
+{"text": "i have mild fever and fatigue and just feel sick all over", "label": "general_practice", "family_id": "gp_gold_v6_004"}
+{"text": "i have been tired for days with body aches and no single symptom stands out", "label": "general_practice", "family_id": "gp_gold_v6_005"}
+{"text": "i feel weak and feverish after a recent viral illness and still do not feel normal", "label": "general_practice", "family_id": "gp_gold_v6_006"}
+{"text": "i have low energy mild headache and feel unwell overall", "label": "general_practice", "family_id": "gp_gold_v6_007"}
+{"text": "i have chills weakness and just feel sick without one clear problem", "label": "general_practice", "family_id": "gp_gold_v6_008"}
+{"text": "i feel tired and sore all over and i cannot tell what symptom is the main one", "label": "general_practice", "family_id": "gp_gold_v6_009"}
+{"text": "i feel off weak and feverish but nothing seems clearly focused in one area", "label": "general_practice", "family_id": "gp_gold_v6_010"}
+{"text": "i feel weak achy and a little feverish but nothing feels clearly wrong in one place", "label": "general_practice", "family_id": "gp_gold_v7_001"}
+{"text": "i have mild stomach upset body aches and tiredness but no main symptom stands out", "label": "general_practice", "family_id": "gp_gold_v7_002"}
+{"text": "i feel sick all over with low fever and i cannot tell what the main problem is", "label": "general_practice", "family_id": "gp_gold_v7_003"}
+{"text": "i have a little throat irritation body aches and fatigue but mostly feel generally unwell", "label": "general_practice", "family_id": "gp_gold_v7_004"}
+{"text": "i feel run down weak and slightly dizzy without one clear symptom leading", "label": "general_practice", "family_id": "gp_gold_v7_005"}
+{"text": "i have mild chest discomfort with body aches and feel generally sick", "label": "general_practice", "family_id": "gp_gold_v7_006"}
+{"text": "i feel tired weak and slightly nauseated but nothing feels strongly focused", "label": "general_practice", "family_id": "gp_gold_v7_007"}
+{"text": "i have body aches low fever and a bit of stomach discomfort but mostly just feel unwell", "label": "general_practice", "family_id": "gp_gold_v7_008"}
+{"text": "i feel tired feverish and dizzy without one clear main symptom", "label": "general_practice", "family_id": "gp_neuro_hn_v4_001"}
+{"text": "i feel tired and slightly dizzy with no one symptom clearly standing out", "label": "general_practice", "family_id": "gp_neuro_hn_v5_001"}
+{"text": "i feel weak and run down after a viral illness", "label": "general_practice", "family_id": "gp_postviral_weakness_003"}
+{"text": "weak and run down after a viral illness", "label": "general_practice", "family_id": "gp_postviral_weakness_003"}
+{"text": "i feel tired all week with low fever and body aches", "label": "general_practice", "family_id": "gp_tired_low_fever_body_aches_002"}
+{"text": "tired all week with low fever and body aches", "label": "general_practice", "family_id": "gp_tired_low_fever_body_aches_002"}
+{"text": "i have mild fever and fatigue and i am not sure what is wrong", "label": "general_practice", "family_id": "gp_vague_fever_fatigue_004"}
+{"text": "mild fever and fatigue and i am not sure what is wrong", "label": "general_practice", "family_id": "gp_vague_fever_fatigue_004"}
+{"text": "i see flashing zigzag lights and then one side of my head starts throbbing but my eye is not red or painful", "label": "neurology", "family_id": "neuro_gold_v12_001"}
+{"text": "i get electric-shock pain across one cheek triggered by brushing my teeth or touching my face", "label": "neurology", "family_id": "neuro_gold_v12_002"}
+{"text": "one arm goes numb and pins-and-needles start before a strong headache begins and moving my neck is not the trigger", "label": "neurology", "family_id": "neuro_gold_v12_003"}
+{"text": "i have tingling on one side of my face followed by a severe headache but my sinuses do not feel blocked", "label": "neurology", "family_id": "neuro_gold_v12_004"}
+{"text": "my balance suddenly feels off and i veer to one side with nausea even though my ears do not feel full", "label": "neurology", "family_id": "neuro_gold_v12_005"}
+{"text": "i have a severe headache with nausea and light hurts my eyes", "label": "neurology", "family_id": "neuro_gold_v3_001"}
+{"text": "i keep getting dizzy and i need to lie down until it settles", "label": "neurology", "family_id": "neuro_gold_v3_002"}
+{"text": "i have a headache that keeps coming back and noise makes it worse", "label": "neurology", "family_id": "neuro_gold_v3_003"}
+{"text": "i have migraine since this morning and my vision gets blurry", "label": "neurology", "family_id": "neuro_gold_v3_004"}
+{"text": "i have tingling in one hand along with headache and dizziness", "label": "neurology", "family_id": "neuro_gold_v3_005"}
+{"text": "i have a throbbing headache with nausea and i need a dark room", "label": "neurology", "family_id": "neuro_gold_v4_001"}
+{"text": "i keep feeling dizzy and unsteady when i stand up", "label": "neurology", "family_id": "neuro_gold_v4_002"}
+{"text": "i have a bad headache and noise makes it worse", "label": "neurology", "family_id": "neuro_gold_v4_003"}
+{"text": "my migraine came back and now i feel sick and weak", "label": "neurology", "family_id": "neuro_gold_v4_004"}
+{"text": "i have headache with dizziness and i cannot focus properly", "label": "neurology", "family_id": "neuro_gold_v4_005"}
+{"text": "i have a one-sided headache with nausea and light makes it worse", "label": "neurology", "family_id": "neuro_gold_v5_001"}
+{"text": "i feel dizzy when i turn my head and i have to sit still", "label": "neurology", "family_id": "neuro_gold_v5_002"}
+{"text": "i have a bad headache and i cannot tolerate noise or bright light", "label": "neurology", "family_id": "neuro_gold_v5_003"}
+{"text": "my migraine came back and now i feel sick to my stomach", "label": "neurology", "family_id": "neuro_gold_v5_004"}
+{"text": "i have dizziness and a pounding headache and i cannot focus", "label": "neurology", "family_id": "neuro_gold_v5_005"}
+{"text": "i feel tingling in my hand and then a headache starts", "label": "neurology", "family_id": "neuro_gold_v5_006"}
+{"text": "i keep getting dizzy spells and feel unsteady on my feet", "label": "neurology", "family_id": "neuro_gold_v5_007"}
+{"text": "i have a severe headache with blurry vision and nausea", "label": "neurology", "family_id": "neuro_gold_v5_008"}
+{"text": "i have a pounding headache with dizziness and i need to lie still", "label": "neurology", "family_id": "neuro_gold_v6_001"}
+{"text": "i have a one-sided headache and bright light makes it much worse", "label": "neurology", "family_id": "neuro_gold_v6_002"}
+{"text": "i keep getting dizzy spells with a heavy headache and trouble focusing", "label": "neurology", "family_id": "neuro_gold_v6_003"}
+{"text": "i have a severe headache with blurred vision and i feel off balance", "label": "neurology", "family_id": "neuro_gold_v6_004"}
+{"text": "i have headache dizziness and tingling in one hand", "label": "neurology", "family_id": "neuro_gold_v6_005"}
+{"text": "my migraine came back and i cannot tolerate light or noise", "label": "neurology", "family_id": "neuro_gold_v6_006"}
+{"text": "i feel unsteady with a strong headache and i need to sit down", "label": "neurology", "family_id": "neuro_gold_v6_007"}
+{"text": "i have repeated dizzy spells and then a headache starts behind my eyes", "label": "neurology", "family_id": "neuro_gold_v6_008"}
+{"text": "i get a throbbing headache with nausea and bright light makes it worse", "label": "neurology", "family_id": "neuro_gold_v8_001"}
+{"text": "before my headache starts my hand tingles and then i get pain on one side of my head", "label": "neurology", "family_id": "neuro_gold_v8_002"}
+{"text": "i have brief episodes of facial numbness followed by a severe headache", "label": "neurology", "family_id": "neuro_gold_v8_003"}
+{"text": "i see zigzag lights and then develop a pounding headache even though my eyes are not red or painful", "label": "neurology", "family_id": "neuro_gold_v8_004"}
+{"text": "i get a throbbing headache on one side with nausea and bright light makes it worse but my eye is not red or painful", "label": "neurology", "family_id": "neuro_gold_v9_001"}
+{"text": "before the headache starts i see shimmering zigzag lines and then the pain builds on one side of my head", "label": "neurology", "family_id": "neuro_gold_v9_002"}
+{"text": "i have repeated brief spells of spinning dizziness when i turn my head followed by imbalance and nausea", "label": "neurology", "family_id": "neuro_gold_v9_003"}
+{"text": "my hand tingles and feels weak for a short time and then i develop a strong headache", "label": "neurology", "family_id": "neuro_gold_v9_004"}
+{"text": "i get sudden electric-shock pain across one side of my face triggered by brushing my teeth", "label": "neurology", "family_id": "neuro_gold_v9_005"}
+{"text": "i keep having numbness and pins-and-needles in one arm with neck pain not being the main issue", "label": "neurology", "family_id": "neuro_gold_v9_006"}
+{"text": "i get electric facial pain triggered by touch not cheek pressure or blocked sinuses", "label": "neurology", "family_id": "neuro_gp_hn_v12_001"}
+{"text": "one arm feels numb and weak briefly before a headache and pressing my neck does not reproduce it", "label": "neurology", "family_id": "neuro_gp_hn_v12_002"}
+{"text": "i have a pounding headache with dizziness and a little nausea", "label": "neurology", "family_id": "neuro_gp_hn_v4_001"}
+{"text": "i feel sick to my stomach during a migraine and bright light makes it worse", "label": "neurology", "family_id": "neuro_gp_hn_v4_002"}
+{"text": "headache and dizziness since morning", "label": "neurology", "family_id": "neuro_headache_dizziness_001"}
+{"text": "headache and dizzyness since morning", "label": "neurology", "family_id": "neuro_headache_dizziness_001"}
+{"text": "i have headache and dizziness since morning", "label": "neurology", "family_id": "neuro_headache_dizziness_001"}
+{"text": "i have migraine since this morning and my vision gets blurry", "label": "neurology", "family_id": "neuro_migraine_blurry_vision_004"}
+{"text": "migraine since this morning and my vision gets blurry", "label": "neurology", "family_id": "neuro_migraine_blurry_vision_004"}
+{"text": "i see shimmering lights and then get a strong headache but my eye is not red or painful", "label": "neurology", "family_id": "neuro_oph_hn_v12_001"}
+{"text": "i have a one-sided headache with blurry vision and nausea", "label": "neurology", "family_id": "neuro_oph_hn_v4_001"}
+{"text": "i have dizziness and a headache and then my vision gets blurry", "label": "neurology", "family_id": "neuro_oph_hn_v4_002"}
+{"text": "i see zigzag lights and then get a pounding headache but my eyes are not red or painful", "label": "neurology", "family_id": "neuro_oph_hn_v6_001"}
+{"text": "i get one-sided headache with nausea and flashing shapes with no eye redness or discharge", "label": "neurology", "family_id": "neuro_oph_hn_v6_002"}
+{"text": "my face feels numb and then i develop a strong headache with visual aura not eye pain", "label": "neurology", "family_id": "neuro_oph_hn_v6_003"}
+{"text": "i have i keep getting dizzy and i need to lie down", "label": "neurology", "family_id": "neuro_recurring_dizziness_lie_down_003"}
+{"text": "i keep getting dizzy and i need to lie down", "label": "neurology", "family_id": "neuro_recurring_dizziness_lie_down_003"}
+{"text": "a severe headache with nausea and light sensitivity", "label": "neurology", "family_id": "neuro_severe_headache_nausea_light_002"}
+{"text": "i have a severe a headache with nausea and light sensitivity", "label": "neurology", "family_id": "neuro_severe_headache_nausea_light_002"}
+{"text": "i have a severe headache with nausea and light sensitivity", "label": "neurology", "family_id": "neuro_severe_headache_nausea_light_002"}
+{"text": "i have a severe headache with nausia and light sensitivity", "label": "neurology", "family_id": "neuro_severe_headache_nausea_light_002"}
+{"text": "blurred vision and eye pain", "label": "ophthalmology", "family_id": "oph_blurred_vision_eye_pain_001"}
+{"text": "i have blurred vision and eye pain", "label": "ophthalmology", "family_id": "oph_blurred_vision_eye_pain_001"}
+{"text": "blurry vision with eye pain and light bothers me", "label": "ophthalmology", "family_id": "oph_blurry_vision_eye_pain_light_002"}
+{"text": "i have blurry vision with eye pain and light bothers me", "label": "ophthalmology", "family_id": "oph_blurry_vision_eye_pain_light_002"}
+{"text": "i have itchy red eyes", "label": "ophthalmology", "family_id": "oph_derm_borderline_001"}
+{"text": "itchy red eyes", "label": "ophthalmology", "family_id": "oph_derm_borderline_001"}
+{"text": "an itchy red eye with tearing", "label": "ophthalmology", "family_id": "oph_derm_borderline_002"}
+{"text": "i have an itchy red eye with tearing", "label": "ophthalmology", "family_id": "oph_derm_borderline_002"}
+{"text": "an itchy red rash around my eyelid", "label": "dermatology", "family_id": "oph_derm_borderline_003"}
+{"text": "i have an itchy red rash around my eyelid", "label": "dermatology", "family_id": "oph_derm_borderline_003"}
+{"text": "it started like eyelid irritation but now the eye itself is red tearing and painful to light", "label": "ophthalmology", "family_id": "oph_derm_hn_v12_001"}
+{"text": "the lid is swollen yet the main issue is blurred vision with soreness inside the eye", "label": "ophthalmology", "family_id": "oph_derm_hn_v12_002"}
+{"text": "i thought it was skin irritation near the eye but the eye is watery red and hurts when i move it", "label": "ophthalmology", "family_id": "oph_derm_hn_v12_003"}
+{"text": "my eye is itchy and red but my vision is blurry and light hurts it", "label": "ophthalmology", "family_id": "oph_derm_hn_v4_001"}
+{"text": "the skin around my eyelids looks puffy but the eye itself is red watery and sensitive to light", "label": "ophthalmology", "family_id": "oph_derm_hn_v6_001"}
+{"text": "i thought it was an eyelid rash but the eye hurts inside and my vision is blurry", "label": "ophthalmology", "family_id": "oph_derm_hn_v6_002"}
+{"text": "my eyelid is swollen yet the main problem is a painful red eye that is hard to keep open", "label": "ophthalmology", "family_id": "oph_derm_hn_v6_003"}
+{"text": "my eyelid looks puffy but the real problem is deep eye pain with blurry vision", "label": "ophthalmology", "family_id": "oph_gold_v12_001"}
+{"text": "one eye is red watery and painful and bright light makes it hard to keep open", "label": "ophthalmology", "family_id": "oph_gold_v12_002"}
+{"text": "i feel grit inside my eye and my vision turns hazy even though the eyelid only looks mildly irritated", "label": "ophthalmology", "family_id": "oph_gold_v12_003"}
+{"text": "i see halos around lights and the eye aches from inside not just on the skin around it", "label": "ophthalmology", "family_id": "oph_gold_v12_004"}
+{"text": "i have blurry vision with eye pain and light really bothers me", "label": "ophthalmology", "family_id": "oph_gold_v3_001"}
+{"text": "i woke up with a red watery eye and i want to keep it closed", "label": "ophthalmology", "family_id": "oph_gold_v3_002"}
+{"text": "my eyes feel itchy and red after long screen use", "label": "ophthalmology", "family_id": "oph_gold_v3_003"}
+{"text": "i have eye pain when i move my eye and it keeps watering", "label": "ophthalmology", "family_id": "oph_gold_v3_004"}
+{"text": "my vision is blurry in one eye and bright light makes it worse", "label": "ophthalmology", "family_id": "oph_gold_v3_005"}
+{"text": "i have blurry vision in one eye and bright light makes it painful", "label": "ophthalmology", "family_id": "oph_gold_v4_001"}
+{"text": "my eye is red watery and painful since this morning", "label": "ophthalmology", "family_id": "oph_gold_v4_002"}
+{"text": "i have eye discomfort after screen time and my vision gets blurry", "label": "ophthalmology", "family_id": "oph_gold_v4_003"}
+{"text": "my eyes are itchy red and sensitive to light", "label": "ophthalmology", "family_id": "oph_gold_v4_004"}
+{"text": "i feel pain behind one eye and it keeps watering", "label": "ophthalmology", "family_id": "oph_gold_v4_005"}
+{"text": "my eye is watery and painful and my vision looks cloudy", "label": "ophthalmology", "family_id": "oph_gold_v5_001"}
+{"text": "i woke up and one eye was red and blurry", "label": "ophthalmology", "family_id": "oph_gold_v5_002"}
+{"text": "bright light hurts my eyes and they keep tearing", "label": "ophthalmology", "family_id": "oph_gold_v5_003"}
+{"text": "my eye feels scratchy and painful after wearing contact lenses", "label": "ophthalmology", "family_id": "oph_gold_v5_004"}
+{"text": "i have blurry vision when reading and my eyes ache afterward", "label": "ophthalmology", "family_id": "oph_gold_v5_005"}
+{"text": "i have blurry vision in one eye and it hurts more in bright light", "label": "ophthalmology", "family_id": "oph_gold_v6_001"}
+{"text": "my eye is red painful and watery and i want to keep it closed", "label": "ophthalmology", "family_id": "oph_gold_v6_002"}
+{"text": "bright light makes my eye hurt and my vision goes blurry", "label": "ophthalmology", "family_id": "oph_gold_v6_003"}
+{"text": "i have pain when i move one eye and it keeps watering", "label": "ophthalmology", "family_id": "oph_gold_v6_004"}
+{"text": "i woke up with one red eye and cloudy vision in that eye", "label": "ophthalmology", "family_id": "oph_gold_v6_005"}
+{"text": "my eye feels scratchy painful and sensitive to light after contact lens use", "label": "ophthalmology", "family_id": "oph_gold_v6_006"}
+{"text": "i have blurred vision and eye pain and i cannot tolerate bright light", "label": "ophthalmology", "family_id": "oph_gold_v6_007"}
+{"text": "my eye is watery and irritated and my vision looks dim in that eye", "label": "ophthalmology", "family_id": "oph_gold_v6_008"}
+{"text": "i have pain behind one eye with tearing and blurry vision", "label": "ophthalmology", "family_id": "oph_gold_v6_009"}
+{"text": "my vision is blurry in one eye and the eye feels sore and red", "label": "ophthalmology", "family_id": "oph_gold_v6_010"}
+{"text": "one eye is red painful and very sensitive to light with constant tearing", "label": "ophthalmology", "family_id": "oph_gold_v8_001"}
+{"text": "i suddenly noticed blurry vision in one eye with floating spots and flashes", "label": "ophthalmology", "family_id": "oph_gold_v8_002"}
+{"text": "my eye hurts inside and looks red with sticky discharge", "label": "ophthalmology", "family_id": "oph_gold_v8_003"}
+{"text": "i keep seeing floating specks and brief flashes in my vision", "label": "ophthalmology", "family_id": "oph_gold_v8_004"}
+{"text": "my eyes burn and feel dry on the computer and my vision blurs until i blink a lot", "label": "ophthalmology", "family_id": "oph_gold_v8_005"}
+{"text": "my eyelid is puffy but the eye itself is painful and watery and light bothers me", "label": "ophthalmology", "family_id": "oph_gold_v8_006"}
+{"text": "one eye is red and my vision looks hazy and bright light makes it worse", "label": "ophthalmology", "family_id": "oph_gold_v8_007"}
+{"text": "i have scratchy eye pain after dust got in it and the eye keeps watering", "label": "ophthalmology", "family_id": "oph_gold_v8_008"}
+{"text": "i see halos around lights and my eye aches at the same time", "label": "ophthalmology", "family_id": "oph_gold_v8_009"}
+{"text": "my eye feels sore and gritty and the vision is blurrier in that eye than the other", "label": "ophthalmology", "family_id": "oph_gold_v8_010"}
+{"text": "my eyes feel itchy and red after screen use", "label": "ophthalmology", "family_id": "oph_itchy_red_eyes_screen_004"}
+{"text": "blurry vision and headache", "label": "ophthalmology", "family_id": "oph_neuro_borderline_001"}
+{"text": "i have blurry vision and headache", "label": "ophthalmology", "family_id": "oph_neuro_borderline_001"}
+{"text": "headache with blurry vision and dizziness", "label": "neurology", "family_id": "oph_neuro_borderline_002"}
+{"text": "headache with blurry vision and dizzyness", "label": "neurology", "family_id": "oph_neuro_borderline_002"}
+{"text": "i have headache with blurry vision and dizziness", "label": "neurology", "family_id": "oph_neuro_borderline_002"}
+{"text": "headache with blurred vision and sensitivity to light", "label": "neurology", "family_id": "oph_neuro_borderline_003"}
+{"text": "i have headache with blurred vision and sensitivity to light", "label": "neurology", "family_id": "oph_neuro_borderline_003"}
+{"text": "blurred vision with a red painful eye and mild headache", "label": "ophthalmology", "family_id": "oph_neuro_borderline_004"}
+{"text": "i have blurred vision with a red painful eye and mild a headache", "label": "ophthalmology", "family_id": "oph_neuro_borderline_004"}
+{"text": "i have blurred vision with a red painful eye and mild headache", "label": "ophthalmology", "family_id": "oph_neuro_borderline_004"}
+{"text": "eye pain with headache and i keep the eye closed", "label": "ophthalmology", "family_id": "oph_neuro_borderline_005"}
+{"text": "i have eye pain with headache and i keep the eye closed", "label": "ophthalmology", "family_id": "oph_neuro_borderline_005"}
+{"text": "dizzy with blurry vision and headache", "label": "neurology", "family_id": "oph_neuro_borderline_006"}
+{"text": "i feel dizzy with blurry vision and headache", "label": "neurology", "family_id": "oph_neuro_borderline_006"}
+{"text": "i have blurred vision with a bad headache and dizziness", "label": "neurology", "family_id": "oph_neuro_hn_v3_001"}
+{"text": "i have one red painful eye with blurred vision and tearing", "label": "ophthalmology", "family_id": "oph_neuro_hn_v3_002"}
+{"text": "i have one painful red eye with blurry vision and tearing", "label": "ophthalmology", "family_id": "oph_neuro_hn_v4_001"}
+{"text": "the headache seems to come from one eye because that eye is red sore and light hurts it", "label": "ophthalmology", "family_id": "oph_neuro_hn_v6_001"}
+{"text": "i feel pressure behind one eye with redness and blurred vision rather than a general headache", "label": "ophthalmology", "family_id": "oph_neuro_hn_v6_002"}
+{"text": "bright light bothers me because one eye is watery painful and blurry", "label": "ophthalmology", "family_id": "oph_neuro_hn_v6_003"}
+{"text": "i have i woke up with a red watery eye and i want to keep it closed", "label": "ophthalmology", "family_id": "oph_red_watery_eye_closed_003"}
+{"text": "i woke up with a red watery eye and i want to keep it closed", "label": "ophthalmology", "family_id": "oph_red_watery_eye_closed_003"}
+{"text": "my back hurts after exercise and feels stiff every time i stand up", "label": "orthopedics", "family_id": "ortho_back_exercise_stiffness_005"}
+{"text": "i have shoulder pain after lifting and it hurts when i move the arm", "label": "orthopedics", "family_id": "ortho_cardio_hn_v5_001"}
+{"text": "my upper back hurts after lifting boxes and gets worse when i twist", "label": "orthopedics", "family_id": "ortho_cardio_hn_v5_002"}
+{"text": "i have chest wall pain after lifting and twisting and it gets worse when i press on the muscle or move my arm", "label": "orthopedics", "family_id": "ortho_cardio_hn_v6_001"}
+{"text": "my shoulder and upper chest hurt after a hard workout and movement makes it worse rather than walking", "label": "orthopedics", "family_id": "ortho_cardio_hn_v6_002"}
+{"text": "i twisted my ankle stepping off a curb and now it is swollen and painful", "label": "orthopedics", "family_id": "ortho_gold_v3_001"}
+{"text": "i have lower back pain after lifting a heavy box and i cannot straighten up", "label": "orthopedics", "family_id": "ortho_gold_v3_002"}
+{"text": "i fell on my shoulder and now i cannot raise my arm properly", "label": "orthopedics", "family_id": "ortho_gold_v3_003"}
+{"text": "my wrist hurts after a fall and i cannot grip things well", "label": "orthopedics", "family_id": "ortho_gold_v3_004"}
+{"text": "i have knee pain when i squat and go up stairs and it feels stiff", "label": "orthopedics", "family_id": "ortho_gold_v3_005"}
+{"text": "i twisted my ankle while walking and now it hurts to put weight on it", "label": "orthopedics", "family_id": "ortho_gold_v4_001"}
+{"text": "my neck became stiff and painful after lifting something heavy", "label": "orthopedics", "family_id": "ortho_gold_v4_002"}
+{"text": "i have shoulder pain when i lift my arm above my head", "label": "orthopedics", "family_id": "ortho_gold_v4_003"}
+{"text": "my lower back hurts after moving furniture and now i cannot bend well", "label": "orthopedics", "family_id": "ortho_gold_v4_004"}
+{"text": "i have knee pain after exercise and it feels swollen and stiff", "label": "orthopedics", "family_id": "ortho_gold_v4_005"}
+{"text": "i rolled my ankle and now it hurts when i put weight on it", "label": "orthopedics", "family_id": "ortho_gold_v5_001"}
+{"text": "my elbow started hurting after lifting heavy bags yesterday", "label": "orthopedics", "family_id": "ortho_gold_v5_002"}
+{"text": "i have hip pain when i climb stairs and stand up from a chair", "label": "orthopedics", "family_id": "ortho_gold_v5_003"}
+{"text": "my wrist hurts after a long day of manual work and feels stiff", "label": "orthopedics", "family_id": "ortho_gold_v5_004"}
+{"text": "i have lower back pain after bending and now it is hard to straighten up", "label": "orthopedics", "family_id": "ortho_gold_v5_005"}
+{"text": "my shoulder hurts after exercise and i cannot move it fully", "label": "orthopedics", "family_id": "ortho_gold_v5_006"}
+{"text": "my lower back hurts after lifting and the pain stays worse when i bend", "label": "orthopedics", "family_id": "ortho_gold_v7_001"}
+{"text": "i twisted my knee and now it is swollen and painful when i walk", "label": "orthopedics", "family_id": "ortho_gold_v7_002"}
+{"text": "my shoulder hurts when i lift my arm and it started after exercise", "label": "orthopedics", "family_id": "ortho_gold_v7_003"}
+{"text": "i have ankle pain after rolling it and now i cannot put full weight on it", "label": "orthopedics", "family_id": "ortho_gold_v7_004"}
+{"text": "my wrist is painful and stiff after a fall yesterday", "label": "orthopedics", "family_id": "ortho_gold_v7_005"}
+{"text": "i have hip pain when i stand up and climb stairs", "label": "orthopedics", "family_id": "ortho_gold_v7_006"}
+{"text": "my knee swelled up after i twisted it getting out of the car", "label": "orthopedics", "family_id": "ortho_gold_v8_001"}
+{"text": "i hurt my lower back lifting a heavy box and it gets worse when i bend forward", "label": "orthopedics", "family_id": "ortho_gold_v8_002"}
+{"text": "my shoulder hurts after reaching overhead and now i cannot lift my arm well", "label": "orthopedics", "family_id": "ortho_gold_v8_003"}
+{"text": "i rolled my ankle on the stairs and it is swollen and painful to stand on", "label": "orthopedics", "family_id": "ortho_gold_v8_004"}
+{"text": "my neck feels stiff after sleeping badly and it hurts more when i turn my head", "label": "orthopedics", "family_id": "ortho_gold_v8_005"}
+{"text": "i have wrist pain and swelling after catching myself during a fall", "label": "orthopedics", "family_id": "ortho_gold_v8_006"}
+{"text": "my hip hurts when i walk and stand for long periods and it feels mechanical", "label": "orthopedics", "family_id": "ortho_gold_v8_007"}
+{"text": "i get pain on the outside of my elbow when i grip tools or lift things", "label": "orthopedics", "family_id": "ortho_gold_v8_008"}
+{"text": "my heel hurts badly with the first few steps every morning", "label": "orthopedics", "family_id": "ortho_gold_v8_009"}
+{"text": "my knee aches and grinds when i go down stairs or stand up from a chair", "label": "orthopedics", "family_id": "ortho_gold_v8_010"}
+{"text": "i strained my upper back carrying boxes and twisting makes it worse", "label": "orthopedics", "family_id": "ortho_gold_v8_011"}
+{"text": "my calf muscle started hurting after i sprinted and it is worse when i push off the foot", "label": "orthopedics", "family_id": "ortho_gold_v8_012"}
+{"text": "my finger became swollen and painful after i jammed it playing ball", "label": "orthopedics", "family_id": "ortho_gold_v8_013"}
+{"text": "i have pain over my rib muscles after coughing hard and twisting my body", "label": "orthopedics", "family_id": "ortho_gold_v8_014"}
+{"text": "my lower back pain shoots a little into my buttock when i move but it started after lifting", "label": "orthopedics", "family_id": "ortho_gold_v8_015"}
+{"text": "i have knee pain after twisting my leg", "label": "orthopedics", "family_id": "ortho_knee_injury_001"}
+{"text": "knee pain after twisting my leg", "label": "orthopedics", "family_id": "ortho_knee_injury_001"}
+{"text": "i have knee pain when i go up and down stairs and it feels stiff", "label": "orthopedics", "family_id": "ortho_knee_stairs_stiffness_006"}
+{"text": "knee pain when i go up and down stairs and it feels stiff", "label": "orthopedics", "family_id": "ortho_knee_stairs_stiffness_006"}
+{"text": "i have lower back pain after lifting a heavy box and i cannot bend properly", "label": "orthopedics", "family_id": "ortho_low_back_lifting_003"}
+{"text": "lower back pain after lifting a heavy box and i cannot bend properly", "label": "orthopedics", "family_id": "ortho_low_back_lifting_003"}
+{"text": "i have lower back pain with tingling down my leg", "label": "orthopedics", "family_id": "ortho_neuro_borderline_001"}
+{"text": "lower back pain with tingling down my leg", "label": "orthopedics", "family_id": "ortho_neuro_borderline_001"}
+{"text": "i have shoulder pain and my arm feels weak after lifting", "label": "orthopedics", "family_id": "ortho_neuro_borderline_002"}
+{"text": "shoulder pain and my arm feels weak after lifting", "label": "orthopedics", "family_id": "ortho_neuro_borderline_002"}
+{"text": "i have lower back pain after lifting and tingling down my leg", "label": "orthopedics", "family_id": "ortho_neuro_hn_v3_001"}
+{"text": "i fell on my shoulder and now i cannot raise my arm well", "label": "orthopedics", "family_id": "ortho_shoulder_fall_004"}
+{"text": "i have i fell on my shoulder and now i cannot raise my arm well", "label": "orthopedics", "family_id": "ortho_shoulder_fall_004"}
+{"text": "i have i twisted my knee and now it hurts and looks swollen", "label": "orthopedics", "family_id": "ortho_twisted_knee_swelling_002"}
+{"text": "i twisted my knee and now it hurts and looks swollen", "label": "orthopedics", "family_id": "ortho_twisted_knee_swelling_002"}
+{"text": "my baby has a rash and is not feeding well", "label": "pediatrics", "family_id": "peds_baby_rash_feeding_004"}
+{"text": "my child has diarrhea and is less active than usual", "label": "pediatrics", "family_id": "peds_child_diarrhea_low_activity_003"}
+{"text": "my daughter has been vomiting and also has fever", "label": "pediatrics", "family_id": "peds_daughter_vomiting_fever_005"}
+{"text": "my daughter has been vomitting and also has fever", "label": "pediatrics", "family_id": "peds_daughter_vomiting_fever_005"}
+{"text": "my child has fever and cough", "label": "pediatrics", "family_id": "peds_fever_cough_001"}
+{"text": "my child has stomach pain and vomiting since yesterday", "label": "pediatrics", "family_id": "peds_gastro_borderline_001"}
+{"text": "my child has stomach pain and vomitting since yesterday", "label": "pediatrics", "family_id": "peds_gastro_borderline_001"}
+{"text": "my child has stomache pain and vomiting since yesterday", "label": "pediatrics", "family_id": "peds_gastro_borderline_001"}
+{"text": "my child has vomiting and stomach pain since this morning", "label": "pediatrics", "family_id": "peds_gastro_hn_v3_001"}
+{"text": "my child has vomiting and tummy pain and has become clingy and sleepy", "label": "pediatrics", "family_id": "peds_gastro_hn_v4_001"}
+{"text": "my baby has diarrhea and is not feeding or drinking like usual", "label": "pediatrics", "family_id": "peds_gastro_hn_v4_002"}
+{"text": "my toddler has stomach pain and diarrhea but also looks much less active than normal", "label": "pediatrics", "family_id": "peds_gastro_hn_v4_003"}
+{"text": "my toddler has fever and keeps pulling at his ear", "label": "pediatrics", "family_id": "peds_gold_v3_001"}
+{"text": "my baby is vomiting and is not feeding well", "label": "pediatrics", "family_id": "peds_gold_v3_002"}
+{"text": "my daughter has a rash and fever since yesterday", "label": "pediatrics", "family_id": "peds_gold_v3_004"}
+{"text": "my son has a bad cough at night and feels hot", "label": "pediatrics", "family_id": "peds_gold_v3_005"}
+{"text": "my toddler has fever and is much less active than usual", "label": "pediatrics", "family_id": "peds_gold_v4_001"}
+{"text": "my baby has diarrhea and is not feeding well", "label": "pediatrics", "family_id": "peds_gold_v4_002"}
+{"text": "my child has a cough and feels hot at night", "label": "pediatrics", "family_id": "peds_gold_v4_003"}
+{"text": "my daughter has been vomiting and refuses to eat", "label": "pediatrics", "family_id": "peds_gold_v4_004"}
+{"text": "my son has a rash and fever since last night", "label": "pediatrics", "family_id": "peds_gold_v4_005"}
+{"text": "my toddler has fever and keeps pulling on one ear", "label": "pediatrics", "family_id": "peds_gold_v5_001"}
+{"text": "my baby has diarrhea and fewer wet diapers than usual", "label": "pediatrics", "family_id": "peds_gold_v5_002"}
+{"text": "my child has a cough and is not playing like usual", "label": "pediatrics", "family_id": "peds_gold_v5_003"}
+{"text": "my daughter has been vomiting and says her tummy hurts", "label": "pediatrics", "family_id": "peds_gold_v5_004"}
+{"text": "my son has a rash and a fever and seems tired", "label": "pediatrics", "family_id": "peds_gold_v5_005"}
+{"text": "my baby has a cough and is not sleeping well at night", "label": "pediatrics", "family_id": "peds_gold_v5_006"}
+{"text": "my child has diarrhea and is eating much less than usual", "label": "pediatrics", "family_id": "peds_gold_v5_007"}
+{"text": "my child has stomach pain and vomiting but is also sleepy and clingy", "label": "pediatrics", "family_id": "peds_gold_v6_001"}
+{"text": "my baby has diarrhea and is not drinking or feeding well", "label": "pediatrics", "family_id": "peds_gold_v6_002"}
+{"text": "my toddler has fever and keeps crying and pulling at one ear", "label": "pediatrics", "family_id": "peds_gold_v6_003"}
+{"text": "my child has been vomiting and says the tummy pain is getting worse", "label": "pediatrics", "family_id": "peds_gold_v6_004"}
+{"text": "my baby has a cough fever and is much less active than usual", "label": "pediatrics", "family_id": "peds_gold_v6_005"}
+{"text": "my son has diarrhea and does not want to eat or play", "label": "pediatrics", "family_id": "peds_gold_v6_006"}
+{"text": "my daughter has fever and tummy pain and seems more tired than normal", "label": "pediatrics", "family_id": "peds_gold_v6_007"}
+{"text": "my toddler is vomiting and refuses to drink milk or water", "label": "pediatrics", "family_id": "peds_gold_v6_008"}
+{"text": "my three-year-old has fever cough and is not feeding well today", "label": "pediatrics", "family_id": "peds_gold_v8_001"}
+{"text": "my toddler has diarrhea and vomiting and seems much sleepier than usual", "label": "pediatrics", "family_id": "peds_gold_v8_002"}
+{"text": "my child has wheezing with cough and fever and looks tired", "label": "pediatrics", "family_id": "peds_gold_v8_003"}
+{"text": "my infant is feverish irritable and not drinking milk like usual", "label": "pediatrics", "family_id": "peds_gold_v8_004"}
+{"text": "my two-year-old has fever cough and is breathing faster than usual today", "label": "pediatrics", "family_id": "peds_gold_v9_001"}
+{"text": "my child has vomiting and diarrhea since last night and now seems tired and less playful", "label": "pediatrics", "family_id": "peds_gold_v9_002"}
+{"text": "my infant has fever and keeps pulling at the ear and crying more than usual", "label": "pediatrics", "family_id": "peds_gold_v9_003"}
+{"text": "my child has a barking cough at night and sounds hoarse when breathing in", "label": "pediatrics", "family_id": "peds_gold_v9_004"}
+{"text": "my baby is feverish irritable and not drinking milk as well as normal today", "label": "pediatrics", "family_id": "peds_gold_v9_005"}
+{"text": "my child has wheezing with cough and mild fever and is less active than usual", "label": "pediatrics", "family_id": "peds_gold_v9_006"}
+{"text": "my toddler has a spreading rash with fever and seems unusually sleepy", "label": "pediatrics", "family_id": "peds_gold_v9_007"}
+{"text": "my child has stomach pain around the belly button with vomiting and will not eat", "label": "pediatrics", "family_id": "peds_gold_v9_008"}
+{"text": "my preschooler has high fever and a sore throat and refuses to drink because it hurts", "label": "pediatrics", "family_id": "peds_gold_v9_009"}
+{"text": "my baby has fever and is not eating well", "label": "pediatrics", "family_id": "peds_gp_borderline_001"}
+{"text": "my child feels tired and feverish with no clear main symptom", "label": "pediatrics", "family_id": "peds_gp_hn_v3_001"}
+{"text": "my child has fever and vague tiredness but no clear main symptom", "label": "pediatrics", "family_id": "peds_gp_hn_v4_001"}
+{"text": "my toddler has fever and cough since yesterday", "label": "pediatrics", "family_id": "peds_toddler_fever_cough_002"}

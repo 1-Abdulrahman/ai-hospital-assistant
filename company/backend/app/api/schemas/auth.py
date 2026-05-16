@@ -9,9 +9,16 @@ class LoginRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_supported_login_shape(self) -> "LoginRequest":
+        """Allow only one supported login shape.
+
+        Accepted forms:
+        - `tenantId` + `email` + `password`
+        - `username` + `password`
+        """
         email_login = bool(self.tenantId and self.email)
         username_login = bool(self.username)
 
+        # Exactly one shape must be selected, otherwise request is ambiguous/invalid.
         if email_login == username_login:
             raise ValueError(
                 "Provide either tenantId and email, or username and password."
@@ -52,6 +59,7 @@ class LoginResponse(BaseModel):
         role: str,
         portal_role: str,
     ) -> "LoginResponse":
+        """Build a response that serves both API and current portal naming contracts."""
         return cls(
             accessToken=access_token,
             tokenType="bearer",
@@ -78,6 +86,7 @@ class AuthenticatedPortalUser(BaseModel):
     isActive: bool
 
     def is_company_admin(self) -> bool:
+        """Return whether the authenticated user has company-level admin privileges."""
         return self.role == "company_admin"
 
 
@@ -88,8 +97,10 @@ class ErrorDetail(BaseModel):
 
 
 def normalize_portal_role(role: str) -> str:
+    """Map backend role values to portal role labels expected by the UI."""
     mapping: dict[str, str] = {
         "company_admin": "ADMIN",
         "tenant_admin": "TENANT_ADMIN",
     }
+    # Fall back to upper-cased passthrough for roles without an explicit mapping.
     return mapping.get(role, role.upper())

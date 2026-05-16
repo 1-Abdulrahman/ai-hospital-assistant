@@ -13,12 +13,22 @@ import { RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format, subDays } from 'date-fns';
 
+// DashboardPage
+//
+// High-level admin dashboard showing service health, summary analytics and
+// recent booking activity. This file is intentionally a thin view layer that
+// delegates data loading to `useApiCall` and focuses on presentation.
+
 function HealthCard({ title, fetchFn }: { title: string; fetchFn: string }) {
+  // `useApiCall` wraps the API call and returns `data | loading | error`
+  // plus a `refetch` helper. We choose the endpoint based on `fetchFn`.
   const { data, loading, error, refetch } = useApiCall(
-    (api) => fetchFn === 'health' ? api.getHealth() : api.getFhirStatus(),
+    (api) => (fetchFn === 'health' ? api.getHealth() : api.getFhirStatus()),
     [fetchFn]
   );
 
+  // Visual card showing the status badge and last-checked timestamp. The
+  // refresh button simply calls `refetch` to reload the single endpoint.
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -44,18 +54,26 @@ function HealthCard({ title, fetchFn }: { title: string; fetchFn: string }) {
 export default function DashboardPage() {
   const { isTenantAdmin } = useAuth();
   const today = format(new Date(), 'yyyy-MM-dd');
+
+  // Date range state for analytics. We store ISO yyyy-MM-dd strings which are
+  // compatible with the backend query parameters used below.
   const [from, setFrom] = useState(format(subDays(new Date(), 7), 'yyyy-MM-dd'));
   const [to, setTo] = useState(today);
   const [preset, setPreset] = useState<DatePreset>('7d');
 
+  // Load summary analytics for the selected date range.
   const { data: analytics, loading: analyticsLoading, error: analyticsError, refetch: refetchAnalytics } = useApiCall(
-    (api) => api.getAnalyticsSummary(from, to), [from, to]
+    (api) => api.getAnalyticsSummary(from, to),
+    [from, to]
   );
 
+  // Load a short list of recent bookings for the activity table.
   const { data: recent, loading: recentLoading, error: recentError, refetch: refetchRecent } = useApiCall(
-    (api) => api.getRecentBookings(10), []
+    (api) => api.getRecentBookings(10),
+    []
   );
 
+  // Layout helpers: admins see a smaller set of summary cards.
   const skeletonCount = isTenantAdmin ? 2 : 5;
   const gridCols = isTenantAdmin ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-5';
 
@@ -73,6 +91,7 @@ export default function DashboardPage() {
       <div className="space-y-4">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <h3 className="text-lg font-semibold">Summary Analytics</h3>
+          {/* DateRangeSelector is a shared control that emits (from, to, preset). */}
           <DateRangeSelector from={from} to={to} preset={preset} onChange={(f, t, p) => { setFrom(f); setTo(t); setPreset(p); }} />
         </div>
         {analyticsLoading && <div className={`grid ${gridCols} gap-4`}>{Array.from({ length: skeletonCount }).map((_, i) => <Skeleton key={i} className="h-24" />)}</div>}
@@ -117,22 +136,20 @@ export default function DashboardPage() {
                   <TableCell>{b.specialty || 'N/A'}</TableCell>
                   <TableCell><StatusBadge status={b.outcome} /></TableCell>
                   <TableCell>
-               {b.correlationId ? (
-                  isTenantAdmin ? (
-                    <span className="text-xs font-mono">
-                      {b.correlationId.slice(0, 8)}…
-                    </span>
-                  ) : (
-                    <Link
-                      to={`/traces?correlationId=${b.correlationId}`}
-                      className="text-xs font-mono text-primary hover:underline"
-                    >
-                      {b.correlationId.slice(0, 8)}…
-                    </Link>
-                  )
-                ) : (
-                  'N/A'
-                )}
+                    {/*
+                      Correlation IDs are sensitive trace keys. For tenant admins we
+                      show a truncated, non-clickable value. For regular users we
+                      link to the traces view so they can inspect the request chain.
+                    */}
+                    {b.correlationId ? (
+                      isTenantAdmin ? (
+                        <span className="text-xs font-mono">{b.correlationId.slice(0, 8)}…</span>
+                      ) : (
+                        <Link to={`/traces?correlationId=${b.correlationId}`} className="text-xs font-mono text-primary hover:underline">{b.correlationId.slice(0, 8)}…</Link>
+                      )
+                    ) : (
+                      'N/A'
+                    )}
 
                   </TableCell>
                 </TableRow>

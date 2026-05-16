@@ -34,3 +34,7 @@ export function getTenantId(): string {
 export function setTenantId(id: string): void {
   sessionStorage.setItem(TENANT_KEY, id);
 }
+
+export function clearCorrelationId(): void {
+  sessionStorage.removeItem(CORRELATION_KEY);
+}

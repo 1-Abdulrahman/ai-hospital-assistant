@@ -1,6 +1,9 @@
 FROM node:24.13.1-alpine AS build
 WORKDIR /ui
 
+ARG VITE_USE_MOCKS=false
+ENV VITE_USE_MOCKS=${VITE_USE_MOCKS}
+
 # Copy offline npm cache from repo root
 COPY docs/offline/npm-cache /npm-cache
 
@@ -17,8 +20,7 @@ RUN npm run build
 
 FROM nginx:1.27.4-alpine
 
-
 COPY company/portal-ui/nginx.conf /etc/nginx/conf.d/default.conf
-
 COPY --from=build /ui/dist /usr/share/nginx/html
+
 EXPOSE 80
