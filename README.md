@@ -201,7 +201,7 @@ Not specified yet.
 
 ## 👤 Author
 
-**Abdelrahman**  
+**Abdelrahman Amr Farag**  
 Final year graduation project
 
 ---
