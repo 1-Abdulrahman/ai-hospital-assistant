@@ -6,6 +6,13 @@ import { useBookingFlow } from "@/hooks/use-booking-flow";
 import { chatContinuityIdentify, chatSelection } from "@/lib/api-client";
 import { toast } from "sonner";
 
+/**
+ * Transforms the API response into a standardized message format for the chat interface.
+ * Extracts relevant fields from the backend response and normalizes undefined values.
+ *
+ * @param res - The API response object containing user message and metadata
+ * @returns A formatted message object with role "assistant" and structured metadata
+ */
 function responseToMessage(res: any) {
   return {
     role: "assistant" as const,
@@ -23,12 +30,26 @@ function responseToMessage(res: any) {
   };
 }
 
+/**
+ * ChatWidgetContinuityIdentity Component
+ *
+ * Allows patients to enter their National ID/Iqama/Border ID to check for continuity of care
+ * with previous physicians. If a match is found, the system will prioritize the previous physician.
+ * Patients can also skip this check to view all available slots.
+ *
+ * @component
+ */
 export default function ChatWidgetContinuityIdentity() {
   const [nationalId, setNationalId] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { addMessage, setStep, setPatientNationalId } = useBookingFlow();
 
+  /**
+   * Handles the continuity check by submitting the patient's National ID to the backend.
+   * On success, stores the ID and transitions to the chat step with the API response.
+   * On error, displays a toast notification.
+   */
   const handleContinue = async () => {
     if (!nationalId.trim()) {
       toast.error("Enter your National ID first.");
@@ -49,6 +70,12 @@ export default function ChatWidgetContinuityIdentity() {
     }
   };
 
+  /**
+   * Handles skipping the continuity check by sending a skip action to the backend.
+   * This allows the patient to proceed to the chat without checking for previous physicians.
+   * On success, transitions to the chat step with all available slots.
+   * On error, displays a toast notification.
+   */
   const handleSkip = async () => {
     setLoading(true);
 
@@ -70,12 +97,15 @@ export default function ChatWidgetContinuityIdentity() {
 
   return (
     <div className="flex flex-col h-full overflow-y-auto px-4 py-3">
+      {/* Section heading */}
       <h3 className="font-semibold text-sm mb-3">Continuity of Care</h3>
 
+      {/* Helper text explaining what continuity of care is and why it matters */}
       <p className="text-xs text-muted-foreground mb-3">
         Enter your National ID / Iqama / Border ID to prioritize continuity of care when a matching previous physician exists.
       </p>
 
+      {/* Input field for patient's national identification number */}
       <Input
         value={nationalId}
         onChange={(e) => setNationalId(e.target.value)}
@@ -84,6 +114,7 @@ export default function ChatWidgetContinuityIdentity() {
         disabled={loading}
       />
 
+      {/* Primary action: Submit national ID for continuity check */}
       <Button
         size="sm"
         className="w-full h-8 text-xs"
@@ -94,6 +125,7 @@ export default function ChatWidgetContinuityIdentity() {
         Check Continuity of Care
       </Button>
 
+      {/* Secondary action: Skip continuity check and show all available slots */}
       <Button
         variant="outline"
         size="sm"
@@ -104,6 +136,7 @@ export default function ChatWidgetContinuityIdentity() {
         Skip and Show All Slots
       </Button>
 
+      {/* Navigation: Go back to chat step */}
       <Button
         variant="ghost"
         size="sm"

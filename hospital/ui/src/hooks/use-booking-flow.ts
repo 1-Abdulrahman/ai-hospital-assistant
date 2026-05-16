@@ -7,6 +7,7 @@ interface BookingFlowState {
   messages: ChatMessage[];
   currentMode: FlowMode | null;
 
+  // User selections collected across the booking and renewal flow.
   selectedSpecialtyId: string | null;
   selectedSpecialtyLabel: string | null;
 
@@ -24,10 +25,12 @@ interface BookingFlowState {
   patientNationalId: string | null;
   patientEmail: string | null;
 
+  // Flow status and validation state.
   otpVerified: boolean;
   isLoading: boolean;
   error: string | null;
 
+  // State mutation helpers used by the UI flow.
   setStep: (step: FlowStep) => void;
   addMessage: (msg: Omit<ChatMessage, "id">) => void;
   setCurrentMode: (m: FlowMode | null) => void;
@@ -57,6 +60,7 @@ interface BookingFlowState {
   reset: () => void;
 }
 
+// Shared baseline state for both partial flow resets and full store resets.
 const initialState = {
   step: "chat" as FlowStep,
   messages: [] as ChatMessage[],
@@ -87,15 +91,19 @@ const initialState = {
 export const useBookingFlow = create<BookingFlowState>((set) => ({
   ...initialState,
 
+  // Move the flow to the requested step.
   setStep: (step) => set({ step }),
 
+  // Append a new chat message with a generated id.
   addMessage: (msg) =>
     set((s) => ({
       messages: [...s.messages, { ...msg, id: uuidv4() }],
     })),
 
+  // Track whether the user is in booking, renewal, or another flow mode.
   setCurrentMode: (currentMode) => set({ currentMode }),
 
+  // Persist the selected booking details as the user moves through the flow.
   setSelectedSpecialtyId: (selectedSpecialtyId) => set({ selectedSpecialtyId }),
   setSelectedSpecialtyLabel: (selectedSpecialtyLabel) =>
     set({ selectedSpecialtyLabel }),
@@ -115,10 +123,12 @@ export const useBookingFlow = create<BookingFlowState>((set) => ({
   setPatientNationalId: (patientNationalId) => set({ patientNationalId }),
   setPatientEmail: (patientEmail) => set({ patientEmail }),
 
+  // Update the current loading and error indicators.
   setOtpVerified: (otpVerified) => set({ otpVerified }),
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
 
+  // Clear only the in-progress flow selections while keeping the chat history.
   resetFlow: () =>
     set({
       step: "chat",
@@ -145,5 +155,6 @@ export const useBookingFlow = create<BookingFlowState>((set) => ({
       error: null,
     }),
 
+  // Restore the store to its initial state.
   reset: () => set(initialState),
 }));
