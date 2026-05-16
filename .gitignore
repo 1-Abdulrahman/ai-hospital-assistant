@@ -15,7 +15,8 @@ Thumbs.db
 
 # Model artifacts
 company/backend/app/assets/nlp_models/*
-!company/backend/app/assets/nlp_models/.gitkeep
+#!company/backend/app/assets/nlp_models/.gitkeep
+!company/backend/app/assets/nlp_models/distilbert-specialty/
 
 # Runtime data
 company/data/
